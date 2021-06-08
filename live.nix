@@ -9,7 +9,10 @@ let
     nativeBuildInputs = [ cpio ];
     passAsFile = [ "init" ];
     init = ''
-      #!/bin/sh
+      #!/bin/sh -eux
+      mount -t devtmpfs none /dev
+      mount -t proc none /proc
+      mount -t sysfs none /sys
       echo hello world
       exec sh -li
     '';
