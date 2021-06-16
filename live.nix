@@ -1,5 +1,5 @@
 { stdenv, host-rootfs, runCommand, runCommandCC
-, busybox, cpio, dosfstools, jq, linux, mtools, systemd, util-linux
+, busybox, cpio, dosfstools, jq, linux, mtools, systemd, pkgsStatic, util-linux
 }:
 
 let
@@ -7,19 +7,74 @@ let
 
   initramfs = runCommand "spectrum-initramfs" {
     nativeBuildInputs = [ cpio ];
-    passAsFile = [ "init" ];
+    passAsFile = [ "init" "mdevconf" ];
     init = ''
-      #!/bin/sh -eux
-      mount -t devtmpfs none /dev
-      mount -t proc none /proc
-      mount -t sysfs none /sys
-      echo hello world
-      exec sh -li
+      #!/bin/execlineb -S0
+
+      export PATH /bin
+
+      if { mount -t devtmpfs none /dev }
+      if { mount -t proc none /proc }
+      if { mount -t sysfs none /sys }
+
+      if { mkfifo /dev/esp.poll }
+
+      background {
+        fdclose 3
+        mdevd -C
+      }
+      importas -iu mdevd_pid !
+
+      if { modprobe squashfs }
+
+      if {
+        redirfd -r 0 /dev/esp.poll
+        redirfd -w 1 /dev/null
+        head -c 1
+      }
+      background { rm /dev/esp.poll }
+      background { kill $mdevd_pid }
+
+      backtick -E partname { readlink /dev/esp }
+      backtick -E partpath { realpath /sys/class/block/''${partname} }
+      backtick -E diskpath { realpath ''${partpath}/.. }
+      backtick -E diskname { basename $diskpath }
+
+      backtick -E rootdev {
+        pipeline { lsblk -lnpo NAME,PARTTYPE /dev/''${diskname} }
+        pipeline { grep -m 1 4f68bce3-e8cd-4db1-96e7-fbcaf984b709 }
+        cut -d " " -f 1
+      }
+
+      background { rm /dev/esp }
+
+      if { mount $rootdev /mnt }
+      if { mount --move /proc /mnt/proc }
+      if { mount --move /sys /mnt/sys }
+      if { mount --move /dev /mnt/dev }
+
+      switch_root /mnt /bin/sh -il
+    '';
+    mdevconf = ''
+      -$MODALIAS=.* 0:0 660 +importas -iu MODALIAS MODALIAS modprobe $MODALIAS
+      $DEVTYPE=partition 0:0 660 +importas -iu MDEV MDEV foreground { redirfd -w 2 /dev/null ln -s $MDEV /dev/esp } redirfd -w -nb 3 /dev/esp.poll echo
     '';
   } ''
-    mkdir -p root
-    cp -R ${busybox.override { enableStatic = true; }}/bin root
+    installPkg() {
+        cp -r $1 root/nix/store
+        ln -sf $1/bin/* root/bin
+    }
+
+    mkdir -p root/{bin,dev,etc,mnt,nix/store,proc,sys}
+    installPkg ${busybox.override {
+      enableStatic = true;
+    }}
+    installPkg ${pkgsStatic.mdevd}
+    installPkg ${pkgsStatic.execline}
+    cp -f ${pkgsStatic.utillinux.override { systemd = null; }}/bin/{blkid,findfs,lsblk} root/bin
+    ln -s /bin root/sbin
     install $initPath root/init
+    cp $mdevconfPath root/etc/mdev.conf
     cp -R ${linux}/lib root
     cd root
     find * -print0 | xargs -0r touch -h -d '@1'
@@ -76,8 +131,8 @@ runCommand "spectrum-live" {
   truncate -s $(((3 * 2048 + $squashfsSize + $efiSize) * 512)) $out
   sfdisk $out <<EOF
   label: gpt
-  - $efiSize      U -
-  - $squashfsSize L -
+  - $efiSize      U                                    -
+  - $squashfsSize 4f68bce3-e8cd-4db1-96e7-fbcaf984b709 -
   EOF
 
   fillPartition $out 0 ${efi}
