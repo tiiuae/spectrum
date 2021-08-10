@@ -1,8 +1,15 @@
-{ stdenv, host-rootfs, runCommand, runCommandCC
-, busybox, cpio, dosfstools, jq, linux, mtools, systemd, pkgsStatic, util-linux
+{ stdenv, host-rootfs, runCommand, runCommandCC, writeReferencesToFile
+, pkgsStatic
+, busybox, cpio, cryptsetup, dosfstools, jq, linux, lvm2, mtools, systemd
+, util-linux
 }:
 
 let
+  cryptsetup' = cryptsetup;
+in
+let
+  cryptsetup = cryptsetup'.override { lvm2 = lvm2.override { udev = null; }; };
+
   kernelTarget = stdenv.hostPlatform.linux-kernel.target;
 
   initramfs = runCommand "spectrum-initramfs" {
@@ -46,9 +53,18 @@ let
         cut -d " " -f 1
       }
 
+      backtick -E hashdev {
+        pipeline { lsblk -lnpo NAME,PARTTYPE /dev/''${diskname} }
+        pipeline { grep -m 1 2c7357ed-ebd2-46d9-aec1-23d437ec2bf5 }
+        cut -d " " -f 1
+      }
+
       background { rm /dev/esp }
 
-      if { mount $rootdev /mnt }
+      backtick -E roothash { cat /etc/roothash }
+
+      if { veritysetup open $rootdev root-verity $hashdev $roothash }
+      if { mount /dev/mapper/root-verity /mnt }
       if { mount --move /proc /mnt/proc }
       if { mount --move /sys /mnt/sys }
       if { mount --move /dev /mnt/dev }
@@ -66,14 +82,19 @@ let
     }
 
     mkdir -p root/{bin,dev,etc,mnt,nix/store,proc,sys}
-    installPkg ${busybox.override {
-      enableStatic = true;
-    }}
+    xargs cp -rt root/nix/store < ${writeReferencesToFile cryptsetup}
+    ln -s ${cryptsetup}/bin/* root/bin
+    installPkg ${busybox.override { enableStatic = true; }}
+
     installPkg ${pkgsStatic.mdevd}
     installPkg ${pkgsStatic.execline}
+
+    cp -fv ${pkgsStatic.coreutils}/bin/date root/bin
+
     cp -f ${pkgsStatic.utillinux.override { systemd = null; }}/bin/{blkid,findfs,lsblk} root/bin
     ln -s /bin root/sbin
     install $initPath root/init
+    grep -m 1 '^Root hash' ${verity.table} | awk '{print $3}' > root/etc/roothash
     cp $mdevconfPath root/etc/mdev.conf
     cp -R ${linux}/lib root
     cd root
@@ -106,12 +127,19 @@ let
     mmd -i $out ::/EFI ::/EFI/BOOT
     mcopy -i $out ${uki} ::/EFI/BOOT/BOOTX64.EFI
   '';
+
+  verity = runCommand "spectrum-verity" {
+    nativeBuildInputs = [ cryptsetup ];
+    outputs = [ "out" "table" ];
+  } ''
+    veritysetup format ${host-rootfs.squashfs} $out > $table
+  '';
 in
 
 runCommand "spectrum-live" {
   nativeBuildInputs = [ jq util-linux ];
   passthru = {
-    inherit efi;
+    inherit efi verity;
     rootfs = host-rootfs;
   };
 } ''
@@ -125,16 +153,19 @@ runCommand "spectrum-live" {
       dd if="$3" of="$1" seek="$start" count="$size" conv=notrunc
   }
 
-  squashfsSize="$(blockSize ${host-rootfs.squashfs})"
   efiSize="$(blockSize ${efi})"
+  squashfsSize="$(blockSize ${host-rootfs.squashfs})"
+  veritySize="$(blockSize ${verity})"
 
-  truncate -s $(((3 * 2048 + $squashfsSize + $efiSize) * 512)) $out
+  truncate -s $(((3 * 2048 + $efiSize + $squashfsSize + $veritySize) * 512)) $out
   sfdisk $out <<EOF
   label: gpt
   - $efiSize      U                                    -
   - $squashfsSize 4f68bce3-e8cd-4db1-96e7-fbcaf984b709 -
+  - $veritySize   2c7357ed-ebd2-46d9-aec1-23d437ec2bf5 -
   EOF
 
   fillPartition $out 0 ${efi}
   fillPartition $out 1 ${host-rootfs.squashfs}
+  fillPartition $out 2 ${verity}
 ''
