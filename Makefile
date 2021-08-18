@@ -1,6 +1,11 @@
 # SPDX-License-Identifier: EUPL-1.2
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
+# qemu-kvm is non-standard, but is present in at least Fedora and
+# Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
+# QEMU_KVM = qemu-system-x86_64 -enable-kvm.
+QEMU_KVM = qemu-kvm
+
 TARFLAGS = -v --show-transformed-names
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
@@ -48,3 +53,10 @@ build/etc/s6-rc: $(S6_RC_FILES)
 clean:
 	rm -rf build
 .PHONY: clean
+
+run: build/rootfs.ext4
+	$(QEMU_KVM) -cpu host -m 6G -nographic \
+	    -drive file=build/rootfs.ext4,if=virtio,format=raw,readonly=on \
+	    -kernel $(KERNEL) \
+	    -append "console=ttyS0 root=/dev/vda"
+.PHONY: run
