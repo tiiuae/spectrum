@@ -1,7 +1,11 @@
 # SPDX-License-Identifier: EUPL-1.2
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs ? import <nixpkgs> {} }: with pkgs;
+{ pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
+
+{ lib, stdenv, runCommand, writeReferencesToFile, s6-rc, tar2ext4
+, busybox, execline, s6, s6-linux-utils, s6-portable-utils
+}:
 
 let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
@@ -28,7 +32,7 @@ stdenv.mkDerivation {
     src = cleanSource ./.;
   };
 
-  nativeBuildInputs = [ s6-rc squashfs-tools-ng ];
+  nativeBuildInputs = [ s6-rc tar2ext4 ];
 
   PACKAGES_TAR = packagesTar;
 
@@ -48,3 +52,4 @@ stdenv.mkDerivation {
     platforms = platforms.linux;
   };
 }
+) {}

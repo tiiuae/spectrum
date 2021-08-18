@@ -3,8 +3,11 @@
 
 TARFLAGS = -v --show-transformed-names
 
+# tar2ext4 will leave half a filesystem behind if it's interrupted
+# half way through.
 build/rootfs.ext4: build/rootfs.tar
-	tar2sqfs -f $@ < build/rootfs.tar
+	tar2ext4 -i build/rootfs.tar -o $@.tmp
+	mv $@.tmp $@
 
 FILES = etc/group etc/init etc/login etc/passwd etc/service/getty/run
 BUILD_FILES = build/etc/s6-rc
