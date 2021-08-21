@@ -14,7 +14,7 @@ build/rootfs.ext4: build/rootfs.tar
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
 
-FILES = etc/group etc/init etc/login etc/passwd etc/service/getty/run
+FILES = etc/fstab etc/group etc/init etc/login etc/passwd etc/service/getty/run
 BUILD_FILES = build/etc/s6-rc
 MOUNTPOINTS = dev run proc sys
 

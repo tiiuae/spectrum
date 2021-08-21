@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: 2020-2021 Alyssa Ross <hi@alyssa.is>
+
+proc	/proc		proc	defaults
+devpts	/dev/pts	devpts	defaults,gid=4,mode=620
+tmpfs	/dev/shm	tmpfs	defaults
+sysfs	/sys		sysfs	defaults
