@@ -14,7 +14,15 @@ build/rootfs.ext4: build/rootfs.tar
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
 
-FILES = etc/fstab etc/group etc/init etc/login etc/passwd etc/service/getty/run
+FILES = \
+	etc/fstab \
+	etc/group \
+	etc/init \
+	etc/login \
+	etc/mdev.conf \
+	etc/passwd \
+	etc/service/getty/run
+
 BUILD_FILES = build/etc/s6-rc
 MOUNTPOINTS = dev run proc sys
 
@@ -31,6 +39,12 @@ build/rootfs.tar: $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
 S6_RC_FILES = \
 	etc/s6-rc/hello/type \
 	etc/s6-rc/hello/up \
+	etc/s6-rc/mdevd-coldplug/dependencies \
+	etc/s6-rc/mdevd-coldplug/type \
+	etc/s6-rc/mdevd-coldplug/up \
+	etc/s6-rc/mdevd/notification-fd \
+	etc/s6-rc/mdevd/run \
+	etc/s6-rc/mdevd/type \
 	etc/s6-rc/ok-all/contents \
 	etc/s6-rc/ok-all/type
 
