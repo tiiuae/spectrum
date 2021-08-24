@@ -20,7 +20,7 @@ in
 { passthru ? {}, nativeBuildInputs ? [], ... }:
 
 {
-  nativeBuildInputs = nativeBuildInputs ++ [ qemu_kvm ];
+  nativeBuildInputs = nativeBuildInputs ++ [ qemu_kvm reuse ];
 
   KERNEL = "${kernel}/${stdenv.hostPlatform.linux-kernel.target}";
 
