@@ -4,14 +4,14 @@
 { pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
 
 { lib, stdenv, runCommand, writeReferencesToFile, s6-rc, tar2ext4
-, busybox, execline, mdevd, s6, s6-linux-utils, s6-portable-utils
+, busybox, execline, mdevd, s6, s6-linux-utils, s6-portable-utils, tmux
 }:
 
 let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
   packages = [
-    busybox execline mdevd s6 s6-linux-utils s6-portable-utils s6-rc
+    busybox execline mdevd s6 s6-linux-utils s6-portable-utils s6-rc tmux
   ];
 
   packagesBin = runCommand "packages-bin" {} ''
