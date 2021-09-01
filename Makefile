@@ -5,6 +5,10 @@
 # Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
 # QEMU_KVM = qemu-system-x86_64 -enable-kvm.
 QEMU_KVM = qemu-kvm
+CLOUD_HYPERVISOR = cloud-hypervisor
+SCREEN = screen
+
+VMM = qemu
 
 TARFLAGS = -v --show-transformed-names
 
@@ -18,10 +22,17 @@ FILES = \
 	etc/fstab \
 	etc/group \
 	etc/init \
-	etc/login \
+	etc/login/prelude \
+	etc/login/sh \
+	etc/login/tmux \
 	etc/mdev.conf \
 	etc/passwd \
-	etc/service/getty/run
+	etc/service/getty-hvc0/run \
+	etc/service/getty-tty1/run \
+	etc/service/getty-tty2/run \
+	etc/service/getty-tty3/run \
+	etc/service/getty-tty4/run \
+	etc/service/getty-ttyS0/run
 
 BUILD_FILES = build/etc/s6-rc
 MOUNTPOINTS = dev run proc sys
@@ -68,9 +79,30 @@ clean:
 	rm -rf build
 .PHONY: clean
 
-run: build/rootfs.ext4
-	$(QEMU_KVM) -cpu host -m 6G -nographic \
+run-qemu: build/rootfs.ext4
+	$(QEMU_KVM) -cpu host -m 6G \
+	    -qmp unix:vmm.sock,server,nowait \
 	    -drive file=build/rootfs.ext4,if=virtio,format=raw,readonly=on \
 	    -kernel $(KERNEL) \
-	    -append "console=ttyS0 root=/dev/vda"
+	    -append "console=ttyS0 root=/dev/vda" \
+	    -chardev pty,id=virtiocon0 \
+	    -device virtio-serial-pci \
+	    -device virtconsole,chardev=virtiocon0
+.PHONY: run-qemu
+
+run-cloud-hypervisor: build/rootfs.ext4
+	$(CLOUD_HYPERVISOR) \
+	    --memory size=6G \
+	    --api-socket path=vmm.sock \
+	    --disk path=build/rootfs.ext4,readonly=on \
+	    --kernel $(KERNEL) \
+	    --cmdline "console=ttyS0 root=/dev/vda" \
+	    --console pty
+.PHONY: run-cloud-hypervisor
+
+run: run-$(VMM)
 .PHONY: run
+
+console:
+	@$(SCREEN) "$$(scripts/$(VMM)-pty.sh vmm.sock virtiocon0)"
+.PHONY: console

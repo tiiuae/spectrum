@@ -11,6 +11,7 @@ let
       VIRTIO = yes;
       VIRTIO_PCI = yes;
       VIRTIO_BLK = yes;
+      VIRTIO_CONSOLE = yes;
       EXT4_FS = yes;
     };
   };
@@ -20,9 +21,11 @@ in
 { passthru ? {}, nativeBuildInputs ? [], ... }:
 
 {
-  nativeBuildInputs = nativeBuildInputs ++ [ qemu_kvm reuse ];
+  nativeBuildInputs = nativeBuildInputs ++ [
+    cloud-hypervisor curl jq netcat qemu_kvm reuse screen
+  ];
 
-  KERNEL = "${kernel}/${stdenv.hostPlatform.linux-kernel.target}";
+  KERNEL = "${kernel.dev}/vmlinux";
 
   passthru = passthru // { inherit kernel; };
 })

@@ -1,0 +1,8 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+/etc/login/prelude
+
+export TMUX_TMPDIR /run
+tmux new-session -As mon

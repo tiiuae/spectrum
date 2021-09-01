@@ -4,6 +4,5 @@
 
 unexport !
 export TERM linux
-export TMUX_TMPDIR /run
 cd /
-tmux new-session -As mon
+$@
