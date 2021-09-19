@@ -30,6 +30,7 @@ FILES = \
 	etc/login/share/sh \
 	etc/mdev.conf \
 	etc/passwd \
+	etc/screenrc \
 	etc/service/getty-hvc0/run \
 	etc/service/getty-tty1/run \
 	etc/service/getty-tty2/run \
