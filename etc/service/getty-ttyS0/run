@@ -2,4 +2,4 @@
 # SPDX-License-Identifier: EUPL-1.2
 # SPDX-FileCopyrightText: 2020-2021 Alyssa Ross <hi@alyssa.is>
 
-getty -i -n -l /etc/login/sh 38400 ttyS0
+getty -i -n -l /etc/login/kind/ttyS 38400 ttyS0

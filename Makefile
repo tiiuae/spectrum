@@ -22,9 +22,12 @@ FILES = \
 	etc/fstab \
 	etc/group \
 	etc/init \
-	etc/login/prelude \
-	etc/login/sh \
-	etc/login/tmux \
+	etc/login/kind/hvc \
+	etc/login/kind/tty \
+	etc/login/kind/ttyS \
+	etc/login/share/prelude \
+	etc/login/share/sh \
+	etc/login/share/tmux \
 	etc/mdev.conf \
 	etc/passwd \
 	etc/service/getty-hvc0/run \

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: EUPL-1.2
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
-/etc/login/prelude
+/etc/login/share/prelude
 
 export TMUX_TMPDIR /run
 tmux new-session -As mon

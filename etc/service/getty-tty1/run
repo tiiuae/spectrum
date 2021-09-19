@@ -2,4 +2,4 @@
 # SPDX-License-Identifier: EUPL-1.2
 # SPDX-FileCopyrightText: 2020-2021 Alyssa Ross <hi@alyssa.is>
 
-getty -i -n -l /etc/login/tmux 38400 tty1
+getty -i -n -l /etc/login/kind/tty 38400 tty1
