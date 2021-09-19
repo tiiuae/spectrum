@@ -26,8 +26,8 @@ FILES = \
 	etc/login/kind/tty \
 	etc/login/kind/ttyS \
 	etc/login/share/prelude \
+	etc/login/share/screen \
 	etc/login/share/sh \
-	etc/login/share/tmux \
 	etc/mdev.conf \
 	etc/passwd \
 	etc/service/getty-hvc0/run \

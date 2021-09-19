@@ -4,5 +4,6 @@
 
 /etc/login/share/prelude
 
-export TMUX_TMPDIR /run
-tmux new-session -As mon
+if { s6-mkdir -pm 0700 /run/screen }
+export SCREENDIR /run/screen
+screen -xRR mon
