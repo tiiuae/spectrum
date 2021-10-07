@@ -45,7 +45,7 @@ FILES = \
 	etc/service/getty-ttyS0/run
 
 BUILD_FILES = build/etc/s6-rc
-MOUNTPOINTS = dev run proc sys
+MOUNTPOINTS = dev ext run proc sys
 
 build/rootfs.tar: $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
 	cp --no-preserve=mode -f $(PACKAGES_TAR) $@
@@ -58,6 +58,8 @@ build/rootfs.tar: $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
 	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' /var/empty
 
 S6_RC_FILES = \
+	etc/s6-rc/ext/type \
+	etc/s6-rc/ext/up \
 	etc/s6-rc/hello/type \
 	etc/s6-rc/hello/up \
 	etc/s6-rc/mdevd-coldplug/dependencies \
