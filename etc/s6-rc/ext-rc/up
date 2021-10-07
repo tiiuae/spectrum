@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+if { s6-rc-init -c /ext/svc/s6-rc -l /run/s6-rc.ext -p ext- /run/service }
+s6-rc -l /run/s6-rc.ext -u change default

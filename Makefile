@@ -58,6 +58,9 @@ build/rootfs.tar: $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
 	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' /var/empty
 
 S6_RC_FILES = \
+	etc/s6-rc/ext-rc/dependencies \
+	etc/s6-rc/ext-rc/type \
+	etc/s6-rc/ext-rc/up \
 	etc/s6-rc/ext/type \
 	etc/s6-rc/ext/up \
 	etc/s6-rc/hello/type \
