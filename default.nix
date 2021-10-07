@@ -24,6 +24,22 @@ let
     tar -cvf $out --verbatim-files-from \
         -T ${writeReferencesToFile packagesBin} bin
   '';
+
+  extTar = runCommand "ext.tar" {
+    nativeBuildInputs = [ s6-rc ];
+  } ''
+    mkdir -p s6-rc/default $out/svc
+    echo s6-echo hello world > s6-rc/default/up
+    echo oneshot > s6-rc/default/type
+    s6-rc-compile $out/svc/s6-rc s6-rc
+  '';
+
+  extFs = runCommand "ext.ext4" {
+    nativeBuildInputs = [ tar2ext4 ];
+  } ''
+    tar -C ${extTar} -cf ext.tar .
+    tar2ext4 -i ext.tar -o $out
+  '';
 in
 
 stdenv.mkDerivation {
@@ -36,6 +52,7 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [ s6-rc tar2ext4 ];
 
+  EXT_FS = extFs;
   PACKAGES_TAR = packagesTar;
 
   postPatch = ''

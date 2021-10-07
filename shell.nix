@@ -22,7 +22,7 @@ in
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [
-    cloud-hypervisor curl jq netcat qemu_kvm reuse screen
+    cloud-hypervisor curl jq netcat qemu_kvm reuse screen util-linux
   ];
 
   KERNEL = "${kernel.dev}/vmlinux";

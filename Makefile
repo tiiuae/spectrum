@@ -18,6 +18,12 @@ build/rootfs.ext4: build/rootfs.tar
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
 
+build/test.img: scripts/make-gpt.sh build/rootfs.ext4 $(EXT_FS)
+	scripts/make-gpt.sh $@.tmp \
+		build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709 \
+		$(EXT_FS):9293e1ff-cee4-4658-88be-898ec863944f
+	mv $@.tmp $@
+
 FILES = \
 	etc/fstab \
 	etc/group \
@@ -83,24 +89,24 @@ clean:
 	rm -rf build
 .PHONY: clean
 
-run-qemu: build/rootfs.ext4
+run-qemu: build/test.img
 	$(QEMU_KVM) -cpu host -m 6G \
 	    -qmp unix:vmm.sock,server,nowait \
-	    -drive file=build/rootfs.ext4,if=virtio,format=raw,readonly=on \
+	    -drive file=build/test.img,if=virtio,format=raw,readonly=on \
 	    -kernel $(KERNEL) \
-	    -append "console=ttyS0 root=/dev/vda" \
+	    -append "console=ttyS0 root=/dev/vda1" \
 	    -chardev pty,id=virtiocon0 \
 	    -device virtio-serial-pci \
 	    -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
-run-cloud-hypervisor: build/rootfs.ext4
+run-cloud-hypervisor: build/test.img
 	$(CLOUD_HYPERVISOR) \
 	    --memory size=6G \
 	    --api-socket path=vmm.sock \
-	    --disk path=build/rootfs.ext4,readonly=on \
+	    --disk path=build/test.img,readonly=on \
 	    --kernel $(KERNEL) \
-	    --cmdline "console=ttyS0 root=/dev/vda" \
+	    --cmdline "console=ttyS0 root=/dev/vda1" \
 	    --console pty
 .PHONY: run-cloud-hypervisor
 
