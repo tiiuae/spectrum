@@ -63,8 +63,6 @@ S6_RC_FILES = \
 	etc/s6-rc/ext-rc/up \
 	etc/s6-rc/ext/type \
 	etc/s6-rc/ext/up \
-	etc/s6-rc/hello/type \
-	etc/s6-rc/hello/up \
 	etc/s6-rc/mdevd-coldplug/dependencies \
 	etc/s6-rc/mdevd-coldplug/type \
 	etc/s6-rc/mdevd-coldplug/up \
