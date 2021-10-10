@@ -15,9 +15,19 @@ let
     busybox execline mdevd s6 s6-linux-utils s6-portable-utils s6-rc screen
   ];
 
-  packagesBin = runCommand "packages-bin" {} ''
+  kernel = pkgs.linux.override {
+    structuredExtraConfig = with lib.kernel; {
+      VIRTIO = yes;
+      VIRTIO_PCI = yes;
+      VIRTIO_BLK = yes;
+      EXT4_FS = yes;
+    };
+  };
+
+  packagesSysroot = runCommand "packages-sysroot" {} ''
     mkdir -p $out/bin
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/bin
+    ln -s ${kernel}/lib $out/lib
 
     # TODO: this is a hack and we should just build the util-linux
     # programs we want.
@@ -26,9 +36,9 @@ let
   '';
 
   packagesTar = runCommand "packages.tar" {} ''
-    cd ${packagesBin}
+    cd ${packagesSysroot}
     tar -cvf $out --verbatim-files-from \
-        -T ${writeReferencesToFile packagesBin} bin
+        -T ${writeReferencesToFile packagesSysroot} .
   '';
 
   extTar = runCommand "ext.tar" {
@@ -71,6 +81,8 @@ stdenv.mkDerivation {
   '';
 
   enableParallelBuilding = true;
+
+  passthru = { inherit kernel; };
 
   meta = with lib; {
     license = licenses.eupl12;

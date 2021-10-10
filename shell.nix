@@ -5,18 +5,6 @@
 
 with pkgs;
 
-let
-  kernel = linux.override {
-    structuredExtraConfig = with lib.kernel; {
-      VIRTIO = yes;
-      VIRTIO_PCI = yes;
-      VIRTIO_BLK = yes;
-      VIRTIO_CONSOLE = yes;
-      EXT4_FS = yes;
-    };
-  };
-in
-
 (import ./. { inherit pkgs; }).overrideAttrs (
 { passthru ? {}, nativeBuildInputs ? [], ... }:
 
@@ -25,7 +13,5 @@ in
     cloud-hypervisor curl jq netcat qemu_kvm reuse screen util-linux
   ];
 
-  KERNEL = "${kernel.dev}/vmlinux";
-
-  passthru = passthru // { inherit kernel; };
+  KERNEL = "${passthru.kernel.dev}/vmlinux";
 })
