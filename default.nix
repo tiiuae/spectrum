@@ -4,7 +4,7 @@
 { pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
 
 { lib, stdenv, runCommand, writeReferencesToFile, s6-rc, tar2ext4
-, busybox, execline, mdevd, s6, s6-linux-utils, s6-portable-utils, screen
+, busybox, cloud-hypervisor, execline, mdevd, s6, s6-linux-utils, s6-portable-utils, screen
 , util-linux
 }:
 
@@ -12,7 +12,8 @@ let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
   packages = [
-    busybox execline mdevd s6 s6-linux-utils s6-portable-utils s6-rc screen
+    cloud-hypervisor busybox execline mdevd s6 s6-linux-utils
+    s6-portable-utils s6-rc screen
   ];
 
   kernel = pkgs.linux.override {
