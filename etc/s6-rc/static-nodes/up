@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+pipeline {
+  elglob modules_devname /lib/modules/*/modules.devname
+  /etc/parse-devname $modules_devname
+}
+
+cd /dev
+forstdin -p line
+
+foreground {
+  backtick -E dirname {
+    backtick -E path {
+      importas -i line line
+      heredoc 0 $line
+      cut -d " " -f 1
+    }
+    dirname $path
+  }
+  redirfd -w 2 /dev/null
+  mkdir $dirname
+}
+
+importas -siu args line
+mknod -- $args

@@ -35,6 +35,7 @@ FILES = \
 	etc/login/share/screen \
 	etc/login/share/sh \
 	etc/mdev.conf \
+	etc/parse-devname \
 	etc/passwd \
 	etc/screenrc \
 	etc/service/getty-hvc0/run \
@@ -70,7 +71,9 @@ S6_RC_FILES = \
 	etc/s6-rc/mdevd/run \
 	etc/s6-rc/mdevd/type \
 	etc/s6-rc/ok-all/contents \
-	etc/s6-rc/ok-all/type
+	etc/s6-rc/ok-all/type \
+	etc/s6-rc/static-nodes/type \
+	etc/s6-rc/static-nodes/up
 
 # s6-rc-compile's input is a directory, but that doesn't play nice
 # with Make, because it won't know to update if some file in the

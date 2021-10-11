@@ -12,8 +12,13 @@ let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
   packages = [
-    cloud-hypervisor busybox execline mdevd s6 s6-linux-utils
+    cloud-hypervisor execline mdevd s6 s6-linux-utils
     s6-portable-utils s6-rc screen
+    (busybox.override {
+      extraConfig = ''
+        CONFIG_INIT n
+      '';
+    })
   ];
 
   kernel = pkgs.linux.override {
@@ -28,6 +33,7 @@ let
   packagesSysroot = runCommand "packages-sysroot" {} ''
     mkdir -p $out/bin
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/bin
+    ln -s bin $out/sbin
     ln -s ${kernel}/lib $out/lib
 
     # TODO: this is a hack and we should just build the util-linux
