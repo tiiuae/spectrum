@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+{ pkgs ? import <nixpkgs> {} }:
+
+with pkgs;
+
+(import ./. { inherit pkgs; }).overrideAttrs (
+{ passthru ? {}, nativeBuildInputs ? [], ... }:
+
+{
+  nativeBuildInputs = nativeBuildInputs ++ [ reuse ];
+})
