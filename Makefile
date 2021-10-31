@@ -45,6 +45,7 @@ VM_FILES = \
 	etc/fstab \
 	etc/init \
 	etc/mdev.conf \
+	etc/mdev/iface \
 	etc/service/getty-ttyS0/run
 
 VM_BUILD_FILES = build/etc/s6-rc
