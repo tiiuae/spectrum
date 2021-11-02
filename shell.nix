@@ -9,5 +9,7 @@ with pkgs;
 { passthru ? {}, nativeBuildInputs ? [], ... }:
 
 {
-  nativeBuildInputs = nativeBuildInputs ++ [ reuse ];
+  nativeBuildInputs = nativeBuildInputs ++ [ qemu_kvm reuse ];
+
+  KERNEL = "${passthru.kernel.dev}/vmlinux";
 })
