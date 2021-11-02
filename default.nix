@@ -5,14 +5,14 @@
 
 { lib, stdenv, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4, xorg
-, busybox, execline, linux, mdevd, s6, s6-linux-utils, s6-portable-utils
+, busybox, dbus, execline, linux, mdevd, s6, s6-linux-utils, s6-portable-utils
 }:
 
 let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
   packages = [
-    busybox execline mdevd s6 s6-linux-utils s6-portable-utils s6-rc
+    busybox dbus execline mdevd s6 s6-linux-utils s6-portable-utils s6-rc
   ];
 
   packagesSysroot = runCommand "packages-sysroot" {

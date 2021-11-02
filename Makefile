@@ -47,6 +47,7 @@ build/host/netvm/data/rootfs.ext4: build/rootfs.tar
 	mv $@.tmp $@
 
 VM_FILES = \
+	etc/dbus-1/system.conf \
 	etc/fstab \
 	etc/init \
 	etc/mdev.conf \
@@ -55,14 +56,14 @@ VM_FILES = \
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
-VM_LINKS = bin
+VM_LINKS = bin var/run
 
 VM_BUILD_FILES = build/etc/s6-rc
 VM_MOUNTPOINTS = dev run proc sys
 
 build/rootfs.tar: $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
 	cp --no-preserve=mode -f $(PACKAGES_TAR) $@
-	tar $(TARFLAGS) --append -f $@ $(VM_FILES)
+	tar $(TARFLAGS) --append -f $@ $(VM_FILES) $(VM_LINKS)
 	echo $(VM_BUILD_FILES) | cut -d/ -f2 | \
 	    tar $(TARFLAGS) --append -f $@ -C build -T -
 	for m in $(VM_MOUNTPOINTS); do \
@@ -71,6 +72,9 @@ build/rootfs.tar: $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
 	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' /var/empty
 
 VM_S6_RC_FILES = \
+	etc/s6-rc/dbus/notification-fd \
+	etc/s6-rc/dbus/run \
+	etc/s6-rc/dbus/type \
 	etc/s6-rc/mdevd-coldplug/dependencies \
 	etc/s6-rc/mdevd-coldplug/type \
 	etc/s6-rc/mdevd-coldplug/up \
