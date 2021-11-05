@@ -60,7 +60,7 @@ VM_FILES = \
 VM_LINKS = bin var/run
 
 VM_BUILD_FILES = build/etc/s6-rc
-VM_MOUNTPOINTS = dev run proc sys
+VM_MOUNTPOINTS = dev run proc sys var/lib/connman
 
 build/rootfs.tar: $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
 	cp --no-preserve=mode -f $(PACKAGES_TAR) $@
@@ -73,6 +73,9 @@ build/rootfs.tar: $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
 	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' /var/empty
 
 VM_S6_RC_FILES = \
+	etc/s6-rc/connman/dependencies \
+	etc/s6-rc/connman/run \
+	etc/s6-rc/connman/type \
 	etc/s6-rc/dbus/notification-fd \
 	etc/s6-rc/dbus/run \
 	etc/s6-rc/dbus/type \
