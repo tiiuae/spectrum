@@ -52,6 +52,7 @@ VM_FILES = \
 	etc/init \
 	etc/mdev.conf \
 	etc/mdev/iface \
+	etc/passwd \
 	etc/service/getty-ttyS0/run
 
 # These are separate because they need to be included, but putting
