@@ -53,6 +53,10 @@ VM_FILES = \
 	etc/mdev/iface \
 	etc/service/getty-ttyS0/run
 
+# These are separate because they need to be included, but putting
+# them as make dependencies would confuse make.
+VM_LINKS = bin
+
 VM_BUILD_FILES = build/etc/s6-rc
 VM_MOUNTPOINTS = dev run proc sys
 

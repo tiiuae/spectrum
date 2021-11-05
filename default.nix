@@ -3,7 +3,8 @@
 
 { pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
 
-{ lib, stdenv, runCommand, writeReferencesToFile, buildPackages, s6-rc, tar2ext4
+{ lib, stdenv, runCommand, writeReferencesToFile, buildPackages
+, s6-rc, tar2ext4, xorg
 , busybox, execline, linux, mdevd, s6, s6-linux-utils, s6-portable-utils
 }:
 
@@ -14,10 +15,20 @@ let
     busybox execline mdevd s6 s6-linux-utils s6-portable-utils s6-rc
   ];
 
-  packagesSysroot = runCommand "packages-sysroot" {} ''
-    mkdir -p $out/bin
-    ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/bin
-    ln -s ${kernel}/lib $out/lib
+  packagesSysroot = runCommand "packages-sysroot" {
+    inherit packages;
+    nativeBuildInputs = [ xorg.lndir ];
+    passAsFile = [ "packages" ];
+  } ''
+    mkdir -p "$out/usr/bin" "$out/usr/share"
+    for pkg in $(< "$packagesPath"); do
+        for dir in bin share; do
+            if [ -e "$pkg/$dir" ]; then
+                lndir -silent "$pkg/$dir" "$out/usr/$dir"
+            fi
+        done
+    done
+    ln -s "${kernel}/lib" "$out"
   '';
 
   packagesTar = runCommand "packages.tar" {} ''
