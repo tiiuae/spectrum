@@ -108,7 +108,9 @@ run: build/host/netvm/data/rootfs.ext4
 	  -drive file=build/host/netvm/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
 	  -append "console=ttyS0 root=/dev/vda" \
 	  -netdev user,id=net0 \
-	  -device e1000e,netdev=net0
+	  -device e1000e,netdev=net0 \
+	  -netdev user,id=net1 \
+	  -device virtio-net,netdev=net1,mac=0A:B3:EC:80:00:00
 
 clean:
 	rm -rf build
