@@ -52,8 +52,10 @@ VM_FILES = \
 	etc/init \
 	etc/mdev.conf \
 	etc/mdev/iface \
+	etc/nftables.conf \
 	etc/passwd \
-	etc/service/getty-ttyS0/run
+	etc/service/getty-ttyS0/run \
+	etc/sysctl.conf
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
@@ -85,8 +87,12 @@ VM_S6_RC_FILES = \
 	etc/s6-rc/mdevd/notification-fd \
 	etc/s6-rc/mdevd/run \
 	etc/s6-rc/mdevd/type \
+	etc/s6-rc/nftables/type \
+	etc/s6-rc/nftables/up \
 	etc/s6-rc/ok-all/contents \
-	etc/s6-rc/ok-all/type
+	etc/s6-rc/ok-all/type \
+	etc/s6-rc/sysctl/type \
+	etc/s6-rc/sysctl/up
 
 build/etc/s6-rc: $(VM_S6_RC_FILES)
 	mkdir -p $$(dirname $@)

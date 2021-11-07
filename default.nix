@@ -5,8 +5,8 @@
 
 { lib, stdenv, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4, xorg
-, busybox, connmanMinimal, dbus, execline, linux, mdevd, s6, s6-linux-utils
-, s6-portable-utils
+, busybox, connmanMinimal, dbus, execline, linux, mdevd, nftables, s6
+, s6-linux-utils, s6-portable-utils
 }:
 
 let
@@ -15,6 +15,8 @@ let
   packages = [
     busybox connmanMinimal dbus execline mdevd s6 s6-linux-utils
     s6-portable-utils s6-rc
+
+    (nftables.override { withCli = false; })
   ];
 
   packagesSysroot = runCommand "packages-sysroot" {
