@@ -2,9 +2,10 @@
 # SPDX-License-Identifier: EUPL-1.2
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
-if { modprobe kvm-intel }
-if { modprobe vfio-pci }
-if { modprobe vfio_iommu_type1 }
+if {
+  forx -pE module { kvm-intel vfio-pci vfio_iommu_type1 }
+  modprobe $module
+}
 
 foreground {
   define IOMMU_GROUP_DEVICES /sys/bus/pci/devices/0000:00:03.0/iommu_group/devices
