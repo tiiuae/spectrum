@@ -18,24 +18,19 @@ HOST_S6_RC_BUILD_FILES = \
 	build/host/appvm-lynx/data/rootfs.ext4 \
 	build/host/appvm-lynx/data/vmlinux
 
-# s6-rc-compile's input is a directory, but that doesn't play nice
+# We produce an s6-rc source directory, but that doesn't play nice
 # with Make, because it won't know to update if some file in the
 # directory is changed, or a file is created or removed in a
 # subdirectory.  Using the whole source directory could also end up
 # including files that aren't intended to be part of the input, like
 # temporary editor files or .license files.  So for all these reasons,
-# only explicitly listed files are made available to s6-rc-compile.
+# only explicitly listed files are included in the build result.
 build/s6-rc: $(HOST_S6_RC_FILES) $(HOST_S6_RC_BUILD_FILES)
-	mkdir -p $$(dirname $@)
 	rm -rf $@
+	mkdir -p $@
 
-	dir=$$(mktemp -d) && \
-	    tar -c $(HOST_S6_RC_FILES) | \
-	        tar -C $$dir -x --strip-components 1 && \
-	    tar -c $(HOST_S6_RC_BUILD_FILES) | \
-	        tar -C $$dir -x --strip-components 2 && \
-	    s6-rc-compile $@ $$dir; \
-	    exit=$$?; rm -rf $$dir; exit $$exit
+	tar -c $(HOST_S6_RC_FILES) | tar -C $@ -x --strip-components 1
+	tar -c $(HOST_S6_RC_BUILD_FILES) | tar -C $@ -x --strip-components 2
 
 build/host/appvm-lynx/data/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
