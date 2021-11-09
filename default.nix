@@ -48,19 +48,22 @@ let
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
-  extTar = runCommand "ext.tar" {
-    nativeBuildInputs = [ s6-rc ];
-  } ''
-    mkdir -p s6-rc/default $out/svc
-    echo s6-echo hello world > s6-rc/default/up
-    echo oneshot > s6-rc/default/type
-    s6-rc-compile $out/svc/s6-rc s6-rc
-  '';
+  netvm = import ../spectrum-netvm { inherit pkgs; };
+  appvm-lynx = import ../spectrum-appvm-lynx { inherit pkgs; };
 
   extFs = runCommand "ext.ext4" {
-    nativeBuildInputs = [ tar2ext4 ];
+    nativeBuildInputs = [ tar2ext4 s6-rc ];
   } ''
-    tar -C ${extTar} -cf ext.tar .
+    mkdir src svc
+    tar -C ${netvm} -c . | tar -C src -x
+    chmod +w src
+    tar -C ${appvm-lynx} -c . | tar -C src -x
+    chmod +w src
+    mkdir src/default
+    echo bundle > src/default/type
+    echo appvm-lynx > src/default/contents
+    s6-rc-compile svc/s6-rc src
+    tar -cf ext.tar svc
     tar2ext4 -i ext.tar -o $out
   '';
 in
