@@ -30,10 +30,10 @@ foreground {
 
 redirfd -r 0 /dev/null
 cloud-hypervisor
+  --api-socket env/cloud-hypervisor.sock
   --kernel data/vmlinux
   --cmdline "console=ttyS0 root=/dev/vda"
   --disk path=data/rootfs.ext4,readonly=on
   --device path=/sys/bus/pci/devices/0000:00:03.0
-  --net ip=100.64.0.0,mask=255.255.255.255,mac=0A:B3:EC:80:00:00
   --console off
   --serial tty
