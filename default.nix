@@ -4,15 +4,15 @@
 { pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
 
 { lib, stdenv, runCommand, writeReferencesToFile, s6-rc, tar2ext4
-, busybox, cloud-hypervisor, execline, mdevd, s6, s6-linux-utils, s6-portable-utils, screen
-, util-linux
+, busybox, cloud-hypervisor, curl, execline, jq, mdevd, mktuntap, s6
+, s6-linux-utils, s6-portable-utils, screen, util-linux
 }:
 
 let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
   packages = [
-    cloud-hypervisor execline mdevd s6 s6-linux-utils
+    cloud-hypervisor curl execline jq mdevd mktuntap s6 s6-linux-utils
     s6-portable-utils s6-rc screen
     (busybox.override {
       extraConfig = ''
