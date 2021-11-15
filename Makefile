@@ -10,8 +10,6 @@ SCREEN = screen
 
 VMM = qemu
 
-TARFLAGS = -v --show-transformed-names
-
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
 build/rootfs.ext4: build/rootfs.tar
