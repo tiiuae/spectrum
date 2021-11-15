@@ -1,6 +1,0 @@
-#!/bin/execlineb -P
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
-# SPDX-License-Identifier: EUPL-1.2
-
-foreground { cat /etc/motd.screen }
-sh -l

@@ -1,9 +1,0 @@
-#!/bin/execlineb -P
-# SPDX-License-Identifier: EUPL-1.2
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
-
-/etc/login/share/prelude
-
-if { s6-mkdir -pm 0700 /run/screen }
-export SCREENDIR /run/screen
-screen -xRR mon

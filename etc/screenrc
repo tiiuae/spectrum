@@ -1,6 +1,0 @@
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
-# SPDX-License-Identifier: EUPL-1.2
-
-hardstatus alwaysfirstline '%-w%{wk}%n %t%{dd}%+w'
-
-screen -t dmesg /etc/screen/dmesg

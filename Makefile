@@ -32,15 +32,10 @@ FILES = \
 	etc/login/kind/tty \
 	etc/login/kind/ttyS \
 	etc/login/share/prelude \
-	etc/login/share/screen \
 	etc/login/share/sh \
 	etc/mdev.conf \
-	etc/motd.screen \
 	etc/parse-devname \
 	etc/passwd \
-	etc/screen/dmesg \
-	etc/screen/sh \
-	etc/screenrc \
 	etc/service/getty-hvc0/run \
 	etc/service/getty-tty1/run \
 	etc/service/getty-tty2/run \
