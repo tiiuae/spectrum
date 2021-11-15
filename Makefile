@@ -25,6 +25,7 @@ build/test.img: scripts/make-gpt.sh build/rootfs.ext4 $(EXT_FS)
 	mv $@.tmp $@
 
 FILES = \
+	etc/fonts/fonts.conf \
 	etc/fstab \
 	etc/group \
 	etc/init \
