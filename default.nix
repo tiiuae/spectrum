@@ -31,15 +31,14 @@ let
   };
 
   packagesSysroot = runCommand "packages-sysroot" {} ''
-    mkdir -p $out/bin
-    ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/bin
-    ln -s bin $out/sbin
+    mkdir -p $out/usr/bin
+    ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
     ln -s ${kernel}/lib $out/lib
 
     # TODO: this is a hack and we should just build the util-linux
     # programs we want.
     # https://lore.kernel.org/util-linux/87zgrl6ufb.fsf@alyssa.is/
-    ln -s ${util-linux.override { systemd = null; }}/bin/lsblk $out/bin
+    ln -s ${util-linux.override { systemd = null; }}/bin/lsblk $out/usr/bin
   '';
 
   packagesTar = runCommand "packages.tar" {} ''

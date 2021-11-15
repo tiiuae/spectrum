@@ -42,12 +42,16 @@ FILES = \
 	etc/service/getty-tty4/run \
 	etc/service/getty-ttyS0/run
 
+# These are separate because they need to be included, but putting
+# them as make dependencies would confuse make.
+LINKS = bin sbin
+
 BUILD_FILES = build/etc/s6-rc
 MOUNTPOINTS = dev ext run proc sys
 
 build/rootfs.tar: $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
 	cp --no-preserve=mode -f $(PACKAGES_TAR) $@
-	tar $(TARFLAGS) --append -f $@ $(FILES)
+	tar $(TARFLAGS) --append -f $@ $(FILES) $(LINKS)
 	echo $(BUILD_FILES) | cut -d/ -f2 | \
 	    tar $(TARFLAGS) --append -f $@ -C build -T -
 	for m in $(MOUNTPOINTS); do \
