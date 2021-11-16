@@ -25,12 +25,13 @@ let
     })
   ];
 
-  kernel = pkgs.linux.override {
+  kernel = pkgs.linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
       VIRTIO = yes;
       VIRTIO_PCI = yes;
       VIRTIO_BLK = yes;
       EXT4_FS = yes;
+      MODPROBE_PATH = freeform "/sbin/modprobe";
     };
   };
 
