@@ -100,14 +100,15 @@ clean:
 
 run: build/test.img
 	$(QEMU_KVM) -cpu host -m 6G \
+	    -machine q35,kernel=$(KERNEL),kernel-irqchip=split \
 	    -display gtk,gl=on \
 	    -qmp unix:vmm.sock,server,nowait \
 	    -drive file=build/test.img,if=virtio,format=raw,readonly=on \
-	    -kernel $(KERNEL) \
-	    -append "console=ttyS0 root=/dev/vda1" \
+	    -append "console=ttyS0 root=/dev/vda1 intel_iommu=on" \
 	    -chardev pty,id=virtiocon0 \
 	    -device virtio-serial-pci \
 	    -device virtconsole,chardev=virtiocon0 \
+	    -device intel-iommu,intremap=on \
 	    -device virtio-vga-gl
 .PHONY: run
 
