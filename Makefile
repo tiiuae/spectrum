@@ -40,7 +40,9 @@ FILES = \
 	etc/service/getty-tty2/run \
 	etc/service/getty-tty3/run \
 	etc/service/getty-tty4/run \
-	etc/service/getty-ttyS0/run
+	etc/service/getty-ttyS0/run \
+	etc/xdg/weston/autolaunch \
+	etc/xdg/weston/weston.ini
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
@@ -75,6 +77,7 @@ S6_RC_FILES = \
 	etc/s6-rc/ok-all/type \
 	etc/s6-rc/static-nodes/type \
 	etc/s6-rc/static-nodes/up \
+	etc/s6-rc/weston/notification-fd \
 	etc/s6-rc/weston/type \
 	etc/s6-rc/weston/run
 
