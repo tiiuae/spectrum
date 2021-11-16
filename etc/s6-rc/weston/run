@@ -1,0 +1,12 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+foreground {
+  redirfd -w 2 /dev/null
+  ln -ns /usr /run/opengl-driver
+}
+
+export XDG_RUNTIME_DIR /run
+redirfd -r 0 /dev/tty1
+weston

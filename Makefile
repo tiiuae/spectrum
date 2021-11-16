@@ -74,7 +74,9 @@ S6_RC_FILES = \
 	etc/s6-rc/ok-all/contents \
 	etc/s6-rc/ok-all/type \
 	etc/s6-rc/static-nodes/type \
-	etc/s6-rc/static-nodes/up
+	etc/s6-rc/static-nodes/up \
+	etc/s6-rc/weston/type \
+	etc/s6-rc/weston/run
 
 # s6-rc-compile's input is a directory, but that doesn't play nice
 # with Make, because it won't know to update if some file in the
@@ -98,13 +100,15 @@ clean:
 
 run-qemu: build/test.img
 	$(QEMU_KVM) -cpu host -m 6G \
+	    -display gtk,gl=on \
 	    -qmp unix:vmm.sock,server,nowait \
 	    -drive file=build/test.img,if=virtio,format=raw,readonly=on \
 	    -kernel $(KERNEL) \
 	    -append "console=ttyS0 root=/dev/vda1" \
 	    -chardev pty,id=virtiocon0 \
 	    -device virtio-serial-pci \
-	    -device virtconsole,chardev=virtiocon0
+	    -device virtconsole,chardev=virtiocon0 \
+	    -device virtio-vga-gl
 .PHONY: run-qemu
 
 run-cloud-hypervisor: build/test.img

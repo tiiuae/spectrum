@@ -11,9 +11,13 @@
 let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
+  pkgsGui = pkgs.pkgsMusl.extend (final: super: {
+    systemd = final.libudev-zero;
+  });
+
   packages = [
     cloud-hypervisor curl execline jq mdevd mktuntap s6 s6-linux-utils
-    s6-portable-utils s6-rc screen
+    s6-portable-utils s6-rc screen pkgsGui.westonLite
     (busybox.override {
       extraConfig = ''
         CONFIG_INIT n
@@ -33,6 +37,7 @@ let
   packagesSysroot = runCommand "packages-sysroot" {} ''
     mkdir -p $out/usr/bin
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
+    ln -s ${pkgsGui.mesa.drivers}/* $out/usr
     ln -s ${kernel}/lib $out/lib
 
     # TODO: this is a hack and we should just build the util-linux
