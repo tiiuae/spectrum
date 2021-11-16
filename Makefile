@@ -5,10 +5,7 @@
 # Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
 # QEMU_KVM = qemu-system-x86_64 -enable-kvm.
 QEMU_KVM = qemu-kvm
-CLOUD_HYPERVISOR = cloud-hypervisor
 SCREEN = screen
-
-VMM = qemu
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
@@ -101,7 +98,7 @@ clean:
 	rm -rf build
 .PHONY: clean
 
-run-qemu: build/test.img
+run: build/test.img
 	$(QEMU_KVM) -cpu host -m 6G \
 	    -display gtk,gl=on \
 	    -qmp unix:vmm.sock,server,nowait \
@@ -112,21 +109,8 @@ run-qemu: build/test.img
 	    -device virtio-serial-pci \
 	    -device virtconsole,chardev=virtiocon0 \
 	    -device virtio-vga-gl
-.PHONY: run-qemu
-
-run-cloud-hypervisor: build/test.img
-	$(CLOUD_HYPERVISOR) \
-	    --memory size=6G \
-	    --api-socket path=vmm.sock \
-	    --disk path=build/test.img,readonly=on \
-	    --kernel $(KERNEL) \
-	    --cmdline "console=ttyS0 root=/dev/vda1" \
-	    --console pty
-.PHONY: run-cloud-hypervisor
-
-run: run-$(VMM)
 .PHONY: run
 
 console:
-	@$(SCREEN) "$$(scripts/$(VMM)-pty.sh vmm.sock virtiocon0)"
+	@$(SCREEN) "$$(scripts/qemu-pty.sh vmm.sock virtiocon0)"
 .PHONY: console

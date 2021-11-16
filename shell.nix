@@ -10,7 +10,7 @@ with pkgs;
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [
-    cloud-hypervisor curl jq netcat qemu_kvm reuse screen util-linux
+    jq netcat qemu_kvm reuse screen util-linux
   ];
 
   KERNEL = "${passthru.kernel.dev}/vmlinux";
