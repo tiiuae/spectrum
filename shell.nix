@@ -9,7 +9,7 @@ with pkgs;
 { passthru ? {}, nativeBuildInputs ? [], ... }:
 
 {
-  nativeBuildInputs = nativeBuildInputs ++ [ qemu_kvm reuse ];
+  nativeBuildInputs = nativeBuildInputs ++ [ cloud-hypervisor jq qemu_kvm reuse ];
 
   KERNEL = "${passthru.kernel.dev}/vmlinux";
 })
