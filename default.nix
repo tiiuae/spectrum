@@ -1,7 +1,11 @@
 # SPDX-License-Identifier: EUPL-1.2
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
+{ pkgs ? import <nixpkgs> {}
+, terminfo ? pkgs.foot.terminfo
+}:
+
+pkgs.pkgsStatic.callPackage (
 
 { lib, stdenv, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4, xorg
@@ -12,8 +16,10 @@
 let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
+  connman = connmanMinimal;
+
   packages = [
-    busybox connmanMinimal dbus execline mdevd s6 s6-linux-utils
+    busybox connman dbus execline mdevd s6 s6-linux-utils
     s6-portable-utils s6-rc
 
     (nftables.override { withCli = false; })
@@ -24,15 +30,14 @@ let
     nativeBuildInputs = [ xorg.lndir ];
     passAsFile = [ "packages" ];
   } ''
-    mkdir -p "$out/usr/bin" "$out/usr/share"
-    for pkg in $(< "$packagesPath"); do
-        for dir in bin share; do
-            if [ -e "$pkg/$dir" ]; then
-                lndir -silent "$pkg/$dir" "$out/usr/$dir"
-            fi
-        done
+    mkdir -p $out/usr/bin $out/usr/share/dbus-1
+    ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
+    ln -s ${kernel}/lib "$out"
+    ln -s ${terminfo}/share/terminfo $out/usr/share
+
+    for pkg in ${dbus} ${connman}; do
+        lndir -silent $pkg/share/dbus-1 $out/usr/share/dbus-1
     done
-    ln -s "${kernel}/lib" "$out"
   '';
 
   packagesTar = runCommand "packages.tar" {} ''
