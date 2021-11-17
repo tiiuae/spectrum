@@ -1,0 +1,38 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+if {
+  forx -pE module { kvm-intel vfio-pci vfio_iommu_type1 }
+  modprobe $module
+}
+
+foreground {
+  define IOMMU_GROUP_DEVICES /sys/bus/pci/devices/0000:00:03.0/iommu_group/devices
+  pipeline { ls -1 $IOMMU_GROUP_DEVICES }
+  forstdin -pE device
+  foreground {
+    redirfd -w 1 ${IOMMU_GROUP_DEVICES}/${device}/driver/unbind
+    printf "%s" $device
+  }
+  foreground {
+    backtick -E device_id {
+      if { dd bs=2 skip=1 count=2 status=none if=${IOMMU_GROUP_DEVICES}/${device}/vendor }
+      if { printf " " }
+      dd bs=2 skip=1 count=2 status=none if=${IOMMU_GROUP_DEVICES}/${device}/device
+    }
+    redirfd -w 1 /sys/bus/pci/drivers/vfio-pci/new_id
+    printf "%s" $device_id
+  }
+  redirfd -w 1 /sys/bus/pci/drivers/vfio-pci/bind
+  printf "%s" $device
+}
+
+cloud-hypervisor
+  --api-socket env/cloud-hypervisor.sock
+  --kernel data/vmlinux
+  --cmdline "console=hvc0 console=ttyS0 root=/dev/vda"
+  --disk path=data/rootfs.ext4,readonly=on
+  --device path=/sys/bus/pci/devices/0000:00:03.0
+  --console pty
+  --serial file=/run/netvm.log

@@ -13,15 +13,18 @@ TARFLAGS = -v --show-transformed-names
 
 # These don't have the host/ prefix because they're not referring to
 # paths in the source tree.
-HOST_S6_RC_DIRECTORIES = netvm/env
+HOST_S6_RC_DIRECTORIES = netvm-vmm/env
 
 HOST_S6_RC_FILES = \
+	host/netvm-vmm/run \
+	host/netvm-vmm/type \
+	host/netvm/dependencies \
 	host/netvm/run \
 	host/netvm/type
 
 HOST_S6_RC_BUILD_FILES = \
-	build/host/netvm/data/rootfs.ext4 \
-	build/host/netvm/data/vmlinux
+	build/host/netvm-vmm/data/rootfs.ext4 \
+	build/host/netvm-vmm/data/vmlinux
 
 # We produce an s6-rc source directory, but that doesn't play nice
 # with Make, because it won't know to update if some file in the
@@ -38,13 +41,13 @@ build/s6-rc: $(HOST_S6_RC_FILES) $(HOST_S6_RC_BUILD_FILES)
 	tar -c $(HOST_S6_RC_BUILD_FILES) | tar -C $@ -x --strip-components 2
 	cd $@ && mkdir -p $(HOST_S6_RC_DIRECTORIES)
 
-build/host/netvm/data/vmlinux: $(VMLINUX)
+build/host/netvm-vmm/data/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
 	cp $(VMLINUX) $@
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
-build/host/netvm/data/rootfs.ext4: build/rootfs.tar
+build/host/netvm-vmm/data/rootfs.ext4: build/rootfs.tar
 	mkdir -p $$(dirname $@)
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
@@ -106,9 +109,9 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    s6-rc-compile $@ $$dir; \
 	    exit=$$?; rm -r $$dir; exit $$exit
 
-run-qemu: build/host/netvm/data/rootfs.ext4
+run-qemu: build/host/netvm-vmm/data/rootfs.ext4
 	$(QEMU_KVM) -cpu host -machine q35,kernel=$(KERNEL) \
-	  -drive file=build/host/netvm/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
+	  -drive file=build/host/netvm-vmm/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
 	  -append "console=hvc0 console=ttyS0 root=/dev/vda" \
 	  -netdev user,id=net0 \
 	  -device e1000e,netdev=net0 \
@@ -119,10 +122,10 @@ run-qemu: build/host/netvm/data/rootfs.ext4
 	  -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
-run-cloud-hypervisor: build/host/netvm/data/rootfs.ext4
+run-cloud-hypervisor: build/host/netvm-vmm/data/rootfs.ext4
 	$(CLOUD_HYPERVISOR) \
 	    --api-socket path=vmm.sock \
-	    --disk path=build/host/netvm/data/rootfs.ext4,readonly=on \
+	    --disk path=build/host/netvm-vmm/data/rootfs.ext4,readonly=on \
 	    --net tap=tap0 tap=tap1,mac=0A:B3:EC:80:00:00 \
 	    --kernel $(KERNEL) \
 	    --cmdline "console=hvc0 console=ttyS0 root=/dev/vda" \
