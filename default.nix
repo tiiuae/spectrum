@@ -35,10 +35,16 @@ let
     };
   };
 
-  packagesSysroot = runCommand "packages-sysroot" {} ''
+  packagesSysroot = runCommand "packages-sysroot" {
+    nativeBuildInputs = [ xorg.lndir ];
+  } ''
     mkdir -p $out/usr/bin
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
-    ln -s ${pkgsGui.mesa.drivers}/* $out/usr
+
+    for pkg in ${lib.escapeShellArgs [ pkgsGui.mesa.drivers pkgsGui.dejavu_fonts ]}; do
+        lndir -silent "$pkg" "$out/usr"
+    done
+
     ln -s ${kernel}/lib $out/lib
 
     # TODO: this is a hack and we should just build the util-linux
