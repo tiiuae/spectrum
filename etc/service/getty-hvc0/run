@@ -1,6 +1,6 @@
 #!/bin/execlineb -P
 # SPDX-License-Identifier: EUPL-1.2
-# SPDX-FileCopyrightText: 2020-2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
 export TERM foot
 export TERMINFO_DIRS /usr/share/terminfo
@@ -14,4 +14,12 @@ backtick HOME {
 importas -i home HOME
 cd $home
 
-getty -i -n -l /bin/sh 38400 hvc0
+redirfd -u 0 /dev/hvc0
+fdmove -c 1 0
+fdmove -c 2 0
+
+foreground { clear }
+unexport ?
+
+exec -l
+sh
