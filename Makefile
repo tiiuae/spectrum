@@ -24,10 +24,7 @@ FILES = \
 	etc/fstab \
 	etc/group \
 	etc/init \
-	etc/login/kind/tty \
-	etc/login/kind/ttyS \
-	etc/login/share/prelude \
-	etc/login/share/sh \
+	etc/login \
 	etc/mdev.conf \
 	etc/parse-devname \
 	etc/passwd \

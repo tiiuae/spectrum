@@ -1,0 +1,16 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+backtick USER { id -un }
+backtick HOME {
+  importas -i user USER
+  homeof $user
+}
+
+importas -i home HOME
+cd $home
+
+export PATH /bin # Clear out execlineb wrapper path
+/bin/exec -l
+sh

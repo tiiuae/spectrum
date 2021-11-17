@@ -1,8 +1,0 @@
-#!/bin/execlineb -s0
-# SPDX-License-Identifier: EUPL-1.2
-# SPDX-FileCopyrightText: 2020-2021 Alyssa Ross <hi@alyssa.is>
-
-unexport !
-export TERM linux
-cd /
-$@
