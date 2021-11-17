@@ -54,7 +54,7 @@ VM_FILES = \
 	etc/mdev/iface \
 	etc/nftables.conf \
 	etc/passwd \
-	etc/service/getty-ttyS0/run \
+	etc/service/getty-hvc0/run \
 	etc/sysctl.conf
 
 # These are separate because they need to be included, but putting
@@ -106,11 +106,14 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 run: build/host/netvm/data/rootfs.ext4
 	$(QEMU_KVM) -cpu host -machine q35,kernel=$(KERNEL) \
 	  -drive file=build/host/netvm/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
-	  -append "console=ttyS0 root=/dev/vda" \
+	  -append "console=hvc0 console=ttyS0 root=/dev/vda" \
 	  -netdev user,id=net0 \
 	  -device e1000e,netdev=net0 \
 	  -netdev user,id=net1 \
-	  -device virtio-net,netdev=net1,mac=0A:B3:EC:80:00:00
+	  -device virtio-net,netdev=net1,mac=0A:B3:EC:80:00:00 \
+	  -chardev pty,id=virtiocon0 \
+	  -device virtio-serial-pci \
+	  -device virtconsole,chardev=virtiocon0
 
 clean:
 	rm -rf build
