@@ -27,6 +27,7 @@ foreground {
   redirfd -w 1 /sys/bus/pci/drivers/vfio-pci/bind
   printf "%s" $device
 }
+unexport ?
 
 cloud-hypervisor
   --api-socket env/cloud-hypervisor.sock
