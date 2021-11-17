@@ -110,7 +110,7 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 run-qemu: build/host/netvm-vmm/data/rootfs.ext4
 	$(QEMU_KVM) -cpu host -machine q35,kernel=$(KERNEL) \
 	  -drive file=build/host/netvm-vmm/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
-	  -append "console=hvc0 console=ttyS0 root=/dev/vda" \
+	  -append "console=ttyS0 root=/dev/vda" \
 	  -netdev user,id=net0 \
 	  -device e1000e,netdev=net0 \
 	  -netdev user,id=net1 \
@@ -126,7 +126,7 @@ run-cloud-hypervisor: build/host/netvm-vmm/data/rootfs.ext4
 	    --disk path=build/host/netvm-vmm/data/rootfs.ext4,readonly=on \
 	    --net tap=tap0 tap=tap1,mac=0A:B3:EC:80:00:00 \
 	    --kernel $(KERNEL) \
-	    --cmdline "console=hvc0 console=ttyS0 root=/dev/vda" \
+	    --cmdline "console=ttyS0 root=/dev/vda" \
 	    --console pty \
 	    --serial tty
 .PHONY: run-cloud-hypervisor

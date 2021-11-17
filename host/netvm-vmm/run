@@ -31,7 +31,7 @@ foreground {
 cloud-hypervisor
   --api-socket env/cloud-hypervisor.sock
   --kernel data/vmlinux
-  --cmdline "console=hvc0 console=ttyS0 root=/dev/vda"
+  --cmdline "console=ttyS0 root=/dev/vda"
   --disk path=data/rootfs.ext4,readonly=on
   --device path=/sys/bus/pci/devices/0000:00:03.0
   --console pty
