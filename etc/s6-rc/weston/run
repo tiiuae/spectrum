@@ -6,6 +6,7 @@ foreground {
   redirfd -w 2 /dev/null
   ln -ns /usr /run/opengl-driver
 }
+unexport ?
 
 export XDG_RUNTIME_DIR /run
 redirfd -r 0 /dev/tty1
