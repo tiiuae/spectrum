@@ -9,8 +9,6 @@ CLOUD_HYPERVISOR = cloud-hypervisor
 
 VMM = qemu
 
-TARFLAGS = -v --show-transformed-names
-
 # These don't have the host/ prefix because they're not referring to
 # paths in the source tree.
 HOST_S6_RC_DIRECTORIES = netvm-vmm/env
