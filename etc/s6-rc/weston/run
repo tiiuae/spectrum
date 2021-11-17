@@ -8,6 +8,15 @@ foreground {
 }
 unexport ?
 
+backtick USER { id -un }
+backtick HOME {
+  importas -i user USER
+  homeof $user
+}
+
 export XDG_RUNTIME_DIR /run
 redirfd -r 0 /dev/tty1
+
+importas -i home HOME
+cd $home
 weston
