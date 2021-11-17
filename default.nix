@@ -5,7 +5,7 @@
 
 { lib, stdenv, runCommand, writeReferencesToFile, s6-rc, tar2ext4
 , busybox, cloud-hypervisor, curl, execline, jq, mdevd, mktuntap, s6
-, s6-linux-utils, s6-portable-utils, screen, util-linux
+, s6-linux-utils, s6-portable-utils, screen, util-linux, xorg
 }:
 
 let
@@ -15,15 +15,17 @@ let
     systemd = final.libudev-zero;
   });
 
+  foot = pkgsGui.foot.override { allowPgo = false; };
+
   packages = [
     cloud-hypervisor curl execline jq mdevd mktuntap s6 s6-linux-utils
-    s6-portable-utils s6-rc screen pkgsGui.westonLite
+    s6-portable-utils s6-rc screen
     (busybox.override {
       extraConfig = ''
         CONFIG_INIT n
       '';
     })
-  ];
+  ] ++ (with pkgsGui; [ foot westonLite ]);
 
   kernel = pkgs.linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
@@ -59,7 +61,11 @@ let
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
-  netvm = import ../spectrum-netvm { inherit pkgs; };
+  netvm = import ../spectrum-netvm {
+    inherit pkgs;
+    inherit (foot) terminfo;
+  };
+
   appvm-lynx = import ../spectrum-appvm-lynx { inherit pkgs; };
 
   extFs = runCommand "ext.ext4" {
