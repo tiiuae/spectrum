@@ -13,17 +13,20 @@ TARFLAGS = -v --show-transformed-names
 
 # These don't have the host/ prefix because they're not referring to
 # paths in the source tree.
-HOST_S6_RC_DIRECTORIES = appvm-lynx/env
+HOST_S6_RC_DIRECTORIES = appvm-lynx-vmm/env
 
 HOST_S6_RC_FILES = \
-	host/appvm-lynx/data/pid2mac \
+	host/appvm-lynx-vmm/data/pid2mac \
+	host/appvm-lynx-vmm/dependencies \
+	host/appvm-lynx-vmm/run \
+	host/appvm-lynx-vmm/type \
 	host/appvm-lynx/dependencies \
 	host/appvm-lynx/run \
 	host/appvm-lynx/type
 
 HOST_S6_RC_BUILD_FILES = \
-	build/host/appvm-lynx/data/rootfs.ext4 \
-	build/host/appvm-lynx/data/vmlinux
+	build/host/appvm-lynx-vmm/data/rootfs.ext4 \
+	build/host/appvm-lynx-vmm/data/vmlinux
 
 # We produce an s6-rc source directory, but that doesn't play nice
 # with Make, because it won't know to update if some file in the
@@ -40,13 +43,13 @@ build/s6-rc: $(HOST_S6_RC_FILES) $(HOST_S6_RC_BUILD_FILES)
 	tar -c $(HOST_S6_RC_BUILD_FILES) | tar -C $@ -x --strip-components 2
 	cd $@ && mkdir -p $(HOST_S6_RC_DIRECTORIES)
 
-build/host/appvm-lynx/data/vmlinux: $(VMLINUX)
+build/host/appvm-lynx-vmm/data/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
 	cp $(VMLINUX) $@
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
-build/host/appvm-lynx/data/rootfs.ext4: build/rootfs.tar
+build/host/appvm-lynx-vmm/data/rootfs.ext4: build/rootfs.tar
 	mkdir -p $$(dirname $@)
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
@@ -95,9 +98,9 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    s6-rc-compile $@ $$dir; \
 	    exit=$$?; rm -r $$dir; exit $$exit
 
-run-qemu: build/host/appvm-lynx/data/rootfs.ext4
+run-qemu: build/host/appvm-lynx-vmm/data/rootfs.ext4
 	$(QEMU_KVM) -cpu host -machine q35,kernel=$(KERNEL) \
-	  -drive file=build/host/appvm-lynx/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
+	  -drive file=build/host/appvm-lynx-vmm/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
 	  -append "console=ttyS0 root=/dev/vda" \
 	  -netdev user,id=net0 \
 	  -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
@@ -106,10 +109,10 @@ run-qemu: build/host/appvm-lynx/data/rootfs.ext4
 	  -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
-run-cloud-hypervisor: build/host/appvm-lynx/data/rootfs.ext4
+run-cloud-hypervisor: build/host/appvm-lynx-vmm/data/rootfs.ext4
 	$(CLOUD_HYPERVISOR) \
 	    --api-socket path=vmm.sock \
-	    --disk path=build/host/appvm-lynx/data/rootfs.ext4,readonly=on \
+	    --disk path=build/host/appvm-lynx-vmm/data/rootfs.ext4,readonly=on \
 	    --net tap=tap0,mac=0A:B3:EC:00:00:00 \
 	    --kernel $(KERNEL) \
 	    --cmdline "console=ttyS0 root=/dev/vda" \
