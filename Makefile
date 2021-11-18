@@ -58,6 +58,7 @@ VM_FILES = \
 	etc/mdev.conf \
 	etc/mdev/iface \
 	etc/passwd \
+	etc/resolv.conf \
 	etc/service/getty-hvc0/run
 
 # These are separate because they need to be included, but putting
