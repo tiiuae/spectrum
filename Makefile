@@ -87,6 +87,14 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    s6-rc-compile $@ $$dir; \
 	    exit=$$?; rm -r $$dir; exit $$exit
 
+run: build/host/appvm-lynx/data/rootfs.ext4
+	$(QEMU_KVM) -cpu host -machine q35,kernel=$(KERNEL) \
+	  -drive file=build/host/appvm-lynx/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
+	  -append "console=ttyS0 root=/dev/vda" \
+	  -netdev user,id=net0 \
+	  -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00
+.PHONY: run
+
 clean:
 	rm -rf build
 .PHONY: clean
