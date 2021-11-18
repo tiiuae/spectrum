@@ -49,7 +49,7 @@ VM_FILES = \
 	etc/mdev.conf \
 	etc/mdev/iface \
 	etc/passwd \
-	etc/service/getty-ttyS0/run
+	etc/service/getty-hvc0/run
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
@@ -92,7 +92,10 @@ run: build/host/appvm-lynx/data/rootfs.ext4
 	  -drive file=build/host/appvm-lynx/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
 	  -append "console=ttyS0 root=/dev/vda" \
 	  -netdev user,id=net0 \
-	  -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00
+	  -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
+	  -chardev pty,id=virtiocon0 \
+	  -device virtio-serial-pci \
+	  -device virtconsole,chardev=virtiocon0
 .PHONY: run
 
 clean:
