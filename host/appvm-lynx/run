@@ -37,7 +37,7 @@ if {
     -H "Content-Type: application/json"
     -A ""
     -d "{\"tap\":\"router${pid}\",\"mac\":\"${router_mac}\"}"
-    --unix-socket ../netvm/env/cloud-hypervisor.sock
+    --unix-socket ../netvm-vmm/env/cloud-hypervisor.sock
     http://localhost/api/v1/vm.add-net
 }
 
