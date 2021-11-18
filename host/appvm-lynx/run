@@ -47,6 +47,7 @@ background { ip link set client${pid} up }
 
 backtick -E client_mac { data/pid2mac -v pid=${pid} -v octet4=00 }
 cloud-hypervisor
+  --api-socket env/cloud-hypervisor.sock
   --kernel data/vmlinux
   --cmdline "console=ttyS0 root=/dev/vda"
   --disk path=data/rootfs.ext4,readonly=on

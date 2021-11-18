@@ -11,6 +11,10 @@ VMM = qemu
 
 TARFLAGS = -v --show-transformed-names
 
+# These don't have the host/ prefix because they're not referring to
+# paths in the source tree.
+HOST_S6_RC_DIRECTORIES = appvm-lynx/env
+
 HOST_S6_RC_FILES = \
 	host/appvm-lynx/data/pid2mac \
 	host/appvm-lynx/dependencies \
@@ -34,6 +38,7 @@ build/s6-rc: $(HOST_S6_RC_FILES) $(HOST_S6_RC_BUILD_FILES)
 
 	tar -c $(HOST_S6_RC_FILES) | tar -C $@ -x --strip-components 1
 	tar -c $(HOST_S6_RC_BUILD_FILES) | tar -C $@ -x --strip-components 2
+	cd $@ && mkdir -p $(HOST_S6_RC_DIRECTORIES)
 
 build/host/appvm-lynx/data/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
