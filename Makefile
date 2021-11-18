@@ -5,6 +5,9 @@
 # Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
 # QEMU_KVM = qemu-system-x86_64 -enable-kvm.
 QEMU_KVM = qemu-kvm
+CLOUD_HYPERVISOR = cloud-hypervisor
+
+VMM = qemu
 
 TARFLAGS = -v --show-transformed-names
 
@@ -87,7 +90,7 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    s6-rc-compile $@ $$dir; \
 	    exit=$$?; rm -r $$dir; exit $$exit
 
-run: build/host/appvm-lynx/data/rootfs.ext4
+run-qemu: build/host/appvm-lynx/data/rootfs.ext4
 	$(QEMU_KVM) -cpu host -machine q35,kernel=$(KERNEL) \
 	  -drive file=build/host/appvm-lynx/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
 	  -append "console=ttyS0 root=/dev/vda" \
@@ -96,6 +99,20 @@ run: build/host/appvm-lynx/data/rootfs.ext4
 	  -chardev pty,id=virtiocon0 \
 	  -device virtio-serial-pci \
 	  -device virtconsole,chardev=virtiocon0
+.PHONY: run-qemu
+
+run-cloud-hypervisor: build/host/appvm-lynx/data/rootfs.ext4
+	$(CLOUD_HYPERVISOR) \
+	    --api-socket path=vmm.sock \
+	    --disk path=build/host/appvm-lynx/data/rootfs.ext4,readonly=on \
+	    --net tap=tap0,mac=0A:B3:EC:00:00:00 \
+	    --kernel $(KERNEL) \
+	    --cmdline "console=ttyS0 root=/dev/vda" \
+	    --console pty \
+	    --serial tty
+.PHONY: run-cloud-hypervisor
+
+run: run-$(VMM)
 .PHONY: run
 
 clean:
