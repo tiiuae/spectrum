@@ -33,7 +33,7 @@ let
 
   packagesTar = runCommand "packages.tar" {} ''
     cd ${packagesSysroot}
-    tar -cvf $out --verbatim-files-from \
+    tar -cf $out --verbatim-files-from \
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
