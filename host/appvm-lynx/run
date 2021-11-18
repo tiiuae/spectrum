@@ -16,7 +16,7 @@ background { ip link set br${pid} up }
 #
 # TODO: it would be nice if we could have this be non-persistent, so
 # it didn't stick around if the network VM was shut down.
-background {
+if {
   # Try to delete the device in case the VM was powered off (as the
   # finish script wouldn't have been run in that case.)  Since we check
   # the return value of ip tuntap add, in the case of a race condition
