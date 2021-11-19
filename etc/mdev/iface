@@ -16,4 +16,21 @@ backtick -E LOCAL_IP {
 if { ip address add ${LOCAL_IP}/32 dev $INTERFACE }
 if { ip link set $INTERFACE up }
 if { ip route add 169.254.0.1 dev $INTERFACE }
-ip route add default via 169.254.0.1 dev $INTERFACE
+if { ip route add default via 169.254.0.1 dev $INTERFACE }
+
+# Try to wait for the network to be up.
+# If we time out, well, there's not much we can do, so just carry on.
+# In future, it would be better if the network VM notified us about
+# network changes.
+foreground { printf "Waiting for network… " }
+foreground {
+  ifte { echo "Connected." } { echo "Timed out." }
+  pipeline { seq 10 }
+  forstdin _
+  if -n {
+    redirfd -w 2 /dev/null
+    wget -qT 6 -O /dev/null http://ipv4.connman.net/online/status.html
+  }
+}
+
+s6-rc -u change lynx

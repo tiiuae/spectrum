@@ -58,8 +58,7 @@ VM_FILES = \
 	etc/mdev.conf \
 	etc/mdev/iface \
 	etc/passwd \
-	etc/resolv.conf \
-	etc/service/getty-hvc0/run
+	etc/resolv.conf
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
@@ -79,6 +78,8 @@ build/rootfs.tar: $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
 	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' /var/empty
 
 VM_S6_RC_FILES = \
+	etc/s6-rc/lynx/run \
+	etc/s6-rc/lynx/type \
 	etc/s6-rc/mdevd-coldplug/dependencies \
 	etc/s6-rc/mdevd-coldplug/type \
 	etc/s6-rc/mdevd-coldplug/up \
