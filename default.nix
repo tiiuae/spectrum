@@ -9,7 +9,7 @@ pkgs.pkgsStatic.callPackage (
 
 { lib, stdenv, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4
-, busybox, execline, linux, mdevd, s6, s6-linux-utils, s6-portable-utils
+, busybox, cacert, execline, linux, mdevd, s6, s6-linux-utils, s6-portable-utils
 }:
 
 let
@@ -27,6 +27,7 @@ let
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
     ln -s ${kernel}/lib "$out"
     ln -s ${terminfo}/share/terminfo $out/usr/share
+    ln -s ${cacert}/etc/ssl $out/usr/share
   '';
 
   packagesTar = runCommand "packages.tar" {} ''

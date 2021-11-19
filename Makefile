@@ -63,7 +63,7 @@ VM_FILES = \
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
-VM_LINKS = bin
+VM_LINKS = bin etc/ssl/certs/ca-certificates.crt
 
 VM_BUILD_FILES = build/etc/s6-rc
 VM_MOUNTPOINTS = dev run proc sys
