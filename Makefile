@@ -98,7 +98,7 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    exit=$$?; rm -r $$dir; exit $$exit
 
 run-qemu: build/host/appvm-lynx-vmm/data/rootfs.ext4
-	$(QEMU_KVM) -cpu host -machine q35,kernel=$(KERNEL) \
+	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) \
 	  -drive file=build/host/appvm-lynx-vmm/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
 	  -append "console=ttyS0 root=/dev/vda" \
 	  -netdev user,id=net0 \
@@ -111,6 +111,7 @@ run-qemu: build/host/appvm-lynx-vmm/data/rootfs.ext4
 run-cloud-hypervisor: build/host/appvm-lynx-vmm/data/rootfs.ext4
 	$(CLOUD_HYPERVISOR) \
 	    --api-socket path=vmm.sock \
+	    --memory size=128M
 	    --disk path=build/host/appvm-lynx-vmm/data/rootfs.ext4,readonly=on \
 	    --net tap=tap0,mac=0A:B3:EC:00:00:00 \
 	    --kernel $(KERNEL) \
