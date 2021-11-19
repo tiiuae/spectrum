@@ -108,7 +108,7 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    exit=$$?; rm -r $$dir; exit $$exit
 
 run-qemu: build/host/netvm-vmm/data/rootfs.ext4
-	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) \
+	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
 	  -drive file=build/host/netvm-vmm/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
 	  -append "console=ttyS0 root=/dev/vda" \
 	  -netdev user,id=net0 \
