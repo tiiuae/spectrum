@@ -33,6 +33,7 @@ cloud-hypervisor
   --api-socket env/cloud-hypervisor.sock
   --kernel data/vmlinux
   --cmdline "console=ttyS0 root=/dev/vda"
+  --memory size=128M
   --disk path=data/rootfs.ext4,readonly=on
   --device path=/sys/bus/pci/devices/0000:00:03.0
   --console pty
