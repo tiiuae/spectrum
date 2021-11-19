@@ -22,6 +22,10 @@ fdmove -c 2 0
 foreground { clear }
 unexport ?
 
-# Run lynx, then a login shell to allow for debugging.
-foreground { lynx }
+# Run catgirl, then a login shell to allow for debugging.
+foreground { printf "IRC nick (to join #spectrum): " }
+foreground {
+  backtick -E nick { head -1 }
+  catgirl -h irc.libera.chat -j "#spectrum-test" -n $nick
+}
 exec -l sh
