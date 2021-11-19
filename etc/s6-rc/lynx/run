@@ -23,5 +23,5 @@ foreground { clear }
 unexport ?
 
 # Run lynx, then a login shell to allow for debugging.
-foreground { lynx }
+foreground { lynx https://spectrum-os.org/ }
 exec -l sh
