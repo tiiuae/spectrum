@@ -115,6 +115,7 @@ run: build/test.img
 	    -display gtk,gl=on \
 	    -qmp unix:vmm.sock,server,nowait \
 	    -monitor vc \
+	    -parallel none \
 	    -drive file=build/test.img,if=virtio,format=raw,readonly=on \
 	    -append "console=ttyS0 root=/dev/vda1 intel_iommu=on" \
 	    -device intel-iommu,intremap=on \
