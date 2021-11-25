@@ -96,6 +96,7 @@ stdenv.mkDerivation {
   nativeBuildInputs = [ s6-rc tar2ext4 ];
 
   EXT_FS = extFs;
+  MODULES_ALIAS = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.alias";
   PACKAGES_TAR = packagesTar;
 
   postPatch = ''

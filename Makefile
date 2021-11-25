@@ -27,6 +27,7 @@ FILES = \
 	etc/login \
 	etc/mdev.conf \
 	etc/mdev/listen \
+	etc/mdev/net/add \
 	etc/mdev/wait \
 	etc/parse-devname \
 	etc/passwd \
@@ -42,7 +43,7 @@ FILES = \
 # them as make dependencies would confuse make.
 LINKS = bin sbin
 
-BUILD_FILES = build/etc/s6-rc
+BUILD_FILES = build/etc/mdev/modalias.sh build/etc/s6-rc
 MOUNTPOINTS = dev ext run proc sys
 
 build/rootfs.tar: $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
@@ -54,6 +55,13 @@ build/rootfs.tar: $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
 	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," /var/empty ; \
 	done
 	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' /var/empty
+
+build/etc/mdev/modalias.sh: scripts/modprobe/gen_modalias.sh.awk scripts/modprobe/modules.map
+	mkdir -p $$(dirname $@)
+	awk -v modmap=scripts/modprobe/modules.map \
+		-f scripts/modprobe/gen_modalias.sh.awk \
+		$(MODULES_ALIAS) > $@
+	chmod +x $@
 
 S6_RC_FILES = \
 	etc/s6-rc/card0/up \

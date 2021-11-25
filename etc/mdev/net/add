@@ -1,0 +1,40 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+# Assign the whole IOMMU group containing this device to the network
+# VM.
+
+if {
+  forx -pE module { vfio-pci vfio_iommu_type1 }
+  modprobe $module
+}
+
+importas -i devpath DEVPATH
+
+foreground {
+  pipeline { ls -1 /sys${devpath}/iommu_group/devices }
+  forstdin -pE device
+  foreground {
+    redirfd -w 1 /sys/bus/pci/devices/${device}/driver/unbind
+    printf "%s" $device
+  }
+  foreground {
+    redirfd -w 1 /sys/bus/pci/devices/${device}/driver_override
+    printf vfio-pci
+  }
+  redirfd -w 1 /sys/bus/pci/drivers/vfio-pci/bind
+  printf "%s" $device
+}
+
+# We have to background here before running s6-rc, because if we're
+# running from inside mdevd-coldplug trying to start another service
+# will deadlock.
+background {
+  # Wait for the VM to be up.
+  foreground { s6-rc -bu change ext-rc-init }
+  if { s6-svwait -U /run/service/ext-netvm-vmm }
+
+  ch-remote --api-socket /run/service/ext-netvm-vmm/env/cloud-hypervisor.sock
+    add-device path=/sys${devpath}
+}
