@@ -26,6 +26,8 @@ FILES = \
 	etc/init \
 	etc/login \
 	etc/mdev.conf \
+	etc/mdev/listen \
+	etc/mdev/wait \
 	etc/parse-devname \
 	etc/passwd \
 	etc/service/getty-tty1/run \
@@ -54,6 +56,8 @@ build/rootfs.tar: $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
 	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' /var/empty
 
 S6_RC_FILES = \
+	etc/s6-rc/card0/up \
+	etc/s6-rc/card0/type \
 	etc/s6-rc/ext-rc/dependencies \
 	etc/s6-rc/ext-rc/type \
 	etc/s6-rc/ext-rc/up \
@@ -69,6 +73,7 @@ S6_RC_FILES = \
 	etc/s6-rc/ok-all/type \
 	etc/s6-rc/static-nodes/type \
 	etc/s6-rc/static-nodes/up \
+	etc/s6-rc/weston/dependencies \
 	etc/s6-rc/weston/notification-fd \
 	etc/s6-rc/weston/type \
 	etc/s6-rc/weston/run
