@@ -4,6 +4,8 @@
 
 if { modprobe kvm-intel }
 
+s6-notifyoncheck -dc "test -S env/cloud-hypervisor.sock"
+
 cloud-hypervisor
   --api-socket env/cloud-hypervisor.sock
   --kernel data/vmlinux

@@ -14,6 +14,7 @@ VMM = qemu
 HOST_S6_RC_DIRECTORIES = netvm-vmm/env
 
 HOST_S6_RC_FILES = \
+	host/netvm-vmm/notification-fd \
 	host/netvm-vmm/run \
 	host/netvm-vmm/type \
 	host/netvm/dependencies \
