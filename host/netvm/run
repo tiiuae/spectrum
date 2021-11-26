@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
 export WAYLAND_DISPLAY wayland-1
-export XDG_RUNTIME_DIR /run
+export XDG_RUNTIME_DIR /run/user/0
 
 backtick -E pty {
   pipeline -w { jq -r .config.console.file }
