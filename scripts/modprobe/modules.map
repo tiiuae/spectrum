@@ -1,6 +1,0 @@
-# SPDX-License-Identifier: CC0-1.0
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
-
-e1000	"/etc/mdev/net/$ACTION"
-e1000e	"/etc/mdev/net/$ACTION"
-virtio-net	"/etc/mdev/net/$ACTION" virtio_net

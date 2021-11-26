@@ -56,11 +56,16 @@ build/rootfs.tar: $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
 	done
 	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' /var/empty
 
-build/etc/mdev/modalias.sh: scripts/modprobe/gen_modalias.sh.awk scripts/modprobe/modules.map
+build/etc/mdev/modules.map: scripts/modprobe/gen_modules.map.awk
 	mkdir -p $$(dirname $@)
-	awk -v modmap=scripts/modprobe/modules.map \
+	awk -f scripts/modprobe/gen_modules.map.awk \
+		$(MODULES_ORDER) > $@ || rm -f $@
+
+build/etc/mdev/modalias.sh: scripts/modprobe/gen_modalias.sh.awk build/etc/mdev/modules.map
+	mkdir -p $$(dirname $@)
+	awk -v modmap=build/etc/mdev/modules.map \
 		-f scripts/modprobe/gen_modalias.sh.awk \
-		$(MODULES_ALIAS) > $@
+		$(MODULES_ALIAS) > $@ || rm -f $@
 	chmod +x $@
 
 S6_RC_FILES = \

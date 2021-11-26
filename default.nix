@@ -115,6 +115,7 @@ stdenv.mkDerivation {
 
   EXT_FS = extFs;
   MODULES_ALIAS = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.alias";
+  MODULES_ORDER = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.order";
   PACKAGES_TAR = packagesTar;
 
   postPatch = ''
