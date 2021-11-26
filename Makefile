@@ -11,9 +11,9 @@ VMM = qemu
 
 # These don't have the host/ prefix because they're not referring to
 # paths in the source tree.
-HOST_S6_RC_DIRECTORIES = netvm-vmm/env
+HOST_DIRECTORIES = netvm-vmm/env
 
-HOST_S6_RC_FILES = \
+HOST_FILES = \
 	host/netvm-vmm/notification-fd \
 	host/netvm-vmm/run \
 	host/netvm-vmm/type \
@@ -21,7 +21,7 @@ HOST_S6_RC_FILES = \
 	host/netvm/run \
 	host/netvm/type
 
-HOST_S6_RC_BUILD_FILES = \
+HOST_BUILD_FILES = \
 	build/host/netvm-vmm/data/rootfs.ext4 \
 	build/host/netvm-vmm/data/vmlinux
 
@@ -32,13 +32,13 @@ HOST_S6_RC_BUILD_FILES = \
 # including files that aren't intended to be part of the input, like
 # temporary editor files or .license files.  So for all these reasons,
 # only explicitly listed files are included in the build result.
-build/s6-rc: $(HOST_S6_RC_FILES) $(HOST_S6_RC_BUILD_FILES)
+build/s6-rc: $(HOST_FILES) $(HOST_BUILD_FILES)
 	rm -rf $@
 	mkdir -p $@
 
-	tar -c $(HOST_S6_RC_FILES) | tar -C $@ -x --strip-components 1
-	tar -c $(HOST_S6_RC_BUILD_FILES) | tar -C $@ -x --strip-components 2
-	cd $@ && mkdir -p $(HOST_S6_RC_DIRECTORIES)
+	tar -c $(HOST_FILES) | tar -C $@ -x --strip-components 1
+	tar -c $(HOST_BUILD_FILES) | tar -C $@ -x --strip-components 2
+	cd $@ && mkdir -p $(HOST_DIRECTORIES)
 
 build/host/netvm-vmm/data/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
