@@ -16,6 +16,7 @@ HOST_S6_RC_DIRECTORIES = appvm-lynx-vmm/env
 HOST_S6_RC_FILES = \
 	host/appvm-lynx-vmm/data/pid2mac \
 	host/appvm-lynx-vmm/dependencies \
+	host/appvm-lynx-vmm/notification-fd \
 	host/appvm-lynx-vmm/run \
 	host/appvm-lynx-vmm/type \
 	host/appvm-lynx/dependencies \

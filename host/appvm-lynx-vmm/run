@@ -41,17 +41,20 @@ if {
     http://localhost/api/v1/vm.add-net
 }
 
-mktuntap -pvBi client${pid} 3
+mktuntap -pvBi client${pid} 4
 background { ip link set client${pid} master br${pid} }
 background { ip link set client${pid} up }
 
 backtick -E client_mac { data/pid2mac -v pid=${pid} -v octet4=00 }
+
+s6-notifyoncheck -dc "test -S env/cloud-hypervisor.sock"
+
 cloud-hypervisor
   --api-socket env/cloud-hypervisor.sock
   --kernel data/vmlinux
   --cmdline "console=ttyS0 root=/dev/vda"
   --memory size=128M
   --disk path=data/rootfs.ext4,readonly=on
-  --net fd=3,mac=${client_mac}
+  --net fd=4,mac=${client_mac}
   --console pty
   --serial file=/run/appvm-lynx.log
