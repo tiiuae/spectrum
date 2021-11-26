@@ -110,7 +110,7 @@ clean:
 .PHONY: clean
 
 run: build/test.img
-	$(QEMU_KVM) -cpu host -m 6G \
+	$(QEMU_KVM) -cpu host -m 2G \
 	    -machine q35,kernel=$(KERNEL),kernel-irqchip=split \
 	    -display gtk,gl=on \
 	    -qmp unix:vmm.sock,server,nowait \
