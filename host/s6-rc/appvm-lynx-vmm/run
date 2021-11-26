@@ -51,10 +51,10 @@ s6-notifyoncheck -dc "test -S env/cloud-hypervisor.sock"
 
 cloud-hypervisor
   --api-socket env/cloud-hypervisor.sock
-  --kernel data/vmlinux
+  --kernel /ext/svc/data/appvm-lynx/vmlinux
   --cmdline "console=ttyS0 root=/dev/vda"
   --memory size=128M
-  --disk path=data/rootfs.ext4,readonly=on
+  --disk path=/ext/svc/data/appvm-lynx/rootfs.ext4,readonly=on
   --net fd=4,mac=${client_mac}
   --console pty
   --serial file=/run/appvm-lynx.log
