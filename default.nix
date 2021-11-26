@@ -79,7 +79,7 @@ stdenv.mkDerivation {
   '';
 
   installPhase = ''
-    mv build/s6-rc $out
+    mv build/svc $out
   '';
 
   enableParallelBuilding = true;
