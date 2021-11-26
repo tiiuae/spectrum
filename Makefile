@@ -116,7 +116,7 @@ run-qemu: build/host/netvm-vmm/data/rootfs.ext4
 	  -device e1000e,netdev=net0 \
 	  -netdev user,id=net1 \
 	  -device virtio-net,netdev=net1,mac=0A:B3:EC:80:00:00 \
-	  -chardev pty,id=virtiocon0 \
+	  -chardev vc,id=virtiocon0 \
 	  -device virtio-serial-pci \
 	  -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
