@@ -16,6 +16,7 @@ HOST_S6_RC_DIRECTORIES = appvm-catgirl-vmm/env
 HOST_S6_RC_FILES = \
 	host/appvm-catgirl-vmm/data/pid2mac \
 	host/appvm-catgirl-vmm/dependencies \
+	host/appvm-catgirl-vmm/notification-fd \
 	host/appvm-catgirl-vmm/run \
 	host/appvm-catgirl-vmm/type \
 	host/appvm-catgirl/dependencies \
