@@ -66,7 +66,15 @@ let
     inherit (foot) terminfo;
   };
 
-  appvm-lynx = import ../spectrum-appvm-lynx { inherit pkgs; };
+  appvm-catgirl = import ../spectrum-appvm-catgirl {
+    inherit pkgs;
+    inherit (foot) terminfo;
+  };
+
+  appvm-lynx = import ../spectrum-appvm-lynx {
+    inherit pkgs;
+    inherit (foot) terminfo;
+  };
 
   extFs = runCommand "ext.ext4" {
     nativeBuildInputs = [ tar2ext4 s6-rc ];
@@ -74,11 +82,13 @@ let
     mkdir src svc
     tar -C ${netvm} -c . | tar -C src -x
     chmod +w src
+    tar -C ${appvm-catgirl} -c . | tar -C src -x
+    chmod +w src
     tar -C ${appvm-lynx} -c . | tar -C src -x
     chmod +w src
     mkdir src/default
     echo bundle > src/default/type
-    echo appvm-lynx > src/default/contents
+    printf "appvm-catgirl\nappvm-lynx\n" > src/default/contents
     s6-rc-compile svc/s6-rc src
     tar -cf ext.tar svc
     tar2ext4 -i ext.tar -o $out
