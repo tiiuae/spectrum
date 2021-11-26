@@ -16,6 +16,7 @@ foreground {
   pipeline { ls -1 /sys${devpath}/iommu_group/devices }
   forstdin -pE device
   foreground {
+    redirfd -w 2 /dev/null
     redirfd -w 1 /sys/bus/pci/devices/${device}/driver/unbind
     printf "%s" $device
   }
