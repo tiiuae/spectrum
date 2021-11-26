@@ -13,5 +13,5 @@ with pkgs;
     jq netcat qemu_kvm reuse screen util-linux
   ];
 
-  KERNEL = "${passthru.kernel.dev}/vmlinux";
+  KERNEL = "${passthru.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
 })
