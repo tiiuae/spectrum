@@ -6,6 +6,11 @@ foreground {
   redirfd -w 2 /dev/null
   ln -ns /usr /run/opengl-driver
 }
+foreground { mkdir /run/user }
+foreground {
+  umask 077
+  mkdir /run/user/0
+}
 unexport ?
 
 backtick USER { id -un }
@@ -14,7 +19,7 @@ backtick HOME {
   homeof $user
 }
 
-export XDG_RUNTIME_DIR /run
+export XDG_RUNTIME_DIR /run/user/0
 redirfd -r 0 /dev/tty1
 
 importas -i home HOME
