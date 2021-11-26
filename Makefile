@@ -11,21 +11,21 @@ VMM = qemu
 
 # These don't have the host/ prefix because they're not referring to
 # paths in the source tree.
-HOST_S6_RC_DIRECTORIES = appvm-catgirl-vmm/env
+HOST_S6_RC_DIRECTORIES = s6-rc/appvm-catgirl-vmm/env
 
 HOST_S6_RC_FILES = \
-	host/appvm-catgirl-vmm/data/pid2mac \
-	host/appvm-catgirl-vmm/dependencies \
-	host/appvm-catgirl-vmm/notification-fd \
-	host/appvm-catgirl-vmm/run \
-	host/appvm-catgirl-vmm/type \
-	host/appvm-catgirl/dependencies \
-	host/appvm-catgirl/run \
-	host/appvm-catgirl/type
+	host/s6-rc/appvm-catgirl-vmm/data/pid2mac \
+	host/s6-rc/appvm-catgirl-vmm/dependencies \
+	host/s6-rc/appvm-catgirl-vmm/notification-fd \
+	host/s6-rc/appvm-catgirl-vmm/run \
+	host/s6-rc/appvm-catgirl-vmm/type \
+	host/s6-rc/appvm-catgirl/dependencies \
+	host/s6-rc/appvm-catgirl/run \
+	host/s6-rc/appvm-catgirl/type
 
 HOST_S6_RC_BUILD_FILES = \
-	build/host/appvm-catgirl-vmm/data/rootfs.ext4 \
-	build/host/appvm-catgirl-vmm/data/vmlinux
+	build/host/data/appvm-catgirl/rootfs.ext4 \
+	build/host/data/appvm-catgirl/vmlinux
 
 # We produce an s6-rc source directory, but that doesn't play nice
 # with Make, because it won't know to update if some file in the
@@ -34,7 +34,7 @@ HOST_S6_RC_BUILD_FILES = \
 # including files that aren't intended to be part of the input, like
 # temporary editor files or .license files.  So for all these reasons,
 # only explicitly listed files are included in the build result.
-build/s6-rc: $(HOST_S6_RC_FILES) $(HOST_S6_RC_BUILD_FILES)
+build/svc: $(HOST_S6_RC_FILES) $(HOST_S6_RC_BUILD_FILES)
 	rm -rf $@
 	mkdir -p $@
 
@@ -42,13 +42,13 @@ build/s6-rc: $(HOST_S6_RC_FILES) $(HOST_S6_RC_BUILD_FILES)
 	tar -c $(HOST_S6_RC_BUILD_FILES) | tar -C $@ -x --strip-components 2
 	cd $@ && mkdir -p $(HOST_S6_RC_DIRECTORIES)
 
-build/host/appvm-catgirl-vmm/data/vmlinux: $(VMLINUX)
+build/host/data/appvm-catgirl/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
 	cp $(VMLINUX) $@
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
-build/host/appvm-catgirl-vmm/data/rootfs.ext4: build/rootfs.tar
+build/host/data/appvm-catgirl/rootfs.ext4: build/rootfs.tar
 	mkdir -p $$(dirname $@)
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
@@ -99,9 +99,9 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    s6-rc-compile $@ $$dir; \
 	    exit=$$?; rm -r $$dir; exit $$exit
 
-run-qemu: build/host/appvm-catgirl-vmm/data/rootfs.ext4
+run-qemu: build/host/data/appvm-catgirl/rootfs.ext4
 	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
-	  -drive file=build/host/appvm-catgirl-vmm/data/rootfs.ext4,if=virtio,format=raw,readonly=on \
+	  -drive file=build/host/data/appvm-catgirl/rootfs.ext4,if=virtio,format=raw,readonly=on \
 	  -append "console=ttyS0 root=/dev/vda" \
 	  -netdev user,id=net0 \
 	  -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
@@ -110,11 +110,11 @@ run-qemu: build/host/appvm-catgirl-vmm/data/rootfs.ext4
 	  -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
-run-cloud-hypervisor: build/host/appvm-catgirl-vmm/data/rootfs.ext4
+run-cloud-hypervisor: build/host/data/appvm-catgirl/rootfs.ext4
 	$(CLOUD_HYPERVISOR) \
 	    --api-socket path=vmm.sock \
 	    --memory size=128M
-	    --disk path=build/host/appvm-catgirl-vmm/data/rootfs.ext4,readonly=on \
+	    --disk path=build/host/data/appvm-catgirl/rootfs.ext4,readonly=on \
 	    --net tap=tap0,mac=0A:B3:EC:00:00:00 \
 	    --kernel $(KERNEL) \
 	    --cmdline "console=ttyS0 root=/dev/vda" \
