@@ -32,7 +32,7 @@ let
       }
       importas -iu mdevd_pid !
 
-      if { modprobe squashfs }
+      if { modprobe ext4 }
 
       if {
         redirfd -r 0 /dev/esp.poll

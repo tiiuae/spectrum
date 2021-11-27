@@ -1,4 +1,4 @@
-{ runCommand, writeReferencesToFile, squashfs-tools-ng, busybox }:
+{ runCommand, writeReferencesToFile, tar2ext4, busybox }:
 
 let
   rootfs = runCommand "rootfs" {} ''
@@ -9,16 +9,17 @@ let
     ln -s ${busybox}/bin/* bin/
   '';
 
-  squashfs = runCommand "root-squashfs" {
+  ext4 = runCommand "root-ext4" {
+    nativeBuildInputs = [ tar2ext4 ];
     passthru.extracted = rootfs;
   } ''
     cd ${rootfs}
     (
         grep -v ^${rootfs} ${writeReferencesToFile rootfs}
         printf "%s\n" *
-    ) \
-        | xargs tar -cP --owner root:0 --group root:0 --hard-dereference \
-        | ${squashfs-tools-ng}/bin/tar2sqfs -c gzip -X level=1 $out
+    ) | tar -cPf $NIX_BUILD_TOP/rootfs.tar --verbatim-files-from -T - \
+        --hard-dereference --owner root:0 --group root:0
+    tar2ext4 -i $NIX_BUILD_TOP/rootfs.tar -o $out
   '';
 in
-squashfs
+ext4
