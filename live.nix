@@ -132,7 +132,7 @@ let
     nativeBuildInputs = [ cryptsetup ];
     outputs = [ "out" "table" ];
   } ''
-    veritysetup format ${host-rootfs.squashfs} $out > $table
+    veritysetup format ${host-rootfs} $out > $table
   '';
 in
 
@@ -154,18 +154,18 @@ runCommand "spectrum-live" {
   }
 
   efiSize="$(blockSize ${efi})"
-  squashfsSize="$(blockSize ${host-rootfs.squashfs})"
+  rootfsSize="$(blockSize ${host-rootfs})"
   veritySize="$(blockSize ${verity})"
 
-  truncate -s $(((3 * 2048 + $efiSize + $squashfsSize + $veritySize) * 512)) $out
+  truncate -s $(((3 * 2048 + $efiSize + $rootfsSize + $veritySize) * 512)) $out
   sfdisk $out <<EOF
   label: gpt
-  - $efiSize      U                                    -
-  - $squashfsSize 4f68bce3-e8cd-4db1-96e7-fbcaf984b709 -
-  - $veritySize   2c7357ed-ebd2-46d9-aec1-23d437ec2bf5 -
+  - $efiSize    U                                    -
+  - $rootfsSize 4f68bce3-e8cd-4db1-96e7-fbcaf984b709 -
+  - $veritySize 2c7357ed-ebd2-46d9-aec1-23d437ec2bf5 -
   EOF
 
   fillPartition $out 0 ${efi}
-  fillPartition $out 1 ${host-rootfs.squashfs}
+  fillPartition $out 1 ${host-rootfs}
   fillPartition $out 2 ${verity}
 ''
