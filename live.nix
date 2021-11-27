@@ -1,4 +1,4 @@
-{ stdenv, host-rootfs, runCommand, runCommandCC, writeReferencesToFile
+{ stdenv, host-rootfs, extfs, runCommand, runCommandCC, writeReferencesToFile
 , pkgsStatic
 , busybox, cpio, cryptsetup, dosfstools, jq, linux, lvm2, mtools, systemd
 , util-linux
@@ -156,7 +156,7 @@ runCommand "spectrum-live" {
   efiSize="$(blockSize ${efi})"
   veritySize="$(blockSize ${verity})"
   rootfsSize="$(blockSize ${host-rootfs})"
-  extSize=1
+  extSize="$(blockSize ${extfs})"
 
   truncate -s $(((4 * 2048 + $efiSize + $veritySize + $rootfsSize + $extSize) * 512)) $out
   sfdisk $out <<EOF
@@ -170,4 +170,5 @@ runCommand "spectrum-live" {
   fillPartition $out 0 ${efi}
   fillPartition $out 1 ${verity}
   fillPartition $out 2 ${host-rootfs}
+  fillPartition $out 3 ${extfs}
 ''
