@@ -9,7 +9,7 @@ let
 
     spectrum-live = callPackage ./live.nix { };
 
-    host-rootfs = callPackage ./host-rootfs.nix { };
+    host-rootfs = import ../spectrum-rootfs { inherit pkgs; };
   };
 in
 self

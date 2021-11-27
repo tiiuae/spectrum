@@ -156,15 +156,15 @@ runCommand "spectrum-live" {
   efiSize="$(blockSize ${efi})"
   veritySize="$(blockSize ${verity})"
   rootfsSize="$(blockSize ${host-rootfs})"
-  dataSize=1
+  extSize=1
 
-  truncate -s $(((4 * 2048 + $efiSize + $veritySize + $rootfsSize + $dataSize) * 512)) $out
+  truncate -s $(((4 * 2048 + $efiSize + $veritySize + $rootfsSize + $extSize) * 512)) $out
   sfdisk $out <<EOF
   label: gpt
   - $efiSize    U                                    -
   - $veritySize 2c7357ed-ebd2-46d9-aec1-23d437ec2bf5 -
   - $rootfsSize 4f68bce3-e8cd-4db1-96e7-fbcaf984b709 -
-  - $dataSize   9293e1ff-cee4-4658-88be-898ec863944f -
+  - $extSize    9293e1ff-cee4-4658-88be-898ec863944f -
   EOF
 
   fillPartition $out 0 ${efi}
