@@ -3,6 +3,7 @@ cp --no-preserve=mode $(nix-build --no-out-link -A spectrum-live) spectrum-live
 qemu-kvm -m 4G \
 	-nographic \
 	-bios $(nix-build --no-out-link -A OVMF.fd '<nixpkgs>')/FV/OVMF.fd \
+	-cpu host \
 	-device qemu-xhci \
 	-device usb-storage,drive=drive1,removable=true \
 	-drive file=spectrum-live,id=drive1,format=raw,if=none
