@@ -69,7 +69,8 @@ let
       if { mount --move /sys /mnt/sys }
       if { mount --move /dev /mnt/dev }
 
-      switch_root /mnt /bin/sh -il
+      switch_root /mnt
+      /etc/init
     '';
     mdevconf = ''
       -$MODALIAS=.* 0:0 660 +importas -iu MODALIAS MODALIAS modprobe $MODALIAS
