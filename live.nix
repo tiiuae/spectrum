@@ -23,6 +23,7 @@ let
       if { mount -t devtmpfs none /dev }
       if { mount -t proc none /proc }
       if { mount -t sysfs none /sys }
+      if { mount -t efivarfs none /sys/firmware/efi/efivars }
 
       if { mkfifo /dev/esp.poll }
 
@@ -74,7 +75,7 @@ let
     '';
     mdevconf = ''
       -$MODALIAS=.* 0:0 660 +importas -iu MODALIAS MODALIAS modprobe $MODALIAS
-      $DEVTYPE=partition 0:0 660 +importas -iu MDEV MDEV foreground { redirfd -w 2 /dev/null ln -s $MDEV /dev/esp } redirfd -w -nb 3 /dev/esp.poll echo
+      $DEVTYPE=partition 0:0 660 +importas -iu MDEV MDEV if { pipeline { lsblk -lnpo PARTUUID $MDEV } pipeline { awk "{gsub(\".\", \"&\\n\"); printf \"\\006\\n\\n\\n%s\\n\\n\", $0}" } pipeline { tr "\\n" "\\0" } diff -aiq - /sys/firmware/efi/efivars/LoaderDevicePartUUID-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f } foreground { redirfd -w 2 /dev/null ln -s $MDEV /dev/esp } redirfd -w -nb 3 /dev/esp.poll echo
     '';
   } ''
     installPkg() {
@@ -82,7 +83,7 @@ let
         ln -sf $1/bin/* root/bin
     }
 
-    mkdir -p root/{bin,dev,etc,mnt,nix/store,proc,sys}
+    mkdir -p root/{bin,dev,etc,mnt,nix/store,proc,sys,tmp}
     xargs cp -rt root/nix/store < ${writeReferencesToFile cryptsetup}
     ln -s ${cryptsetup}/bin/* root/bin
     installPkg ${busybox.override { enableStatic = true; }}
