@@ -1,0 +1,56 @@
+#!/bin/execlineb -S0
+
+export PATH /bin
+
+if { mount -t devtmpfs none /dev }
+if { mount -t proc none /proc }
+if { mount -t sysfs none /sys }
+if { mount -t efivarfs none /sys/firmware/efi/efivars }
+
+if { mkfifo /dev/esp.poll }
+
+background {
+  fdclose 3
+  mdevd -C
+}
+importas -iu mdevd_pid !
+
+if { modprobe ext4 }
+
+if {
+  redirfd -r 0 /dev/esp.poll
+  redirfd -w 1 /dev/null
+  head -c 1
+}
+background { rm /dev/esp.poll }
+background { kill $mdevd_pid }
+
+backtick -E partname { readlink /dev/esp }
+backtick -E partpath { realpath /sys/class/block/${partname} }
+backtick -E diskpath { realpath ${partpath}/.. }
+backtick -E diskname { basename $diskpath }
+
+backtick -E rootdev {
+  pipeline { lsblk -lnpo NAME,PARTTYPE /dev/${diskname} }
+  pipeline { grep -m 1 4f68bce3-e8cd-4db1-96e7-fbcaf984b709 }
+  cut -d " " -f 1
+}
+
+backtick -E hashdev {
+  pipeline { lsblk -lnpo NAME,PARTTYPE /dev/${diskname} }
+  pipeline { grep -m 1 2c7357ed-ebd2-46d9-aec1-23d437ec2bf5 }
+  cut -d " " -f 1
+}
+
+background { rm /dev/esp }
+
+backtick -E roothash { cat /etc/roothash }
+
+if { veritysetup open $rootdev root-verity $hashdev $roothash }
+if { mount /dev/mapper/root-verity /mnt }
+if { mount --move /proc /mnt/proc }
+if { mount --move /sys /mnt/sys }
+if { mount --move /dev /mnt/dev }
+
+switch_root /mnt
+/etc/init

@@ -14,69 +14,6 @@ let
 
   initramfs = runCommand "spectrum-initramfs" {
     nativeBuildInputs = [ cpio ];
-    passAsFile = [ "init" "mdevconf" ];
-    init = ''
-      #!/bin/execlineb -S0
-
-      export PATH /bin
-
-      if { mount -t devtmpfs none /dev }
-      if { mount -t proc none /proc }
-      if { mount -t sysfs none /sys }
-      if { mount -t efivarfs none /sys/firmware/efi/efivars }
-
-      if { mkfifo /dev/esp.poll }
-
-      background {
-        fdclose 3
-        mdevd -C
-      }
-      importas -iu mdevd_pid !
-
-      if { modprobe ext4 }
-
-      if {
-        redirfd -r 0 /dev/esp.poll
-        redirfd -w 1 /dev/null
-        head -c 1
-      }
-      background { rm /dev/esp.poll }
-      background { kill $mdevd_pid }
-
-      backtick -E partname { readlink /dev/esp }
-      backtick -E partpath { realpath /sys/class/block/''${partname} }
-      backtick -E diskpath { realpath ''${partpath}/.. }
-      backtick -E diskname { basename $diskpath }
-
-      backtick -E rootdev {
-        pipeline { lsblk -lnpo NAME,PARTTYPE /dev/''${diskname} }
-        pipeline { grep -m 1 4f68bce3-e8cd-4db1-96e7-fbcaf984b709 }
-        cut -d " " -f 1
-      }
-
-      backtick -E hashdev {
-        pipeline { lsblk -lnpo NAME,PARTTYPE /dev/''${diskname} }
-        pipeline { grep -m 1 2c7357ed-ebd2-46d9-aec1-23d437ec2bf5 }
-        cut -d " " -f 1
-      }
-
-      background { rm /dev/esp }
-
-      backtick -E roothash { cat /etc/roothash }
-
-      if { veritysetup open $rootdev root-verity $hashdev $roothash }
-      if { mount /dev/mapper/root-verity /mnt }
-      if { mount --move /proc /mnt/proc }
-      if { mount --move /sys /mnt/sys }
-      if { mount --move /dev /mnt/dev }
-
-      switch_root /mnt
-      /etc/init
-    '';
-    mdevconf = ''
-      -$MODALIAS=.* 0:0 660 +importas -iu MODALIAS MODALIAS modprobe $MODALIAS
-      $DEVTYPE=partition 0:0 660 +importas -iu MDEV MDEV if { pipeline { lsblk -lnpo PARTUUID $MDEV } pipeline { awk "{gsub(\".\", \"&\\n\"); printf \"\\006\\n\\n\\n%s\\n\\n\", $0}" } pipeline { tr "\\n" "\\0" } diff -aiq - /sys/firmware/efi/efivars/LoaderDevicePartUUID-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f } foreground { redirfd -w 2 /dev/null ln -s $MDEV /dev/esp } redirfd -w -nb 3 /dev/esp.poll echo
-    '';
   } ''
     installPkg() {
         cp -r $1 root/nix/store
@@ -95,9 +32,9 @@ let
 
     cp -f ${pkgsStatic.utillinux.override { systemd = null; }}/bin/{blkid,findfs,lsblk} root/bin
     ln -s /bin root/sbin
-    install $initPath root/init
+    install ${etc/init} root/init
     grep -m 1 '^Root hash' ${verity.table} | awk '{print $3}' > root/etc/roothash
-    cp $mdevconfPath root/etc/mdev.conf
+    cp ${etc/mdev.conf} root/etc/mdev.conf
     cp -R ${linux}/lib root
     cd root
     find * -print0 | xargs -0r touch -h -d '@1'
@@ -105,15 +42,11 @@ let
   '';
 
   uki = runCommandCC "spectrum-uki" {
-    passAsFile = [ "cmdline" "osrel" ];
+    passAsFile = [ "cmdline" ];
     cmdline = "ro console=ttyS0";
-    osrel = ''
-      PRETTY_NAME="Spectrum"
-      VERSION_ID=0.1
-    '';
     inherit initramfs;
   } ''
-    objcopy --add-section .osrel=$osrelPath --change-section-vma .osrel=0x20000 \
+    objcopy --add-section .osrel=${etc/os-release} --change-section-vma .osrel=0x20000 \
             --add-section .cmdline=$cmdlinePath --change-section-vma .cmdline=0x30000 \
             --add-section .linux=${linux}/${kernelTarget} --change-section-vma .linux=0x40000 \
             --add-section .initrd=$initramfs --change-section-vma .initrd=0x3000000 \
