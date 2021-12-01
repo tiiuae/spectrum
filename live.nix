@@ -41,7 +41,8 @@ let
   } ''
     mkdir -p root/{dev,etc,mnt,proc,sys,tmp}
     install ${etc/init} root/init
-    grep -m 1 '^Root hash' ${verity.table} | awk '{print $3}' > root/etc/roothash
+    awk -F ':[[:blank:]]*' '$1 == "Root hash" {print $2; exit}' ${verity.table} \
+        > root/etc/roothash
     cp ${etc/mdev.conf} root/etc/mdev.conf
     cd root
     find * -print0 | xargs -0r touch -h -d '@1'
