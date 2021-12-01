@@ -12,31 +12,46 @@ let
 
   kernelTarget = stdenv.hostPlatform.linux-kernel.target;
 
-  initramfs = runCommand "spectrum-initramfs" {
+  packagesCpio = runCommand "packages.cpio" {
     nativeBuildInputs = [ cpio ];
   } ''
     installPkg() {
-        cp -r $1 root/nix/store
-        ln -sf $1/bin/* root/bin
+        cp -r $1 pkg/nix/store
+        ln -sf $1/bin/* pkg/bin
     }
 
-    mkdir -p root/{bin,dev,etc,mnt,nix/store,proc,sys,tmp}
-    xargs cp -rt root/nix/store < ${writeReferencesToFile cryptsetup}
-    ln -s ${cryptsetup}/bin/* root/bin
+    mkdir -p pkg/{bin,nix/store}
+    xargs cp -rt pkg/nix/store < ${writeReferencesToFile cryptsetup}
+    ln -s ${cryptsetup}/bin/* pkg/bin
     installPkg ${busybox.override { enableStatic = true; }}
 
     installPkg ${pkgsStatic.mdevd}
     installPkg ${pkgsStatic.execline}
 
-    cp -f ${pkgsStatic.utillinux.override { systemd = null; }}/bin/{blkid,findfs,lsblk} root/bin
-    ln -s /bin root/sbin
+    cp -f ${pkgsStatic.utillinux.override { systemd = null; }}/bin/{blkid,findfs,lsblk} pkg/bin
+    cp -R ${linux}/lib pkg
+    ln -s /bin pkg/sbin
+    cd pkg
+    find * -print0 | xargs -0r touch -h -d '@1'
+    find * -print0 | sort -z | cpio -o -H newc -R +0:+0 --reproducible --null > $out
+  '';
+
+  localCpio = runCommand "local.cpio" {
+    nativeBuildInputs = [ cpio ];
+  } ''
+    mkdir -p root/{dev,etc,mnt,proc,sys,tmp}
     install ${etc/init} root/init
     grep -m 1 '^Root hash' ${verity.table} | awk '{print $3}' > root/etc/roothash
     cp ${etc/mdev.conf} root/etc/mdev.conf
-    cp -R ${linux}/lib root
     cd root
     find * -print0 | xargs -0r touch -h -d '@1'
-    find * -print0 | sort -z | cpio -o -H newc -R +0:+0 --reproducible --null | gzip -9n > $out
+    find * -print0 | sort -z | cpio -o -H newc -R +0:+0 --reproducible --null > $out
+  '';
+
+  initramfs = runCommand "spectrum-initramfs" {
+    nativeBuildInputs = [ cpio ];
+  } ''
+    cat ${packagesCpio} ${localCpio} | gzip -9n > $out
   '';
 
   uki = runCommandCC "spectrum-uki" {
