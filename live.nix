@@ -1,5 +1,5 @@
-{ stdenv, host-rootfs, extfs, runCommand, runCommandCC, writeReferencesToFile
-, pkgsStatic
+{ lib, stdenv, host-rootfs, extfs, runCommand, runCommandCC
+, writeReferencesToFile, pkgsStatic
 , busybox, cpio, cryptsetup, dosfstools, jq, linux, lvm2, mtools, systemd
 , util-linux
 }:
@@ -8,6 +8,8 @@ let
   cryptsetup' = cryptsetup;
 in
 let
+  inherit (lib) cleanSource cleanSourceWith;
+
   cryptsetup = cryptsetup'.override { lvm2 = lvm2.override { udev = null; }; };
 
   kernelTarget = stdenv.hostPlatform.linux-kernel.target;
@@ -36,16 +38,22 @@ let
     find * -print0 | sort -z | cpio -o -H newc -R +0:+0 --reproducible --null > $out
   '';
 
-  localCpio = runCommand "local.cpio" {
+  localCpio = stdenv.mkDerivation {
+    name = "local.cpio";
+
+    src = cleanSourceWith {
+      filter = name: _type: name != "${toString ./.}/build" && name != "${toString ./.}/spectrum-live";
+      src = cleanSource ./.;
+    };
+
     nativeBuildInputs = [ cpio ];
-  } ''
-    mkdir -p root/{dev,etc,mnt,proc,sys,tmp}
-    install ${etc/init} root/init
-    cp ${etc/mdev.conf} root/etc/mdev.conf
-    cd root
-    find * -print0 | xargs -0r touch -h -d '@1'
-    find * -print0 | sort -z | cpio -o -H newc -R +0:+0 --reproducible --null > $out
-  '';
+
+    installPhase = ''
+      cp build/local.cpio $out
+    '';
+
+    enableParallelBuilding = true;
+  };
 
   initramfs = runCommand "spectrum-initramfs" {
     nativeBuildInputs = [ cpio ];
