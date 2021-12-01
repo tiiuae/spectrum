@@ -44,7 +44,7 @@ backtick -E hashdev {
 
 background { rm /dev/esp }
 
-backtick -E roothash { cat /etc/roothash }
+importas -i roothash roothash
 
 if { veritysetup open $rootdev root-verity $hashdev $roothash }
 if { mount /dev/mapper/root-verity /mnt }

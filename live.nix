@@ -41,8 +41,6 @@ let
   } ''
     mkdir -p root/{dev,etc,mnt,proc,sys,tmp}
     install ${etc/init} root/init
-    awk -F ':[[:blank:]]*' '$1 == "Root hash" {print $2; exit}' ${verity.table} \
-        > root/etc/roothash
     cp ${etc/mdev.conf} root/etc/mdev.conf
     cd root
     find * -print0 | xargs -0r touch -h -d '@1'
@@ -60,8 +58,10 @@ let
     cmdline = "ro console=ttyS0";
     inherit initramfs;
   } ''
+    roothash="$(awk -F ':[[:blank:]]*' '$1 == "Root hash" {print $2; exit}' ${verity.table})"
+    echo "ro console=ttyS0 roothash=$roothash" > cmdline
     objcopy --add-section .osrel=${etc/os-release} --change-section-vma .osrel=0x20000 \
-            --add-section .cmdline=$cmdlinePath --change-section-vma .cmdline=0x30000 \
+            --add-section .cmdline=cmdline --change-section-vma .cmdline=0x30000 \
             --add-section .linux=${linux}/${kernelTarget} --change-section-vma .linux=0x40000 \
             --add-section .initrd=$initramfs --change-section-vma .initrd=0x3000000 \
             ${systemd}/lib/systemd/boot/efi/linuxx64.efi.stub $out
