@@ -38,28 +38,24 @@ let
     find * -print0 | sort -z | cpio -o -H newc -R +0:+0 --reproducible --null > $out
   '';
 
-  localCpio = stdenv.mkDerivation {
-    name = "local.cpio";
+  initramfs = stdenv.mkDerivation {
+    name = "initramfs";
 
     src = cleanSourceWith {
       filter = name: _type: name != "${toString ./.}/build" && name != "${toString ./.}/spectrum-live";
       src = cleanSource ./.;
     };
 
+    PACKAGES_CPIO = packagesCpio;
+
     nativeBuildInputs = [ cpio ];
 
     installPhase = ''
-      cp build/local.cpio $out
+      cp build/initramfs $out
     '';
 
     enableParallelBuilding = true;
   };
-
-  initramfs = runCommand "spectrum-initramfs" {
-    nativeBuildInputs = [ cpio ];
-  } ''
-    cat ${packagesCpio} ${localCpio} | gzip -9n > $out
-  '';
 
   uki = runCommandCC "spectrum-uki" {
     passAsFile = [ "cmdline" ];

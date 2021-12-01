@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: EUPL-1.2
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
+build/initramfs: build/local.cpio $(PACKAGES_CPIO)
+	cat build/local.cpio $(PACKAGES_CPIO) | gzip -9n > $@
+
 build/local.cpio: etc/init etc/mdev.conf
 	rm -rf build/root
 
