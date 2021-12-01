@@ -28,8 +28,6 @@ let
     installPkg ${pkgsStatic.mdevd}
     installPkg ${pkgsStatic.execline}
 
-    cp -fv ${pkgsStatic.coreutils}/bin/date root/bin
-
     cp -f ${pkgsStatic.utillinux.override { systemd = null; }}/bin/{blkid,findfs,lsblk} root/bin
     ln -s /bin root/sbin
     install ${etc/init} root/init
