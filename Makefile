@@ -19,6 +19,7 @@ build/mountpoints:
 	rm -rf build/mountpoints
 	mkdir -p build/mountpoints
 	cd build/mountpoints && mkdir -p $(MOUNTPOINTS)
+	find build/mountpoints -mindepth 1 -exec touch -d @0 {} ';'
 
 clean:
 	rm -rf build
