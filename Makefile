@@ -1,18 +1,24 @@
 # SPDX-License-Identifier: EUPL-1.2
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
+CPIO = cpio
+CPIOFLAGS = --reproducible -R +0:+0 -H newc
+
 build/initramfs: build/local.cpio $(PACKAGES_CPIO)
 	cat build/local.cpio $(PACKAGES_CPIO) | gzip -9n > $@
 
-build/local.cpio: etc/init etc/mdev.conf
-	rm -rf build/root
+MOUNTPOINTS = dev mnt proc sys tmp
 
-	mkdir -p build/root/{dev,etc,mnt,proc,sys,tmp}
-	install etc/init build/root/init
-	cp etc/mdev.conf build/root/etc/mdev.conf
+build/local.cpio: etc/init etc/mdev.conf build/mountpoints
+	printf "%s\n" etc etc/mdev.conf | $(CPIO) -o $(CPIOFLAGS) > $@
+	cd etc && echo init | $(CPIO) -o $(CPIOFLAGS) -AF ../$@
+	cd build/mountpoints && \
+	    printf "%s\n" $(MOUNTPOINTS) | $(CPIO) -o $(CPIOFLAGS) -AF ../../$@
 
-	find build/root -print0 | xargs -0r touch -h -d '@1'
-	(cd build/root; find . -print0 | sort -z | cpio -o -H newc -R +0:+0 --reproducible --null) > $@
+build/mountpoints:
+	rm -rf build/mountpoints
+	mkdir -p build/mountpoints
+	cd build/mountpoints && mkdir -p $(MOUNTPOINTS)
 
 clean:
 	rm -rf build
