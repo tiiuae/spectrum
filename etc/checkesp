@@ -23,6 +23,7 @@ if {
   }
   pipeline { tr "\\n" "\\0" }
 
+  redirfd -w 1 /dev/null
   diff -aiq - /sys/firmware/efi/efivars/LoaderDevicePartUUID-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
 }
 
