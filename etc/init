@@ -6,7 +6,7 @@
 /bin/s6-setsid -qb --
 
 umask 022
-if { s6-mount -t tmpfs -o mode=0755 tmpfs /run }
+if { mount -t tmpfs -o mode=0755 tmpfs /run }
 if { s6-hiercopy /etc/service /run/service }
 emptyenv -p
 
@@ -17,7 +17,7 @@ background {
 
   if { s6-mkdir -p /dev/pts /dev/shm }
 
-  if { s6-mount -a }
+  if { mount -a }
 
   s6-rc change ok-all
 }
