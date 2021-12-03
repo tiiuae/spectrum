@@ -8,34 +8,36 @@ let
   cryptsetup' = cryptsetup;
 in
 let
-  inherit (lib) cleanSource cleanSourceWith;
+  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
   cryptsetup = cryptsetup'.override { lvm2 = lvm2.override { udev = null; }; };
 
   kernelTarget = stdenv.hostPlatform.linux-kernel.target;
 
+  packages = [
+    cryptsetup (busybox.override { enableStatic = true; }) pkgsStatic.mdevd
+    pkgsStatic.execline
+  ];
+
+  packagesSysroot = runCommand "packages-sysroot" {} ''
+    mkdir -p $out/bin
+    ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/bin
+    cp -R ${linux}/lib $out
+    ln -s /bin $out/sbin
+
+    # TODO: this is a hack and we should just build the util-linux
+    # programs we want.
+    # https://lore.kernel.org/util-linux/87zgrl6ufb.fsf@alyssa.is/
+    cp ${pkgsStatic.util-linux.override { systemd = null; }}/bin/lsblk $out/bin
+  '';
+
   packagesCpio = runCommand "packages.cpio" {
     nativeBuildInputs = [ cpio ];
+    storePaths = writeReferencesToFile packagesSysroot;
   } ''
-    installPkg() {
-        cp -r $1 pkg/nix/store
-        ln -sf $1/bin/* pkg/bin
-    }
-
-    mkdir -p pkg/{bin,nix/store}
-    xargs cp -rt pkg/nix/store < ${writeReferencesToFile cryptsetup}
-    ln -s ${cryptsetup}/bin/* pkg/bin
-    installPkg ${busybox.override { enableStatic = true; }}
-
-    installPkg ${pkgsStatic.mdevd}
-    installPkg ${pkgsStatic.execline}
-
-    cp -f ${pkgsStatic.utillinux.override { systemd = null; }}/bin/{blkid,findfs,lsblk} pkg/bin
-    cp -R ${linux}/lib pkg
-    ln -s /bin pkg/sbin
-    cd pkg
-    find * -print0 | xargs -0r touch -h -d '@1'
-    find * -print0 | sort -z | cpio -o -H newc -R +0:+0 --reproducible --null > $out
+    cd ${packagesSysroot}
+    (printf "/nix\n/nix/store\n" && find . $(< $storePaths)) |
+        cpio -o -H newc -R +0:+0 --reproducible > $out
   '';
 
   initramfs = stdenv.mkDerivation {
