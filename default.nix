@@ -9,6 +9,8 @@ let
 
     spectrum-live = callPackage ./live.nix { };
 
+    initramfs = callPackage ./initramfs.nix { };
+
     host-rootfs = import ../spectrum-rootfs { inherit pkgs; };
 
     extfs = pkgs.pkgsStatic.callPackage ./extfs.nix { inherit pkgs; };
