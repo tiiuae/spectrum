@@ -37,15 +37,13 @@ if {
   }
 
   backtick -E rootdev {
-    pipeline { lsblk -lnpo NAME,PARTTYPE /dev/${diskname} }
-    pipeline { grep -m 1 4f68bce3-e8cd-4db1-96e7-fbcaf984b709 }
-    cut -d " " -f 1
+    pipeline { lsblk -lnpo PARTTYPE,NAME /dev/${diskname} }
+    awk "$1 == \"4f68bce3-e8cd-4db1-96e7-fbcaf984b709\" { print $2 }"
   }
 
   backtick -E hashdev {
-    pipeline { lsblk -lnpo NAME,PARTTYPE /dev/${diskname} }
-    pipeline { grep -m 1 2c7357ed-ebd2-46d9-aec1-23d437ec2bf5 }
-    cut -d " " -f 1
+    pipeline { lsblk -lnpo PARTTYPE,NAME /dev/${diskname} }
+    awk "$1 == \"2c7357ed-ebd2-46d9-aec1-23d437ec2bf5\" { print $2 }"
   }
 
   importas -i roothash roothash
