@@ -9,8 +9,9 @@ build/initramfs: build/local.cpio $(PACKAGES_CPIO)
 
 MOUNTPOINTS = dev mnt proc sys tmp
 
-build/local.cpio: etc/init etc/mdev.conf build/mountpoints
-	printf "%s\n" etc etc/mdev.conf | $(CPIO) -o $(CPIOFLAGS) > $@
+build/local.cpio: etc/checkesp etc/init etc/mdev.conf build/mountpoints
+	printf "%s\n" etc etc/checkesp etc/mdev.conf | \
+	    $(CPIO) -o $(CPIOFLAGS) > $@
 	cd etc && echo init | $(CPIO) -o $(CPIOFLAGS) -AF ../$@
 	cd build/mountpoints && \
 	    printf "%s\n" $(MOUNTPOINTS) | $(CPIO) -o $(CPIOFLAGS) -AF ../../$@
