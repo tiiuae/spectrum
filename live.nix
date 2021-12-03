@@ -1,8 +1,14 @@
-{ stdenv, host-rootfs, extfs, initramfs, runCommand, runCommandCC
+{ pkgs ? import <nixpkgs> {} }: pkgs.callPackage (
+
+{ stdenv, runCommand, runCommandCC, callPackage, pkgsStatic
 , cryptsetup, dosfstools, jq, linux, mtools, systemd, util-linux
 }:
 
 let
+  initramfs = callPackage ./. { };
+  host-rootfs = import ../spectrum-rootfs { inherit pkgs; };
+  extfs = pkgsStatic.callPackage ./extfs.nix { inherit pkgs; };
+
   kernelTarget = stdenv.hostPlatform.linux-kernel.target;
 
   uki = runCommandCC "spectrum-uki" {
@@ -73,3 +79,4 @@ runCommand "spectrum-live" {
   fillPartition $out 2 ${host-rootfs}
   fillPartition $out 3 ${extfs}
 ''
+) {}

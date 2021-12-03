@@ -1,20 +1,60 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> {} }: pkgs.callPackage (
 
-pkgs.callPackage (
-{ newScope }:
+{ lib, stdenv, runCommand, writeReferencesToFile, pkgsStatic
+, busybox, cpio, cryptsetup, linux, lvm2
+}:
 
 let
-  self = with self; {
-    callPackage = newScope self;
-
-    spectrum-live = callPackage ./live.nix { };
-
-    initramfs = callPackage ./initramfs.nix { };
-
-    host-rootfs = import ../spectrum-rootfs { inherit pkgs; };
-
-    extfs = pkgs.pkgsStatic.callPackage ./extfs.nix { inherit pkgs; };
-  };
+  cryptsetup' = cryptsetup;
 in
-self
+let
+  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
+
+  cryptsetup = cryptsetup'.override { lvm2 = lvm2.override { udev = null; }; };
+
+  packages = [
+    cryptsetup (busybox.override { enableStatic = true; }) pkgsStatic.mdevd
+    pkgsStatic.execline
+  ];
+
+  packagesSysroot = runCommand "packages-sysroot" {} ''
+    mkdir -p $out/bin
+    ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/bin
+    cp -R ${linux}/lib $out
+    ln -s /bin $out/sbin
+
+    # TODO: this is a hack and we should just build the util-linux
+    # programs we want.
+    # https://lore.kernel.org/util-linux/87zgrl6ufb.fsf@alyssa.is/
+    cp ${pkgsStatic.util-linux.override { systemd = null; }}/bin/lsblk $out/bin
+  '';
+
+  packagesCpio = runCommand "packages.cpio" {
+    nativeBuildInputs = [ cpio ];
+    storePaths = writeReferencesToFile packagesSysroot;
+  } ''
+    cd ${packagesSysroot}
+    (printf "/nix\n/nix/store\n" && find . $(< $storePaths)) |
+        cpio -o -H newc -R +0:+0 --reproducible > $out
+  '';
+in
+
+stdenv.mkDerivation {
+  name = "initramfs";
+
+  src = cleanSourceWith {
+    filter = name: _type: name != "${toString ./.}/build" && name != "${toString ./.}/spectrum-live";
+    src = cleanSource ./.;
+  };
+
+  PACKAGES_CPIO = packagesCpio;
+
+  nativeBuildInputs = [ cpio ];
+
+  installPhase = ''
+    cp build/initramfs $out
+  '';
+
+  enableParallelBuilding = true;
+}
 ) {}

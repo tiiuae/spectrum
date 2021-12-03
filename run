@@ -1,5 +1,5 @@
 #!/bin/sh -eux
-cp --no-preserve=mode $(nix-build --no-out-link -A spectrum-live) spectrum-live
+cp --no-preserve=mode $(nix-build --no-out-link live.nix) spectrum-live
 qemu-kvm -m 4G \
 	-bios $(nix-build --no-out-link -A OVMF.fd '<nixpkgs>')/FV/OVMF.fd \
 	-cpu host \
