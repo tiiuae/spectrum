@@ -31,4 +31,4 @@ foreground {
   ln -s $MDEV /dev/esp
 }
 
-redirfd -w -nb 3 /dev/esp.poll echo
+redirfd -w -nb 1 /dev/esp.poll echo
