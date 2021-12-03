@@ -7,10 +7,15 @@ CPIOFLAGS = --reproducible -R +0:+0 -H newc
 build/initramfs: build/local.cpio $(PACKAGES_CPIO)
 	cat build/local.cpio $(PACKAGES_CPIO) | gzip -9n > $@
 
+# etc/init isn't included in ETC_FILES, because it gets installed to
+# the root.
+ETC_FILES = etc/checkesp etc/fstab etc/mdev.conf
 MOUNTPOINTS = dev mnt proc sys tmp
 
-build/local.cpio: etc/checkesp etc/init etc/mdev.conf build/mountpoints
-	printf "%s\n" etc etc/checkesp etc/mdev.conf | \
+build/local.cpio: $(ETC_FILES) etc/init build/mountpoints
+	printf "%s\n" $(ETC_FILES) | \
+	    awk '{while (length) { print; sub("/?[^/]*$$", "") }}' | \
+	    sort -u | \
 	    $(CPIO) -o $(CPIOFLAGS) > $@
 	cd etc && echo init | $(CPIO) -o $(CPIOFLAGS) -AF ../$@
 	cd build/mountpoints && \

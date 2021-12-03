@@ -2,10 +2,7 @@
 
 export PATH /bin
 
-if { mount -t devtmpfs none /dev }
-if { mount -t proc none /proc }
-if { mount -t sysfs none /sys }
-if { mount -t efivarfs none /sys/firmware/efi/efivars }
+if { mount -a }
 
 if { mkfifo /dev/esp.poll }
 

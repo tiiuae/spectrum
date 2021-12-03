@@ -1,0 +1,4 @@
+devtmpfs	/dev				devtmpfs	defaults
+proc		/proc				proc		defaults
+sysfs		/sys				sysfs		defaults
+efivarfs	/sys/firmware/efi/efivars	efivarfs	defaults
