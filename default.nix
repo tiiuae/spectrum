@@ -57,7 +57,7 @@ let
 
   packagesTar = runCommand "packages.tar" {} ''
     cd ${packagesSysroot}
-    tar -cf $out --verbatim-files-from \
+    tar -cf $out --sort=name --mtime=@0 --verbatim-files-from \
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
