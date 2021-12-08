@@ -60,6 +60,12 @@ runCommand "spectrum-live" {
       dd if="$3" of="$1" seek="$start" count="$size" conv=notrunc
   }
 
+  formatUuid() {
+      printf "%s\n" "''${1:0:8}-''${1:8:4}-''${1:12:4}-''${1:16:4}-''${1:20}"
+  }
+
+  roothash="$(awk -F ':[[:blank:]]*' '$1 == "Root hash" {print $2; exit}' ${verity.table})"
+
   efiSize="$(blockSize ${efi})"
   veritySize="$(blockSize ${verity})"
   rootfsSize="$(blockSize ${host-rootfs})"
@@ -68,10 +74,10 @@ runCommand "spectrum-live" {
   truncate -s $(((4 * 2048 + $efiSize + $veritySize + $rootfsSize + $extSize) * 512)) $out
   sfdisk $out <<EOF
   label: gpt
-  - $efiSize    U                                    -
-  - $veritySize 2c7357ed-ebd2-46d9-aec1-23d437ec2bf5 -
-  - $rootfsSize 4f68bce3-e8cd-4db1-96e7-fbcaf984b709 -
-  - $extSize    9293e1ff-cee4-4658-88be-898ec863944f -
+  size=$efiSize,    type=c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+  size=$veritySize, type=2c7357ed-ebd2-46d9-aec1-23d437ec2bf5, uuid=$(formatUuid "$(printf "%s" "$roothash" | tail -c 32)")
+  size=$rootfsSize, type=4f68bce3-e8cd-4db1-96e7-fbcaf984b709, uuid=$(formatUuid "$(printf "%s" "$roothash" | head -c 32)")
+  size=$extSize,    type=9293e1ff-cee4-4658-88be-898ec863944f
   EOF
 
   fillPartition $out 0 ${efi}

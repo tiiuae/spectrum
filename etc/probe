@@ -1,0 +1,14 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+importas -i rootfs_uuid ROOTFS_UUID
+importas -i verity_uuid VERITY_UUID
+
+backtick -E rootfs_dev { findfs PARTUUID=${rootfs_uuid} }
+backtick -E verity_dev { findfs PARTUUID=${verity_uuid} }
+
+if { ln -s $rootfs_dev /dev/rootfs }
+if { ln -s $verity_dev /dev/verity }
+
+redirfd -w -nb 1 /dev/rootfs.poll echo

@@ -9,7 +9,7 @@ build/initramfs: build/local.cpio $(PACKAGES_CPIO)
 
 # etc/init isn't included in ETC_FILES, because it gets installed to
 # the root.
-ETC_FILES = etc/checkesp etc/fstab etc/mdev.conf
+ETC_FILES = etc/getuuids etc/probe etc/fstab etc/mdev.conf
 MOUNTPOINTS = dev mnt proc sys tmp
 
 build/local.cpio: $(ETC_FILES) etc/init build/mountpoints

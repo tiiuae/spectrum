@@ -4,7 +4,16 @@ export PATH /bin
 
 if { mount -a }
 
-if { mkfifo /dev/esp.poll }
+piperw 3 4
+if { fdmove 1 4 /etc/getuuids }
+fdclose 4
+# head -1 would be clearer, but it might use buffered I/O and consume
+# too much from the fifo.  Ideally we'd have line(1) from illumos.
+backtick ROOTFS_UUID { fdmove 0 3 dd count=1 bs=37 status=none }
+backtick VERITY_UUID { fdmove 0 3 dd count=1 bs=37 status=none }
+fdclose 3
+
+if { mkfifo /dev/rootfs.poll }
 
 background {
   fdclose 3
@@ -14,7 +23,7 @@ background {
 if { modprobe ext4 }
 
 if {
-  redirfd -r 0 /dev/esp.poll
+  redirfd -r 0 /dev/rootfs.poll
   redirfd -w 1 /dev/null
   head -c 1
 }
@@ -22,35 +31,14 @@ background {
   importas -iu mdevd_pid !
   kill $mdevd_pid
 }
-background { rm /dev/esp.poll }
+background { rm /dev/rootfs.poll }
 
 if {
-  backtick -E diskname {
-    backtick -E diskpath {
-      backtick -E partpath {
-        backtick -E partname { readlink /dev/esp }
-        realpath /sys/class/block/${partname}
-      }
-      realpath ${partpath}/..
-    }
-    basename $diskpath
-  }
-
-  backtick -E rootdev {
-    pipeline { lsblk -lnpo PARTTYPE,NAME /dev/${diskname} }
-    awk "$1 == \"4f68bce3-e8cd-4db1-96e7-fbcaf984b709\" { print $2 }"
-  }
-
-  backtick -E hashdev {
-    pipeline { lsblk -lnpo PARTTYPE,NAME /dev/${diskname} }
-    awk "$1 == \"2c7357ed-ebd2-46d9-aec1-23d437ec2bf5\" { print $2 }"
-  }
-
   importas -i roothash roothash
-  veritysetup open $rootdev root-verity $hashdev $roothash
+  veritysetup open /dev/rootfs root-verity /dev/verity $roothash
 }
 
-background { rm /dev/esp }
+background { rm /dev/rootfs /dev/verity }
 
 if { mount /dev/mapper/root-verity /mnt }
 if { mount --move /proc /mnt/proc }
