@@ -10,7 +10,7 @@ build/initramfs: build/local.cpio $(PACKAGES_CPIO)
 # etc/init isn't included in ETC_FILES, because it gets installed to
 # the root.
 ETC_FILES = etc/getuuids etc/probe etc/fstab etc/mdev.conf
-MOUNTPOINTS = dev mnt proc sys tmp
+MOUNTPOINTS = dev mnt/root proc sys tmp
 
 build/local.cpio: $(ETC_FILES) etc/init build/mountpoints
 	printf "%s\n" $(ETC_FILES) | \
@@ -18,8 +18,10 @@ build/local.cpio: $(ETC_FILES) etc/init build/mountpoints
 	    sort -u | \
 	    $(CPIO) -o $(CPIOFLAGS) > $@
 	cd etc && echo init | $(CPIO) -o $(CPIOFLAGS) -AF ../$@
-	cd build/mountpoints && \
-	    printf "%s\n" $(MOUNTPOINTS) | $(CPIO) -o $(CPIOFLAGS) -AF ../../$@
+	cd build/mountpoints && printf "%s\n" $(MOUNTPOINTS) | \
+	    awk '{while (length) { print; sub("/?[^/]*$$", "") }}' | \
+	    sort -u | \
+	    $(CPIO) -o $(CPIOFLAGS) -AF ../../$@
 
 build/mountpoints:
 	rm -rf build/mountpoints

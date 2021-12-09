@@ -2,6 +2,25 @@
 # SPDX-License-Identifier: EUPL-1.2
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
+if -n {
+  # If this is a Spectrum installer eosimages partition, we might be
+  # booting from the installer, and should loopback mount the images.
+  importas -i mdev MDEV
+  if {
+    backtick -E type { lsblk -lnpo PARTTYPE $mdev }
+    test $type = 56a3bbc3-aefa-43d9-a64d-7b3fd59bbc4e
+  }
+  if { forx -Ep module { exfat loop } modprobe $module }
+  backtick -E uuid { lsblk -lnpo PARTUUID $mdev }
+  if { mkdir -p /mnt/${uuid} }
+  if { mount $mdev /mnt/${uuid} }
+  find /mnt/${uuid} -name *.img -exec
+  losetup -Pf {}
+  ;
+}
+
+# Check whether we now have all the partitions we need to boot.
+
 importas -i rootfs_uuid ROOTFS_UUID
 importas -i verity_uuid VERITY_UUID
 

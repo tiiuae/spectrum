@@ -40,10 +40,10 @@ if {
 
 background { rm /dev/rootfs /dev/verity }
 
-if { mount /dev/mapper/root-verity /mnt }
-if { mount --move /proc /mnt/proc }
-if { mount --move /sys /mnt/sys }
-if { mount --move /dev /mnt/dev }
+if { mount /dev/mapper/root-verity /mnt/root }
+if { mount --move /proc /mnt/root/proc }
+if { mount --move /sys /mnt/root/sys }
+if { mount --move /dev /mnt/root/dev }
 
-switch_root /mnt
+switch_root /mnt/root
 /etc/init
