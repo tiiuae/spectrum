@@ -23,6 +23,8 @@ importas -iu mdevd_pid !
 
 if { modprobe ext4 }
 
+# Do a blocking read on the fifo to wait for mdevd to find the
+# partition.
 if {
   redirfd -r 0 /dev/rootfs.poll
   redirfd -w 1 /dev/null
