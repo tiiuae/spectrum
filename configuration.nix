@@ -8,6 +8,8 @@ let
 in
 
 {
+  boot.initrd.availableKernelModules = [ "squashfs" ];
+
   fileSystems."/" = { fsType = "tmpfs"; };
   fileSystems."/nix/store" = {
     device = "/dev/disk/by-partuuid/6e23b026-9f1e-479d-8a58-a0cda382e1ce";
