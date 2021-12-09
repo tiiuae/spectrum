@@ -6,9 +6,14 @@
 # careful thought, including support for doing it asynchronously
 # e.g. if the ext partition is on a USB device.
 
+backtick -E rootpart {
+  pipeline { veritysetup status root-verity }
+  awk -F ":[[:blank:]]*" "$1 ~ /^[[:blank:]]*data device$/ {print $2; exit}"
+}
+
 backtick -E diskpath {
-  pipeline { lsblk -lnpo MOUNTPOINT,PKNAME }
-  awk "$1 == \"/\" {print $2; exit}"
+  pipeline { lsblk -lnpo KNAME,PKNAME }
+  awk -v rootpart=${rootpart} "$1 == rootpart {print $2; exit}"
 }
 
 backtick -E extpart {

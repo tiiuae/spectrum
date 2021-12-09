@@ -20,6 +20,7 @@ let
   packages = [
     cloud-hypervisor curl execline jq mdevd mktuntap s6 s6-linux-utils
     s6-portable-utils s6-rc screen
+    pkgs.pkgsMusl.cryptsetup
     (busybox.override {
       extraConfig = ''
         CONFIG_INIT n
