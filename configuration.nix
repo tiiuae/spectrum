@@ -26,7 +26,7 @@ in
   boot.loader.systemd-boot.enable = true;
 
   environment.systemPackages = with pkgs; [
-    (callPackage ./installer.nix { })
+    (callPackage ./app { })
     gnome.adwaita-icon-theme
   ];
 

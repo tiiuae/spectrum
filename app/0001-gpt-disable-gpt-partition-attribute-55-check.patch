@@ -1,0 +1,37 @@
+From 2738d4316abe780e50a4f6241b9845fe200edfdd Mon Sep 17 00:00:00 2001
+SPDX-License-Identifier: GPL-2.0-or-later
+SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+From: Alyssa Ross <hi@alyssa.is>
+Date: Thu, 9 Dec 2021 21:10:11 +0000
+Subject: [PATCH 1/5] gpt: disable gpt partition attribute 55 check
+
+Endless OS uses flag 55 to mean a partition should be auto-grown, and
+to identify Endless OS partitions.  Both of these meanings of flag 55
+are specific to Endless OS though, so it doesn't make sense for
+installing other operating systems.
+---
+ gnome-image-installer/util/gpt.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/gnome-image-installer/util/gpt.c b/gnome-image-installer/util/gpt.c
+index c88ba9b9..7a33210f 100644
+--- a/gnome-image-installer/util/gpt.c
++++ b/gnome-image-installer/util/gpt.c
+@@ -241,12 +241,14 @@ int is_eos_gpt_valid(struct ptable *pt, uint64_t *size)
+           || memcmp(&pt->partitions[i].type_guid, GPT_GUID_LINUX_ROOTFS2, 16)==0
+           || memcmp(&pt->partitions[i].type_guid, GPT_GUID_LINUX_ROOTFS3, 16)==0
+           || memcmp(&pt->partitions[i].type_guid, GPT_GUID_LINUX_ROOTFS4, 16)==0) {
++#if 0
+         uint64_t flags = 0;
+         memcpy(&flags, pt->partitions[i].attributes, 8);
+         if(!is_nth_flag_set(flags, 55)) {
+           //  55th flag must be 1 for EOS images
+           continue ;
+         }
++#endif
+         has_root=1;
+         break ;
+       }
+-- 
+2.33.0
+
