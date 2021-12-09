@@ -19,6 +19,7 @@ background {
   fdclose 3
   mdevd -C
 }
+importas -iu mdevd_pid !
 
 if { modprobe ext4 }
 
@@ -27,10 +28,7 @@ if {
   redirfd -w 1 /dev/null
   head -c 1
 }
-background {
-  importas -iu mdevd_pid !
-  kill $mdevd_pid
-}
+background { kill $mdevd_pid }
 background { rm /dev/rootfs.poll }
 
 if {
@@ -41,6 +39,8 @@ if {
 background { rm /dev/rootfs /dev/verity }
 
 if { mount /dev/mapper/root-verity /mnt/root }
+wait { $mdevd_pid }
+
 if { mount --move /proc /mnt/root/proc }
 if { mount --move /sys /mnt/root/sys }
 if { mount --move /dev /mnt/root/dev }
