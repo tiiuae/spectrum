@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: EUPL-1.2
+// SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+polkit.addRule(function (action, subject) {
+    // The user of the graphical session should be able to do anything.
+    if (subject.seat) {
+        return polkit.Result.YES;
+    }
+});
