@@ -23,6 +23,8 @@ in
   users.groups.demo = {};
   security.polkit.extraConfig = readFile ./seat.rules;
 
+  documentation.enable = false;
+
   boot.loader.systemd-boot.enable = true;
 
   environment.systemPackages = with pkgs; [
