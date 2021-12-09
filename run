@@ -1,5 +1,4 @@
 #!/bin/sh -eux
-cp --no-preserve=mode $(nix-build --no-out-link live.nix) spectrum-live
 qemu-kvm -m 4G \
 	-bios $(nix-build --no-out-link -A OVMF.fd '<nixpkgs>')/FV/OVMF.fd \
 	-cpu host \
@@ -7,4 +6,4 @@ qemu-kvm -m 4G \
 	-device virtio-vga-gl \
 	-device qemu-xhci \
 	-device usb-storage,drive=drive1,removable=true \
-	-drive file=spectrum-live,id=drive1,format=raw,if=none
+	-drive file=$(nix-build --no-out-link live.nix),id=drive1,format=raw,if=none,readonly=true
