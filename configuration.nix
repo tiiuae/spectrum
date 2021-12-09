@@ -1,13 +1,15 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs, ... }:
+{ modulesPath, pkgs, ... }:
 
 let
   inherit (builtins) readFile;
 in
 
 {
+  imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
+
   boot.initrd.availableKernelModules = [ "squashfs" ];
 
   fileSystems."/" = { fsType = "tmpfs"; };
