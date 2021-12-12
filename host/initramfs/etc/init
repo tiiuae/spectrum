@@ -1,0 +1,51 @@
+#!/bin/execlineb -S0
+
+export PATH /bin
+
+if { mount -a }
+
+piperw 3 4
+if { fdmove 1 4 /etc/getuuids }
+fdclose 4
+# head -1 would be clearer, but it might use buffered I/O and consume
+# too much from the fifo.  Ideally we'd have line(1) from illumos.
+backtick ROOTFS_UUID { fdmove 0 3 dd count=1 bs=37 status=none }
+backtick VERITY_UUID { fdmove 0 3 dd count=1 bs=37 status=none }
+fdclose 3
+
+if { mkfifo /dev/rootfs.poll }
+
+background {
+  fdclose 3
+  mdevd -C
+}
+importas -iu mdevd_pid !
+
+if { modprobe ext4 }
+
+# Do a blocking read on the fifo to wait for mdevd to find the
+# partition.
+if {
+  redirfd -r 0 /dev/rootfs.poll
+  redirfd -w 1 /dev/null
+  head -c 1
+}
+background { kill $mdevd_pid }
+background { rm /dev/rootfs.poll }
+
+if {
+  importas -i roothash roothash
+  veritysetup open /dev/rootfs root-verity /dev/verity $roothash
+}
+
+background { rm /dev/rootfs /dev/verity }
+
+if { mount /dev/mapper/root-verity /mnt/root }
+wait { $mdevd_pid }
+
+if { mount --move /proc /mnt/root/proc }
+if { mount --move /sys /mnt/root/sys }
+if { mount --move /dev /mnt/root/dev }
+
+switch_root /mnt/root
+/etc/init
