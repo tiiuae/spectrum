@@ -1,0 +1,16 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+if { modprobe kvm-intel }
+
+s6-notifyoncheck -dc "test -S env/cloud-hypervisor.sock"
+
+cloud-hypervisor
+  --api-socket env/cloud-hypervisor.sock
+  --kernel /ext/svc/data/netvm/vmlinux
+  --cmdline "console=ttyS0 root=/dev/vda"
+  --memory size=128M
+  --disk path=/ext/svc/data/netvm/rootfs.ext4,readonly=on
+  --console pty
+  --serial file=/run/netvm.log
