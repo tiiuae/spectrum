@@ -1,0 +1,44 @@
+From edb82b623c4238fc18b7a317f05562a92519419f Mon Sep 17 00:00:00 2001
+SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+SPDX-License-Identifier: GPL-2.0-or-later
+From: Alyssa Ross <hi@alyssa.is>
+Date: Thu, 9 Dec 2021 21:06:36 +0000
+Subject: [PATCH 4/5] finished: don't run eos-diagnostics
+
+This has to be installed separately from eos-installer, and we don't
+currently do that for the Spectrum installer.  If there was an error,
+eos-installer would try to run it, and then display an additional
+error message about not being able to find it on the error screen.
+---
+ .../pages/finished/gis-finished-page.c            | 15 ---------------
+ 1 file changed, 15 deletions(-)
+
+diff --git a/gnome-image-installer/pages/finished/gis-finished-page.c b/gnome-image-installer/pages/finished/gis-finished-page.c
+index b546fcbe..9f75d2ef 100644
+--- a/gnome-image-installer/pages/finished/gis-finished-page.c
++++ b/gnome-image-installer/pages/finished/gis-finished-page.c
+@@ -300,21 +300,6 @@ gis_finished_page_shown (GisPage *page)
+       gtk_widget_hide (priv->success_box);
+       gis_assistant_locale_changed (assistant);
+ 
+-      if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+-        {
+-          /* Running eos-diagnostics can be slow enough that we can't do it
+-           * synchronously on the UI thread.
+-           */
+-          GFile *image_dir = G_FILE (gis_store_get_object (GIS_STORE_IMAGE_DIR));
+-          /* See implementation of gis_write_diagnostics_async for rationale. */
+-          const gchar *home_dir = priv->gedit != NULL ? g_get_home_dir () : NULL;
+-
+-          g_application_hold (G_APPLICATION (page->driver));
+-          gis_write_diagnostics_async (NULL, image_dir, home_dir,
+-                                       NULL, write_diagnostics_cb,
+-                                       g_object_ref (self));
+-        }
+-
+       if (gis_store_is_unattended())
+         {
+           g_timeout_add_seconds (1, (GSourceFunc)toggle_leds, page);
+-- 
+2.33.0
+

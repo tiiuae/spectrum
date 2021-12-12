@@ -1,0 +1,32 @@
+From 9b163a05e237ff27688093252da8440592df5898 Mon Sep 17 00:00:00 2001
+SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+SPDX-License-Identifier: GPL-2.0-or-later
+From: Alyssa Ross <hi@alyssa.is>
+Date: Thu, 9 Dec 2021 21:07:38 +0000
+Subject: [PATCH 5/5] finished: promote #spectrum, not the Endless forum
+
+---
+ gnome-image-installer/pages/finished/gis-finished-page.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/gnome-image-installer/pages/finished/gis-finished-page.c b/gnome-image-installer/pages/finished/gis-finished-page.c
+index 9f75d2ef..f5af32f1 100644
+--- a/gnome-image-installer/pages/finished/gis-finished-page.c
++++ b/gnome-image-installer/pages/finished/gis-finished-page.c
+@@ -481,11 +481,9 @@ gis_finished_page_locale_changed (GisPage *page)
+     }
+ 
+   support_email = get_customer_support_email ();
+-  support_email_markup = g_strdup_printf ("<a href=\"mailto:%1$s\">%1$s</a>",
+-                                          support_email);
+   /* Translators: the %s is the customer support email address */
+-  support_markup = g_strdup_printf (_("Please contact %s or join the <a href=\"https://community.endlessos.com/\">Endless Community</a> to troubleshoot."),
+-                                    support_email_markup);
++  support_markup = g_strdup_printf (_("Please contact %s or join #spectrum on irc.libera.chat to troubleshoot."),
++                                    support_email);
+   gtk_label_set_markup (priv->support_label, support_markup);
+ }
+ 
+-- 
+2.33.0
+
