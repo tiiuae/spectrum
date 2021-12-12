@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+# For now, we only support ext partitions on the same disk as the
+# rootfs.  This could be relaxed in future, but probably requires some
+# careful thought, including support for doing it asynchronously
+# e.g. if the ext partition is on a USB device.
+
+backtick -E rootpart {
+  pipeline { veritysetup status root-verity }
+  awk -F ":[[:blank:]]*" "$1 ~ /^[[:blank:]]*data device$/ {print $2; exit}"
+}
+
+backtick -E diskpath {
+  pipeline { lsblk -lnpo KNAME,PKNAME }
+  awk -v rootpart=${rootpart} "$1 == rootpart {print $2; exit}"
+}
+
+backtick -E extpart {
+  pipeline { lsblk -lnpo PARTTYPE,NAME $diskpath }
+  awk "$1 == \"9293e1ff-cee4-4658-88be-898ec863944f\" {print $2; exit}"
+}
+
+mount $extpart /ext

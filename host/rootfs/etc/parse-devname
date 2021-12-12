@@ -1,0 +1,10 @@
+#!/bin/awk -f
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+# Parses modules.devname into space-separated arguments suitable for mknod(1).
+
+!/^#/ {
+    sub(":", " ", $3);
+    print $2 " " substr($3, 1, 1) " " substr($3, 2);
+}

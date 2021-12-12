@@ -1,0 +1,27 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+foreground {
+  redirfd -w 2 /dev/null
+  ln -ns /usr /run/opengl-driver
+}
+foreground { mkdir /run/user }
+foreground {
+  umask 077
+  mkdir /run/user/0
+}
+unexport ?
+
+backtick USER { id -un }
+backtick HOME {
+  importas -i user USER
+  homeof $user
+}
+
+export XDG_RUNTIME_DIR /run/user/0
+redirfd -r 0 /dev/tty1
+
+importas -i home HOME
+cd $home
+weston
