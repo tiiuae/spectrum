@@ -1,0 +1,60 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2020-2021 Alyssa Ross <hi@alyssa.is>
+
+redirfd -r 0 /dev/null
+
+getpid -E pid
+
+# Checking the return value of the bridge creation is important,
+# because if it fails due to the bridge already existing that means
+# something else could already be using this bridge.
+if { ip link add name br${pid} type bridge }
+background { ip link set br${pid} up }
+
+# Create the net VM end, and attach it to the net VM.
+#
+# TODO: it would be nice if we could have this be non-persistent, so
+# it didn't stick around if the network VM was shut down.
+if {
+  # Try to delete the device in case the VM was powered off (as the
+  # finish script wouldn't have been run in that case.)  Since we check
+  # the return value of ip tuntap add, in the case of a race condition
+  # between deleting the device and creating it again, we'll just fail
+  # and try again.
+  foreground {
+    redirfd -w 2 /dev/null
+    ip link delete router${pid}
+  }
+
+  if { tunctl -t router${pid} }
+  background { ip link set router${pid} master br${pid} }
+  background { ip link set router${pid} up }
+
+  backtick -E router_mac { data/pid2mac -v pid=${pid} -v octet4=80 }
+  curl -Sfso /dev/null
+    -X PUT
+    -H "Content-Type: application/json"
+    -A ""
+    -d "{\"tap\":\"router${pid}\",\"mac\":\"${router_mac}\"}"
+    --unix-socket ../netvm-vmm/env/cloud-hypervisor.sock
+    http://localhost/api/v1/vm.add-net
+}
+
+mktuntap -pvBi client${pid} 4
+background { ip link set client${pid} master br${pid} }
+background { ip link set client${pid} up }
+
+backtick -E client_mac { data/pid2mac -v pid=${pid} -v octet4=00 }
+
+s6-notifyoncheck -dc "test -S env/cloud-hypervisor.sock"
+
+cloud-hypervisor
+  --api-socket env/cloud-hypervisor.sock
+  --kernel /ext/svc/data/appvm-lynx/vmlinux
+  --cmdline "console=ttyS0 root=/dev/vda"
+  --memory size=128M
+  --disk path=/ext/svc/data/appvm-lynx/rootfs.ext4,readonly=on
+  --net fd=4,mac=${client_mac}
+  --console pty
+  --serial file=/run/appvm-lynx.log

@@ -1,0 +1,13 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+
+export WAYLAND_DISPLAY wayland-1
+export XDG_RUNTIME_DIR /run/user/0
+
+backtick -E pty {
+  pipeline -w { jq -r .config.console.file }
+  ch-remote --api-socket ../appvm-lynx-vmm/env/cloud-hypervisor.sock info
+}
+
+foot -T appvm-lynx --pty $pty
