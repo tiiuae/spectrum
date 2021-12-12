@@ -29,7 +29,7 @@ let
     nativeBuildInputs = [ dosfstools mtools ];
     passthru = { inherit uki; };
   } ''
-    truncate -s ${toString (100 * 1024 * 1024)} $out
+    truncate -s ${toString (150 * 1024 * 1024)} $out
     mkfs.vfat $out
     mmd -i $out ::/EFI ::/EFI/BOOT
     mcopy -i $out ${uki} ::/EFI/BOOT/BOOTX64.EFI

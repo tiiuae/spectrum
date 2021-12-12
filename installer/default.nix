@@ -35,7 +35,7 @@ let
   eosimages = vmTools.runInLinuxVM (runCommand "eosimages.img" {
     nativeBuildInputs = [ exfatprogs kmod util-linux ];
   } ''
-    truncate -s 4G "$out"
+    truncate -s 5G "$out"
     mkfs.exfat -L eosimages "$out"
     mkdir /mnt
     modprobe loop
