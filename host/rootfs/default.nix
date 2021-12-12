@@ -62,17 +62,17 @@ let
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
-  netvm = import ../spectrum-netvm {
+  netvm = import ../../vm/sys/net {
     inherit pkgs;
     inherit (foot) terminfo;
   };
 
-  appvm-catgirl = import ../spectrum-appvm-catgirl {
+  appvm-catgirl = import ../../vm/app/catgirl {
     inherit pkgs;
     inherit (foot) terminfo;
   };
 
-  appvm-lynx = import ../spectrum-appvm-lynx {
+  appvm-lynx = import ../../vm/app/lynx {
     inherit pkgs;
     inherit (foot) terminfo;
   };

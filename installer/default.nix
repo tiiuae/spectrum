@@ -8,7 +8,7 @@ let
   inherit (pkgs.lib) removePrefix;
   inherit (nixos ./configuration.nix) config;
 
-  image = import ../spectrum-initramfs/live.nix { inherit pkgs; };
+  image = import ../host/initramfs/live.nix { inherit pkgs; };
 
   grub = grub2_efi;
 

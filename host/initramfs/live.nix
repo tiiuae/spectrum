@@ -6,7 +6,7 @@
 
 let
   initramfs = callPackage ./. { };
-  host-rootfs = import ../spectrum-rootfs { inherit pkgs; };
+  host-rootfs = import ../rootfs { inherit pkgs; };
   extfs = pkgsStatic.callPackage ./extfs.nix { inherit pkgs; };
 
   kernelTarget = stdenv.hostPlatform.linux-kernel.target;
