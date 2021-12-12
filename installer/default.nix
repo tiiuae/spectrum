@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021 Yureka <yuka@yuka.dev>
 
 { pkgs ? import <nixpkgs> {} }: with pkgs;
 
@@ -20,6 +21,22 @@ let
       "init=${config.system.build.toplevel}/init"
     ] ++ config.boot.kernelParams);
   };
+
+  efi = runCommand "efi.img" {
+    nativeBuildInputs = [ grub libfaketime dosfstools mtools ];
+  } ''
+    install -D ${grubCfg} files/grub/grub.cfg
+    cp -r ${grub}/lib/grub/${grub.grubTarget} files/grub/
+    cp ${grub}/share/grub/unicode.pf2 files/grub/
+    grub-mkimage -o grubx64.efi -p "(hd0,gpt1)/grub" -O ${grub.grubTarget} part_gpt fat
+    install -D grubx64.efi files/EFI/BOOT/BOOTX64.EFI
+
+    img=$out
+    truncate -s 15M $img
+    faketime "1970-01-01 00:00:00" mkfs.vfat -i 0x2178694e -n EFI $img
+    (cd files; mcopy -psvm -i $img ./* ::)
+    fsck.vfat -vn $img
+  '';
 
   installer = runCommand "installer.img" {
     nativeBuildInputs = [ squashfs-tools-ng ];
@@ -47,7 +64,7 @@ let
   '');
 in
 
-vmTools.runInLinuxVM (runCommand "spectrum-installer" {
+runCommand "spectrum-installer" {
   nativeBuildInputs = [ dosfstools grub jq kmod util-linux systemdMinimal ];
 } ''
   blockSize() {
@@ -60,7 +77,7 @@ vmTools.runInLinuxVM (runCommand "spectrum-installer" {
       dd if="$3" of="$1" seek="$start" count="$size" conv=notrunc
   }
 
-  efiSize=40000
+  efiSize="$(blockSize ${efi})"
   installerSize="$(blockSize ${installer})"
   eosimagesSize="$(blockSize ${eosimages})"
 
@@ -72,16 +89,7 @@ vmTools.runInLinuxVM (runCommand "spectrum-installer" {
   size=$eosimagesSize, type=56a3bbc3-aefa-43d9-a64d-7b3fd59bbc4e
   EOF
 
+  fillPartition $out 0 ${efi}
   fillPartition $out 1 ${installer}
   fillPartition $out 2 ${eosimages}
-
-  modprobe loop
-  loop="$(losetup -P --show -f $out)"
-  mkfs.vfat "$loop"p1
-  mkdir /mnt
-  mount "$loop"p1 /mnt
-  grub-install --target ${grub.grubTarget} --removable \
-      --boot-directory /mnt --efi-directory /mnt "$loop"
-  cp ${grubCfg} /mnt/grub/grub.cfg
-  umount /mnt
-'')
+''
