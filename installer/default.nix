@@ -22,7 +22,7 @@ let
     ] ++ config.boot.kernelParams);
   };
 
-  efi = runCommand "efi.img" {
+  esp = runCommand "esp.img" {
     nativeBuildInputs = [ grub libfaketime dosfstools mtools ];
   } ''
     install -D ${grubCfg} files/grub/grub.cfg
@@ -51,6 +51,7 @@ let
 
   eosimages = vmTools.runInLinuxVM (runCommand "eosimages.img" {
     nativeBuildInputs = [ exfatprogs kmod util-linux ];
+    passthru = { inherit image; };
   } ''
     truncate -s 5G "$out"
     mkfs.exfat -L eosimages "$out"
@@ -66,6 +67,7 @@ in
 
 runCommand "spectrum-installer" {
   nativeBuildInputs = [ dosfstools grub jq kmod util-linux systemdMinimal ];
+  passthru = { inherit esp installer eosimages; };
 } ''
   blockSize() {
       wc -c "$1" | awk '{printf "%d\n", ($1 + 511) / 512}'
@@ -77,19 +79,19 @@ runCommand "spectrum-installer" {
       dd if="$3" of="$1" seek="$start" count="$size" conv=notrunc
   }
 
-  efiSize="$(blockSize ${efi})"
+  espSize="$(blockSize ${esp})"
   installerSize="$(blockSize ${installer})"
   eosimagesSize="$(blockSize ${eosimages})"
 
-  truncate -s $(((3 * 2048 + $efiSize + $installerSize + $eosimagesSize) * 512)) $out
+  truncate -s $(((3 * 2048 + $espSize + $installerSize + $eosimagesSize) * 512)) $out
   sfdisk $out <<EOF
   label: gpt
-  size=$efiSize, type=U
+  size=$espSize, type=U
   size=$installerSize, type=L, uuid=${installerUuid}
   size=$eosimagesSize, type=56a3bbc3-aefa-43d9-a64d-7b3fd59bbc4e
   EOF
 
-  fillPartition $out 0 ${efi}
+  fillPartition $out 0 ${esp}
   fillPartition $out 1 ${installer}
   fillPartition $out 2 ${eosimages}
 ''
