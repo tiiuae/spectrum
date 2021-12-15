@@ -24,6 +24,7 @@ let
 
   esp = runCommand "esp.img" {
     nativeBuildInputs = [ grub libfaketime dosfstools mtools ];
+    grubTargetDir = "${grub}/lib/grub/${grub.grubTarget}";
     # Definition copied from util/grub-install-common.c.
     # Last checked: GRUB 2.06
     pkglib_DATA = [
@@ -31,23 +32,23 @@ let
       "parttool.lst" "video.lst" "crypto.lst" "terminal.lst" "modinfo.sh"
     ];
   } ''
-    mkdir -p files/grub/${grub.grubTarget}
-    cp ${grubCfg} files/grub/grub.cfg
-    cp ${grub}/lib/grub/${grub.grubTarget}/*.mod files/grub/${grub.grubTarget}
+    truncate -s 15M $out
+    faketime "1970-01-01 00:00:00" mkfs.vfat -i 0x2178694e -n EFI $out
+    mmd -i $out ::/EFI ::/EFI/BOOT \
+        ::/grub ::/grub/${grub.grubTarget} ::/grub/fonts
+
+    mcopy -i $out ${grubCfg} ::/grub/grub.cfg
+    mcopy -i $out $grubTargetDir/*.mod ::/grub/${grub.grubTarget}
     for file in $pkglib_DATA; do
-        path="${grub}/lib/grub/${grub.grubTarget}/$file"
-        ! [ -e "$path" ] || cp "$path" files/grub/${grub.grubTarget}
+        path="$grubTargetDir/$file"
+        ! [ -e "$path" ] || mcopy -i $out "$path" ::/grub/${grub.grubTarget}
     done
+    mcopy -i $out ${grub}/share/grub/unicode.pf2 ::/grub/fonts
 
-    install -D ${grub}/share/grub/unicode.pf2 files/grub/fonts/unicode.pf2
     grub-mkimage -o grubx64.efi -p "(hd0,gpt1)/grub" -O ${grub.grubTarget} part_gpt fat
-    install -D grubx64.efi files/EFI/BOOT/BOOTX64.EFI
+    mcopy -i $out grubx64.efi ::/EFI/BOOT/BOOTX64.EFI
 
-    img=$out
-    truncate -s 15M $img
-    faketime "1970-01-01 00:00:00" mkfs.vfat -i 0x2178694e -n EFI $img
-    (cd files; mcopy -psvm -i $img ./* ::)
-    fsck.vfat -vn $img
+    fsck.vfat -n $out
   '';
 
   installer = runCommand "installer.img" {
