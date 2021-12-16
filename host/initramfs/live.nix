@@ -1,14 +1,15 @@
 { pkgs ? import <nixpkgs> {} }: pkgs.callPackage (
 
 { stdenv, runCommand, runCommandCC, callPackage, pkgsStatic
-, cryptsetup, dosfstools, jq, linux, mtools, systemd, util-linux
+, cryptsetup, dosfstools, jq, mtools, systemd, util-linux
 }:
 
 let
-  initramfs = callPackage ./. { };
+  initramfs = (import ./. { inherit pkgs; }).override { linux = kernel; };
   host-rootfs = import ../rootfs { inherit pkgs; };
   extfs = pkgsStatic.callPackage ./extfs.nix { inherit pkgs; };
 
+  inherit (host-rootfs) kernel;
   kernelTarget = stdenv.hostPlatform.linux-kernel.target;
 
   uki = runCommandCC "spectrum-uki" {
@@ -20,7 +21,7 @@ let
     echo "ro console=ttyS0 roothash=$roothash" > cmdline
     objcopy --add-section .osrel=${etc/os-release} --change-section-vma .osrel=0x20000 \
             --add-section .cmdline=cmdline --change-section-vma .cmdline=0x30000 \
-            --add-section .linux=${linux}/${kernelTarget} --change-section-vma .linux=0x40000 \
+            --add-section .linux=${kernel}/${kernelTarget} --change-section-vma .linux=0x40000 \
             --add-section .initrd=$initramfs --change-section-vma .initrd=0x3000000 \
             ${systemd}/lib/systemd/boot/efi/linuxx64.efi.stub $out
   '';
