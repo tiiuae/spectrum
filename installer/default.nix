@@ -24,10 +24,22 @@ let
 
   esp = runCommand "esp.img" {
     nativeBuildInputs = [ grub libfaketime dosfstools mtools ];
+    # Definition copied from util/grub-install-common.c.
+    # Last checked: GRUB 2.06
+    pkglib_DATA = [
+      "efiemu32.o" "efiemu64.o" "moddep.lst" "command.lst" "fs.lst" "partmap.lst"
+      "parttool.lst" "video.lst" "crypto.lst" "terminal.lst" "modinfo.sh"
+    ];
   } ''
-    install -D ${grubCfg} files/grub/grub.cfg
-    cp -r ${grub}/lib/grub/${grub.grubTarget} files/grub/
-    cp ${grub}/share/grub/unicode.pf2 files/grub/
+    mkdir -p files/grub/${grub.grubTarget}
+    cp ${grubCfg} files/grub/grub.cfg
+    cp ${grub}/lib/grub/${grub.grubTarget}/*.mod files/grub/${grub.grubTarget}
+    for file in $pkglib_DATA; do
+        path="${grub}/lib/grub/${grub.grubTarget}/$file"
+        ! [ -e "$path" ] || cp "$path" files/grub/${grub.grubTarget}
+    done
+
+    install -D ${grub}/share/grub/unicode.pf2 files/grub/fonts/unicode.pf2
     grub-mkimage -o grubx64.efi -p "(hd0,gpt1)/grub" -O ${grub.grubTarget} part_gpt fat
     install -D grubx64.efi files/EFI/BOOT/BOOTX64.EFI
 

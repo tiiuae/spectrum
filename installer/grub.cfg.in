@@ -5,7 +5,7 @@ insmod efi_gop
 insmod efi_uga
 
 insmod font
-loadfont /grub/unicode.pf2
+loadfont /grub/fonts/unicode.pf2
 
 insmod gfxterm
 set gfxpayload=keep
