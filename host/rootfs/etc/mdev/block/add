@@ -1,0 +1,39 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+
+cd /dev
+importas -i devname DEVNAME
+
+backtick -E ext {
+  backtick -x extspec { redirfd -w 2 /dev/null cat /run/param/ext }
+  ifelse { redirfd -w 1 /dev/null printenv extspec }
+
+  {
+    importas -iu extspec extspec
+    findfs $extspec
+  }
+
+  pipeline {
+    backtick -E diskpath {
+      pipeline { lsblk -lnpo KNAME,PKNAME }
+      backtick -E rootpart {
+        pipeline { veritysetup status root-verity }
+        awk -F ":[[:blank:]]*" "$1 ~ /^[[:blank:]]*data device$/ {print $2; exit}"
+      }
+      awk -v rootpart=${rootpart} "$1 == rootpart {print $2; exit}"
+    }
+    lsblk -lnpo PARTTYPE,NAME $diskpath
+  }
+  awk "$1 == \"9293e1ff-cee4-4658-88be-898ec863944f\" {print $2; exit}"
+}
+
+if {
+  backtick -E extinode { redirfd -w 2 /dev/null stat -Lc %d:%i $ext }
+  backtick -E inode { stat -Lc %d:%i $devname }
+  test $inode = $extinode
+}
+
+if { ln -s $devname ext }
+if { mount ext /ext }
+/etc/mdev/listen ext

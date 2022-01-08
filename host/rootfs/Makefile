@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: EUPL-1.2
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
 # qemu-kvm is non-standard, but is present in at least Fedora and
 # Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
@@ -13,12 +13,6 @@ build/rootfs.ext4: build/rootfs.tar
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
 
-build/test.img: scripts/make-gpt.sh build/rootfs.ext4 $(EXT_FS)
-	scripts/make-gpt.sh $@.tmp \
-		build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709 \
-		$(EXT_FS):9293e1ff-cee4-4658-88be-898ec863944f
-	mv $@.tmp $@
-
 FILES = \
 	etc/fonts/fonts.conf \
 	etc/fstab \
@@ -26,6 +20,7 @@ FILES = \
 	etc/init \
 	etc/login \
 	etc/mdev.conf \
+	etc/mdev/block/add \
 	etc/mdev/listen \
 	etc/mdev/net/add \
 	etc/mdev/wait \
@@ -114,15 +109,16 @@ clean:
 	rm -rf build
 .PHONY: clean
 
-run: build/test.img
+run: build/rootfs.ext4 $(EXT_FS)
 	$(QEMU_KVM) -cpu host -m 2G \
 	    -machine q35,kernel=$(KERNEL),kernel-irqchip=split \
 	    -display gtk,gl=on \
 	    -qmp unix:vmm.sock,server,nowait \
 	    -monitor vc \
 	    -parallel none \
-	    -drive file=build/test.img,if=virtio,format=raw,readonly=on \
-	    -append "console=ttyS0 root=/dev/vda1 intel_iommu=on" \
+	    -drive file=build/rootfs.ext4,if=virtio,format=raw,readonly=on \
+	    -drive file=$(EXT_FS),if=virtio,format=raw,readonly=on \
+	    -append "console=ttyS0 root=/dev/vda ext=/dev/vdb intel_iommu=on" \
 	    -device intel-iommu,intremap=on \
 	    -device virtio-vga-gl
 .PHONY: run

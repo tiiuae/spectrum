@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: EUPL-1.2
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
 { pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
 
@@ -23,6 +23,7 @@ let
     pkgs.pkgsMusl.cryptsetup
     (busybox.override {
       extraConfig = ''
+        CONFIG_FINDFS n
         CONFIG_INIT n
       '';
     })
@@ -53,7 +54,7 @@ let
     # TODO: this is a hack and we should just build the util-linux
     # programs we want.
     # https://lore.kernel.org/util-linux/87zgrl6ufb.fsf@alyssa.is/
-    ln -s ${util-linux.override { systemd = null; }}/bin/lsblk $out/usr/bin
+    ln -s ${util-linux.override { systemd = null; }}/bin/{findfs,lsblk} $out/usr/bin
   '';
 
   packagesTar = runCommand "packages.tar" {} ''
