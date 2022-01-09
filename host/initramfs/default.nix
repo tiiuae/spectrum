@@ -1,7 +1,10 @@
-{ pkgs ? import <nixpkgs> {} }: pkgs.callPackage (
+{ pkgs ? import <nixpkgs> {}
+, rootfs ? import ../rootfs { inherit pkgs; }
+}:
 
+pkgs.callPackage (
 { lib, stdenv, runCommand, writeReferencesToFile, pkgsStatic
-, busybox, cpio, cryptsetup, linux, lvm2
+, busybox, cpio, cryptsetup, lvm2
 }:
 
 let
@@ -11,6 +14,7 @@ let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
   cryptsetup = cryptsetup'.override { lvm2 = lvm2.override { udev = null; }; };
+  linux = rootfs.kernel;
 
   packages = [
     cryptsetup pkgsStatic.mdevd pkgsStatic.execline
@@ -49,7 +53,7 @@ stdenv.mkDerivation {
   name = "initramfs";
 
   src = cleanSourceWith {
-    filter = name: _type: name != "${toString ./.}/build" && name != "${toString ./.}/spectrum-live";
+    filter = name: _type: name != "${toString ./.}/build";
     src = cleanSource ./.;
   };
 
@@ -58,7 +62,9 @@ stdenv.mkDerivation {
   nativeBuildInputs = [ cpio ];
 
   installPhase = ''
+    runHook preInstall
     cp build/initramfs $out
+    runHook postInstall
   '';
 
   enableParallelBuilding = true;
