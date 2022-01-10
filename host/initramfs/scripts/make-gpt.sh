@@ -47,6 +47,7 @@ for partition; do
 	gptBytes="$(expr "$gptBytes" + "$sizeMiB" \* $ONE_MiB)"
 done
 
+rm -f "$out"
 truncate -s "$gptBytes" "$out"
 sfdisk "$out" <<EOF
 $table
