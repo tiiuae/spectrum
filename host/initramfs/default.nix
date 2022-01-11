@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-License-Identifier: MIT
+
 { pkgs ? import <nixpkgs> {}
 , rootfs ? import ../rootfs { inherit pkgs; }
 }:
