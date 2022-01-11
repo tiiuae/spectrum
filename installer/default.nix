@@ -9,7 +9,7 @@ let
   inherit (pkgs.lib) removePrefix;
   inherit (nixos ./configuration.nix) config;
 
-  image = import ../host/initramfs/live.nix { inherit pkgs; };
+  image = import ../live { inherit pkgs; };
 
   grub = grub2_efi;
 

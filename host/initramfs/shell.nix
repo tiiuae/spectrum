@@ -3,8 +3,22 @@
 
 { pkgs ? import <nixpkgs> {} }:
 
+let
+  inherit (pkgs.lib) cleanSource cleanSourceWith;
+
+  extfs = pkgs.pkgsStatic.callPackage ./extfs.nix {
+    inherit pkgs;
+  };
+  rootfs = import ../rootfs { inherit pkgs; };
+  initramfs = import ./. { inherit pkgs rootfs; };
+in
+
 with pkgs;
 
-(import ./live.nix { inherit pkgs; }).overrideAttrs ({ ... }: {
-  OVMF_FD = "${OVMF.fd}/FV/OVMF.fd";
+initramfs.overrideAttrs ({ nativeBuildInputs ? [], ... }: {
+  nativeBuildInputs = nativeBuildInputs ++ [ cryptsetup jq util-linux ];
+
+  EXT_FS = extfs;
+  KERNEL = "${rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
+  ROOT_FS = rootfs;
 })

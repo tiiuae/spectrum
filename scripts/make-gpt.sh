@@ -33,6 +33,8 @@ $1
 EOF
 }
 
+scriptsDir="$(dirname "$0")"
+
 out="$1"
 shift
 
@@ -43,7 +45,7 @@ table="label: gpt"
 gptBytes=$TWO_MiB
 for partition; do
 	sizeMiB="$(sizeMiB "$(partitionPath "$partition")")"
-	table="$table${nl}size=${sizeMiB}MiB,$(awk -f scripts/sfdisk-field.awk -v partition="$partition")"
+	table="$table${nl}size=${sizeMiB}MiB,$(awk -f "$scriptsDir/sfdisk-field.awk" -v partition="$partition")"
 	gptBytes="$(expr "$gptBytes" + "$sizeMiB" \* $ONE_MiB)"
 done
 

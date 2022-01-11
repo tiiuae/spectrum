@@ -8,11 +8,7 @@ QEMU_KVM = qemu-kvm
 
 CPIO = cpio
 CPIOFLAGS = --reproducible -R +0:+0 -H newc
-MCOPY = mcopy
-MKFS_FAT = mkfs.fat
-MMD = mmd
-OBJCOPY = objcopy
-TRUNCATE = truncate
+SCRIPTS = ../../scripts
 VERITYSETUP = veritysetup
 
 build/initramfs: build/local.cpio $(PACKAGES_CPIO)
@@ -40,23 +36,6 @@ build/mountpoints:
 	cd build/mountpoints && mkdir -p $(MOUNTPOINTS)
 	find build/mountpoints -mindepth 1 -exec touch -d @0 {} ';'
 
-build/cmdline: build/rootfs.verity.roothash
-	printf "ro console=ttyS0 roothash=" > $@
-	cat build/rootfs.verity.roothash >> $@
-
-build/bootx64.efi: etc/os-release build/cmdline build/initramfs
-	$(OBJCOPY) --add-section .osrel=etc/os-release --change-section-vma .osrel=0x20000 \
-	    --add-section .cmdline=build/cmdline --change-section-vma .cmdline=0x30000 \
-	    --add-section .linux=$(KERNEL) --change-section-vma .linux=0x40000 \
-	    --add-section .initrd=build/initramfs --change-section-vma .initrd=0x3000000 \
-	    $(EFI_STUB) $@
-
-build/boot.fat: build/bootx64.efi
-	$(TRUNCATE) -s 157286400 $@
-	$(MKFS_FAT) $@
-	$(MMD) -i $@ ::/EFI ::/EFI/BOOT
-	$(MCOPY) -i $@ build/bootx64.efi ::/EFI/BOOT
-
 # veritysetup format produces two files, but Make only (portably)
 # supports one output per rule, so we combine the two outputs then
 # define two more rules to separate them again.
@@ -73,25 +52,26 @@ build/rootfs.verity.roothash: build/rootfs.verity
 build/rootfs.verity.superblock: build/rootfs.verity
 	tail -n +2 build/rootfs.verity > $@
 
-build/live.img: scripts/format-uuid.sh scripts/make-gpt.sh build/boot.fat build/rootfs.verity.superblock build/rootfs.verity.roothash $(ROOT_FS) $(EXT_FS)
-	scripts/make-gpt.sh $@.tmp \
-	    build/boot.fat:c12a7328-f81f-11d2-ba4b-00a0c93ec93b \
-	    build/rootfs.verity.superblock:2c7357ed-ebd2-46d9-aec1-23d437ec2bf5:$$(scripts/format-uuid.sh "$$(dd if=build/rootfs.verity.roothash bs=32 skip=1 count=1 status=none)") \
-	    $(ROOT_FS):4f68bce3-e8cd-4db1-96e7-fbcaf984b709:$$(scripts/format-uuid.sh "$$(head -c 32 build/rootfs.verity.roothash)") \
-	    $(EXT_FS):9293e1ff-cee4-4658-88be-898ec863944f
+build/live.img: $(SCRIPTS)/format-uuid.sh $(SCRIPTS)/make-gpt.sh build/rootfs.verity.superblock build/rootfs.verity.roothash $(ROOT_FS) $(EXT_FS)
+	$(SCRIPTS)/make-gpt.sh $@.tmp \
+	    build/rootfs.verity.superblock:2c7357ed-ebd2-46d9-aec1-23d437ec2bf5:$$($(SCRIPTS)/format-uuid.sh "$$(dd if=build/rootfs.verity.roothash bs=32 skip=1 count=1 status=none)") \
+	    $(ROOT_FS):4f68bce3-e8cd-4db1-96e7-fbcaf984b709:$$($(SCRIPTS)/format-uuid.sh "$$(head -c 32 build/rootfs.verity.roothash)")
 	mv $@.tmp $@
 
 clean:
 	rm -rf build
 .PHONY: clean
 
-run: build/live.img
+run: build/initramfs build/rootfs.verity.roothash build/live.img
 	$(QEMU_KVM) -m 4G \
-	    -bios $(OVMF_FD) \
+	    -kernel $(KERNEL) \
+	    -initrd build/initramfs \
+	    -append "ro console=ttyS0 ext=vda roothash=$$(< build/rootfs.verity.roothash)" \
 	    -cpu host \
 	    -display gtk,gl=on \
 	    -device virtio-vga-gl \
 	    -device qemu-xhci \
 	    -device usb-storage,drive=drive1,removable=true \
-	    -drive file=build/live.img,id=drive1,format=raw,if=none,readonly=true
+	    -drive file=build/live.img,id=drive1,format=raw,if=none,readonly=true \
+	    -drive file=$(EXT_FS),format=raw,if=virtio,readonly=true
 .PHONY: run
