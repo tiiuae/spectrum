@@ -5,7 +5,7 @@
 
 { lib, stdenv, runCommand, writeReferencesToFile, s6-rc, tar2ext4
 , busybox, cloud-hypervisor, curl, execline, jq, mdevd, mktuntap, s6
-, s6-linux-utils, s6-portable-utils, screen, util-linux, xorg
+, s6-linux-utils, s6-portable-utils, screen, util-linuxMinimal, xorg
 }:
 
 let
@@ -54,7 +54,7 @@ let
     # TODO: this is a hack and we should just build the util-linux
     # programs we want.
     # https://lore.kernel.org/util-linux/87zgrl6ufb.fsf@alyssa.is/
-    ln -s ${util-linux.override { systemd = null; }}/bin/{findfs,lsblk} $out/usr/bin
+    ln -s ${util-linuxMinimal}/bin/{findfs,lsblk} $out/usr/bin
   '';
 
   packagesTar = runCommand "packages.tar" {} ''

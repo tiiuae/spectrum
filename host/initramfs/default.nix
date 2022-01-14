@@ -39,7 +39,7 @@ let
     # TODO: this is a hack and we should just build the util-linux
     # programs we want.
     # https://lore.kernel.org/util-linux/87zgrl6ufb.fsf@alyssa.is/
-    cp ${pkgsStatic.util-linux.override { systemd = null; }}/bin/{findfs,lsblk} $out/bin
+    cp ${pkgsStatic.util-linuxMinimal}/bin/{findfs,lsblk} $out/bin
   '';
 
   packagesCpio = runCommand "packages.cpio" {
