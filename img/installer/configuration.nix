@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
 { modulesPath, pkgs, ... }:
 
@@ -37,6 +37,10 @@ in
   security.polkit.extraConfig = readFile ./seat.rules;
 
   documentation.enable = false;
+  networking.firewall.enable = false;
+  networking.resolvconf.enable = false;
+  nix.enable = false;
+  services.timesyncd.enable = false;
 
   boot.loader.systemd-boot.enable = true;
 
