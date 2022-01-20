@@ -6,12 +6,12 @@
 let
   inherit (pkgs.lib) cleanSource cleanSourceWith;
 
-  extfs = pkgs.pkgsStatic.callPackage ../host/initramfs/extfs.nix {
+  extfs = pkgs.pkgsStatic.callPackage ../../host/initramfs/extfs.nix {
     inherit pkgs;
   };
-  rootfs = import ../host/rootfs { inherit pkgs; };
-  scripts = import ../scripts { inherit pkgs; };
-  initramfs = import ../host/initramfs { inherit pkgs rootfs; };
+  rootfs = import ../../host/rootfs { inherit pkgs; };
+  scripts = import ../../scripts { inherit pkgs; };
+  initramfs = import ../../host/initramfs { inherit pkgs rootfs; };
 in
 
 with pkgs;

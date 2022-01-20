@@ -1,25 +1,43 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2021 Yureka <yuka@yuka.dev>
 
 { pkgs ? import <nixpkgs> {} }: with pkgs;
 
 let
-  inherit (builtins) head match storeDir;
+  inherit (builtins) storeDir;
   inherit (pkgs.lib) removePrefix;
-  inherit (nixos ./configuration.nix) config;
 
-  image = import ../live { inherit pkgs; };
+  eosimages = import ./eosimages.nix { inherit pkgs; };
+
+  installerPartUuid = "6e23b026-9f1e-479d-8a58-a0cda382e1ce";
+  installer = import ../installer {
+    inherit pkgs;
+
+    extraConfig = {
+      boot.initrd.availableKernelModules = [ "squashfs" ];
+
+      fileSystems.${storeDir} = {
+        device = "/dev/disk/by-partuuid/${installerPartUuid}";
+      };
+    };
+  };
+
+  rootfs = runCommand "installer.img" {
+    nativeBuildInputs = [ squashfs-tools-ng ];
+  } ''
+    sed 's,^${storeDir}/,,' ${writeReferencesToFile installer.store} |
+        tar -C ${storeDir} -c --verbatim-files-from -T - \
+            --owner 0 --group 0 | tar2sqfs $out
+  '';
 
   grub = grub2_efi;
 
   grubCfg = substituteAll {
     src = ./grub.cfg.in;
-    linux = removePrefix storeDir "${config.boot.kernelPackages.kernel}/${config.system.boot.loader.kernelFile}";
-    initrd = removePrefix storeDir "${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}";
-    kernelParams = toString ([
-      "init=${config.system.build.toplevel}/init"
-    ] ++ config.boot.kernelParams);
+    linux = removePrefix storeDir installer.kernel;
+    initrd = removePrefix storeDir installer.initramfs;
+    inherit (installer) kernelParams;
   };
 
   esp = runCommand "esp.img" {
@@ -50,35 +68,10 @@ let
 
     fsck.vfat -n $out
   '';
-
-  installer = runCommand "installer.img" {
-    nativeBuildInputs = [ squashfs-tools-ng ];
-  } ''
-    sed 's,^${storeDir}/,,' ${writeReferencesToFile config.system.build.toplevel} |
-        tar -C ${storeDir} -c --verbatim-files-from -T - \
-            --owner 0 --group 0 | tar2sqfs $out
-  '';
-
-  storeDev = config.fileSystems."/nix/store".device;
-  installerUuid = head (match "/dev/disk/by-partuuid/(.*)" storeDev);
-
-  eosimages = runCommand "eosimages.img" {
-    nativeBuildInputs = [ e2fsprogs tar2ext4 ];
-    imageName = "Spectrum-0.0-x86_64-generic.0.Live.img";
-    passthru = { inherit image; };
-  } ''
-    mkdir dir
-    cd dir
-    ln -s ${image} Spectrum-0.0-x86_64-generic.0.Live.img
-    sha256sum $imageName > $imageName.sha256
-    tar -chf $NIX_BUILD_TOP/eosimages.tar *
-    tar2ext4 -i $NIX_BUILD_TOP/eosimages.tar -o $out
-    e2label $out eosimages
-  '';
 in
 
 runCommand "spectrum-installer" {
-  nativeBuildInputs = [ dosfstools grub jq kmod util-linux systemdMinimal ];
+  nativeBuildInputs = [ grub jq util-linux systemdMinimal ];
   passthru = { inherit esp installer eosimages; };
 } ''
   blockSize() {
@@ -92,18 +85,18 @@ runCommand "spectrum-installer" {
   }
 
   espSize="$(blockSize ${esp})"
-  installerSize="$(blockSize ${installer})"
+  installerSize="$(blockSize ${rootfs})"
   eosimagesSize="$(blockSize ${eosimages})"
 
   truncate -s $(((3 * 2048 + $espSize + $installerSize + $eosimagesSize) * 512)) $out
   sfdisk $out <<EOF
   label: gpt
   size=$espSize, type=U
-  size=$installerSize, type=L, uuid=${installerUuid}
+  size=$installerSize, type=L, uuid=${installerPartUuid}
   size=$eosimagesSize, type=56a3bbc3-aefa-43d9-a64d-7b3fd59bbc4e
   EOF
 
   fillPartition $out 0 ${esp}
-  fillPartition $out 1 ${installer}
+  fillPartition $out 1 ${rootfs}
   fillPartition $out 2 ${eosimages}
 ''
