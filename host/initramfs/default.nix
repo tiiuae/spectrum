@@ -20,7 +20,15 @@ let
   linux = rootfs.kernel;
 
   packages = [
-    cryptsetup pkgsStatic.mdevd pkgsStatic.execline
+    pkgsStatic.mdevd pkgsStatic.execline
+
+    (cryptsetup.override {
+      programs = {
+        cryptsetup = false;
+        cryptsetup-reencrypt = false;
+        integritysetup = false;
+      };
+    })
 
     (busybox.override {
       enableStatic = true;
