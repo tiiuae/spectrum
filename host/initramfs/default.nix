@@ -11,18 +11,14 @@ pkgs.callPackage (
 }:
 
 let
-  cryptsetup' = cryptsetup;
-in
-let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
-  cryptsetup = cryptsetup'.override { lvm2 = lvm2.override { udev = null; }; };
   linux = rootfs.kernel;
 
   packages = [
     pkgsStatic.mdevd pkgsStatic.execline
 
-    (cryptsetup.override {
+    (pkgsStatic.cryptsetup.override {
       programs = {
         cryptsetup = false;
         cryptsetup-reencrypt = false;
