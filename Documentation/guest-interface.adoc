@@ -1,0 +1,41 @@
+// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: GFDL-1.3-or-later OR CC-BY-SA-4.0
+
+= Spectrum guest interface
+
+This document describes the interface between a Spectrum guest VM, and
+the host system and other VMs.  Using this information, it should be
+possible to create custom VMs that integrate correctly with the
+Spectrum system.
+
+== Logging
+
+Every VM has a serial console that is connected to the host system's
+logging infrastructure.  The console is write-only — there will never
+be any input to read from the console.
+
+== User interface
+
+Every VM has a virtio-console device to use to interact with the user
+of the Spectrum system.
+
+== Networking
+
+The Spectrum host system can create network connections between VMs.
+These take the form of virtio-net devices.  Guests must support the
+VIRTIO_NET_F_MAC feature.
+
+A guest can distinguish between virtual inter-guest network
+connections and hardware network connections through the MAC address
+of the corresponding network interface: guest network interfaces for
+inter-guest networking have the OUI `0A:B3:EC`.
+
+Connections to *network provider VMs* have the IP address to use
+encoded in the client interface's MAC address.  The client guest
+should configure an IPv4 address in `100.64.0.0/16`, where the final
+two octets of the IP address are the final two octets of the
+interface's MAC address.  For example, an application VM where a
+network interface named `eth0` has the MAC address `0A:B3:EC:00:A5:46`
+should configure `eth0` with the IPv4 address `100.64.165.70` (because
+`A5` in hexadecimal is `165` in decimal, and `46` in hexadecimal is
+`70` in decimal).
