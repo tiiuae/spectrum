@@ -9,38 +9,25 @@ CLOUD_HYPERVISOR = cloud-hypervisor
 
 VMM = qemu
 
-# These don't have the host/ prefix because they're not referring to
-# paths in the source tree.
-HOST_S6_RC_DIRECTORIES = s6-rc/appvm-lynx-vmm/env
-
-HOST_S6_RC_FILES = \
-	host/s6-rc/appvm-lynx-vmm/data/pid2mac \
-	host/s6-rc/appvm-lynx-vmm/dependencies \
-	host/s6-rc/appvm-lynx-vmm/notification-fd \
-	host/s6-rc/appvm-lynx-vmm/run \
-	host/s6-rc/appvm-lynx-vmm/type \
-	host/s6-rc/appvm-lynx/dependencies \
-	host/s6-rc/appvm-lynx/run \
-	host/s6-rc/appvm-lynx/type
+HOST_S6_RC_FILES = host/data/appvm-lynx/providers/net/netvm
 
 HOST_S6_RC_BUILD_FILES = \
 	build/host/data/appvm-lynx/rootfs.ext4 \
 	build/host/data/appvm-lynx/vmlinux
 
-# We produce an s6-rc source directory, but that doesn't play nice
-# with Make, because it won't know to update if some file in the
-# directory is changed, or a file is created or removed in a
-# subdirectory.  Using the whole source directory could also end up
-# including files that aren't intended to be part of the input, like
-# temporary editor files or .license files.  So for all these reasons,
-# only explicitly listed files are included in the build result.
+# We produce a directory, but that doesn't play nice with Make,
+# because it won't know to update if some file in the directory is
+# changed, or a file is created or removed in a subdirectory.  Using
+# the whole directory could also end up including files that aren't
+# intended to be part of the input, like temporary editor files or
+# .license files.  So for all these reasons, only explicitly listed
+# files are included in the build result.
 build/svc: $(HOST_S6_RC_FILES) $(HOST_S6_RC_BUILD_FILES)
 	rm -rf $@
 	mkdir -p $@
 
 	tar -c $(HOST_S6_RC_FILES) | tar -C $@ -x --strip-components 1
 	tar -c $(HOST_S6_RC_BUILD_FILES) | tar -C $@ -x --strip-components 2
-	cd $@ && mkdir -p $(HOST_S6_RC_DIRECTORIES)
 
 build/host/data/appvm-lynx/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)

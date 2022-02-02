@@ -11,6 +11,8 @@
 let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
+  start-vm = import ../start-vm { pkgs = pkgs.pkgsStatic; };
+
   pkgsGui = pkgs.pkgsMusl.extend (final: super: {
     systemd = final.libudev-zero;
   });
@@ -19,7 +21,7 @@ let
 
   packages = [
     cloud-hypervisor curl execline jq mdevd mktuntap s6 s6-linux-utils
-    s6-portable-utils s6-rc screen
+    s6-portable-utils s6-rc screen start-vm
     pkgs.pkgsMusl.cryptsetup
     (busybox.override {
       extraConfig = ''
@@ -81,18 +83,7 @@ let
   extFs = runCommand "ext.ext4" {
     nativeBuildInputs = [ tar2ext4 s6-rc ];
   } ''
-    mkdir s6-rc svc
-
-    tar -C ${netvm}/s6-rc -c . | tar -C s6-rc -x
-    chmod +w s6-rc
-    tar -C ${appvm-catgirl}/s6-rc -c . | tar -C s6-rc -x
-    chmod +w s6-rc
-    tar -C ${appvm-lynx}/s6-rc -c . | tar -C s6-rc -x
-    chmod +w s6-rc
-    mkdir s6-rc/default
-    echo bundle > s6-rc/default/type
-    printf "appvm-catgirl\nappvm-lynx\n" > s6-rc/default/contents
-    s6-rc-compile svc/s6-rc s6-rc
+    mkdir svc
 
     tar -C ${netvm} -c data | tar -C svc -x
     chmod +w svc/data

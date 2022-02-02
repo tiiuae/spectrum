@@ -13,30 +13,21 @@ VMM = qemu
 # paths in the source tree.
 HOST_DIRECTORIES = s6-rc/netvm-vmm/env
 
-HOST_FILES = \
-	host/s6-rc/netvm-vmm/notification-fd \
-	host/s6-rc/netvm-vmm/run \
-	host/s6-rc/netvm-vmm/type \
-	host/s6-rc/netvm/dependencies \
-	host/s6-rc/netvm/run \
-	host/s6-rc/netvm/type
-
 HOST_BUILD_FILES = \
 	build/host/data/netvm/rootfs.ext4 \
 	build/host/data/netvm/vmlinux
 
-# We produce an s6-rc source directory, but that doesn't play nice
-# with Make, because it won't know to update if some file in the
-# directory is changed, or a file is created or removed in a
-# subdirectory.  Using the whole source directory could also end up
-# including files that aren't intended to be part of the input, like
-# temporary editor files or .license files.  So for all these reasons,
-# only explicitly listed files are included in the build result.
-build/svc: $(HOST_FILES) $(HOST_BUILD_FILES)
+# We produce a directory, but that doesn't play nice with Make,
+# because it won't know to update if some file in the directory is
+# changed, or a file is created or removed in a subdirectory.  Using
+# the whole directory could also end up including files that aren't
+# intended to be part of the input, like temporary editor files or
+# .license files.  So for all these reasons, only explicitly listed
+# files are included in the build result.
+build/svc: $(HOST_BUILD_FILES)
 	rm -rf $@
 	mkdir -p $@
 
-	tar -c $(HOST_FILES) | tar -C $@ -x --strip-components 1
 	tar -c $(HOST_BUILD_FILES) | tar -C $@ -x --strip-components 2
 	cd $@ && mkdir -p $(HOST_DIRECTORIES)
 

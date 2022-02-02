@@ -1,4 +1,34 @@
 # SPDX-License-Identifier: EUPL-1.2
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-s6-rc-init -c /ext/svc/s6-rc -l /run/s6-rc.ext -p ext- /run/service
+if { mkdir -p /run/s6-rc.ext.src }
+
+if {
+  elglob -0 dirs /ext/svc/data/*/
+  forx -E dir { $dirs }
+  backtick -E name { basename -- $dir }
+
+  cd /run/s6-rc.ext.src
+
+  if {
+    mkdir -- $name ${name}/dependencies.d ${name}-vmm ${name}-vmm/dependencies.d
+      ${name}-vmm/env
+  }
+  if { redirfd -w 1 ${name}-vmm/type echo longrun }
+  if { redirfd -w 1 ${name}-vmm/notification-fd echo 3 }
+  if { ln -s -- /bin/start-vm ${name}-vmm/run }
+
+  if {
+    elglob -0 paths /ext/svc/data/${name}/providers/net/*
+    forx -pE path { $paths }
+    backtick -E dep { basename -- $path }
+    touch -- ${name}-vmm/dependencies.d/${dep}
+  }
+
+  if { redirfd -w 1 ${name}/type echo longrun }
+  if { ln -s -- /etc/graphical-console ${name}/run }
+  if { touch -- ${name}/dependencies.d/${name}-vmm }
+}
+
+if { s6-rc-compile /run/s6-rc.ext.db /run/s6-rc.ext.src }
+s6-rc-init -c /run/s6-rc.ext.db -l /run/s6-rc.ext -p ext- /run/service

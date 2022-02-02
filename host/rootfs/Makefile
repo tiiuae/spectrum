@@ -16,6 +16,7 @@ build/rootfs.ext4: build/rootfs.tar
 FILES = \
 	etc/fonts/fonts.conf \
 	etc/fstab \
+	etc/graphical-console \
 	etc/group \
 	etc/init \
 	etc/login \

@@ -1,4 +1,4 @@
 # SPDX-License-Identifier: EUPL-1.2
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
-s6-rc -l /run/s6-rc.ext -u change default
+s6-rc -l /run/s6-rc.ext -u change appvm-catgirl appvm-lynx
