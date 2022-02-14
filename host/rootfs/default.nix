@@ -5,7 +5,7 @@
 
 { lib, stdenv, runCommand, writeReferencesToFile, s6-rc, tar2ext4
 , busybox, cloud-hypervisor, curl, execline, jq, mdevd, mktuntap, s6
-, s6-linux-utils, s6-portable-utils, screen, util-linuxMinimal, xorg
+, s6-linux-utils, s6-portable-utils, screen, socat, util-linuxMinimal, xorg
 }:
 
 let
@@ -22,7 +22,7 @@ let
   packages = [
     cloud-hypervisor curl execline jq mdevd mktuntap s6 s6-linux-utils
     s6-portable-utils s6-rc screen start-vm
-    pkgs.pkgsMusl.cryptsetup
+    pkgs.pkgsMusl.cryptsetup socat
     (busybox.override {
       extraConfig = ''
         CONFIG_FINDFS n

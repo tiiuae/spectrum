@@ -1,0 +1,23 @@
+// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: GFDL-1.3-or-later OR CC-BY-SA-4.0
+
+= Spectrum development
+
+== Debugging
+
+=== Core dumps
+
+When using a VM to run the Spectrum host system, a special mechanism
+is available to enable easy introspection of core files.  When a
+program on the Spectrum host system dumps core, the system will
+attempt to upload the core file to _its_ host (i.e. the system running
+Spectrum in a VM) using the vsock(7) protocol, on port 1129271877.
+
+For example, when running Spectrum in a VM using `make run` in the
+host/rootfs directory (which automatically sets up a virtio-vsock
+device), the running this command on the development Linux system will
+listen for a core file from Spectrum, and write it to a file:
+
+----
+socat -u VSOCK-LISTEN:1129271877 CREATE:spectrum.core
+----

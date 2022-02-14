@@ -67,6 +67,8 @@ build/etc/mdev/modalias.sh: scripts/modprobe/gen_modalias.sh.awk build/etc/mdev/
 S6_RC_FILES = \
 	etc/s6-rc/card0/type \
 	etc/s6-rc/card0/up \
+	etc/s6-rc/core/type \
+	etc/s6-rc/core/up \
 	etc/s6-rc/ext-rc-init/dependencies \
 	etc/s6-rc/ext-rc-init/type \
 	etc/s6-rc/ext-rc-init/up \
@@ -121,7 +123,8 @@ run: build/rootfs.ext4 $(EXT_FS)
 	    -drive file=$(EXT_FS),if=virtio,format=raw,readonly=on \
 	    -append "console=ttyS0 root=/dev/vda ext=/dev/vdb intel_iommu=on" \
 	    -device intel-iommu,intremap=on \
-	    -device virtio-vga-gl
+	    -device virtio-vga-gl \
+	    -device vhost-vsock-pci,guest-cid=3
 .PHONY: run
 
 console:

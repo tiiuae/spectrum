@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+
+redirfd -w 1 /proc/sys/kernel/core_pattern
+echo "|/bin/socat VSOCK-CONNECT:2:1129271877 -"
