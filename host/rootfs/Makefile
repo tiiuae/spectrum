@@ -65,8 +65,8 @@ build/etc/mdev/modalias.sh: scripts/modprobe/gen_modalias.sh.awk build/etc/mdev/
 	chmod +x $@
 
 S6_RC_FILES = \
-	etc/s6-rc/card0/up \
 	etc/s6-rc/card0/type \
+	etc/s6-rc/card0/up \
 	etc/s6-rc/ext-rc-init/dependencies \
 	etc/s6-rc/ext-rc-init/type \
 	etc/s6-rc/ext-rc-init/up \
