@@ -21,8 +21,16 @@ let
 
   packages = [
     cloud-hypervisor curl execline jq mdevd mktuntap s6 s6-linux-utils
-    s6-portable-utils s6-rc screen start-vm
-    pkgs.pkgsMusl.cryptsetup socat
+    s6-portable-utils s6-rc screen socat start-vm
+
+    (pkgs.pkgsMusl.cryptsetup.override {
+      programs = {
+        cryptsetup = false;
+        cryptsetup-reencrypt = false;
+        integritysetup = false;
+      };
+    })
+
     (busybox.override {
       extraConfig = ''
         CONFIG_FINDFS n
