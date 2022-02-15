@@ -7,6 +7,4 @@ project('start-vm', 'rust', 'c',
 c_lib = static_library('start-vm-c', 'net.c', 'net-util.c',
   c_args : ['-D_GNU_SOURCE'])
 
-executable('start-vm', 'start-vm.rs', 'net.rs', 'modprobe.rs',
-  link_with : c_lib,
-  install : true)
+executable('start-vm', 'start-vm.rs', link_with : c_lib, install : true)
