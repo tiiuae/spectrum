@@ -29,3 +29,18 @@ pub fn format_mac(mac: &[u8; 6]) -> String {
     // Safe because a formatted MAC address is always UTF-8.
     unsafe { String::from_utf8_unchecked(s) }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn format_mac_all_zero() {
+        assert_eq!(format_mac(&[0; 6]), "00:00:00:00:00:00");
+    }
+
+    #[test]
+    fn format_mac_hex() {
+        assert_eq!(format_mac(&[0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54]), "FE:DC:BA:98:76:54");
+    }
+}

@@ -8,3 +8,7 @@ c_lib = static_library('start-vm-c', 'net.c', 'net-util.c',
   c_args : ['-D_GNU_SOURCE'])
 
 executable('start-vm', 'start-vm.rs', link_with : c_lib, install : true)
+
+test('Rust unit tests', executable('start-vm-test', 'start-vm.rs',
+                                   rust_args : ['--test'],
+                                   link_with : c_lib))
