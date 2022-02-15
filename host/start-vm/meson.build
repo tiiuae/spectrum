@@ -10,5 +10,5 @@ c_lib = static_library('start-vm-c', 'net.c', 'net-util.c',
 executable('start-vm', 'start-vm.rs', link_with : c_lib, install : true)
 
 test('Rust unit tests', executable('start-vm-test', 'start-vm.rs',
-                                   rust_args : ['--test'],
-                                   link_with : c_lib))
+  rust_args : ['--test'],
+  link_with : c_lib))
