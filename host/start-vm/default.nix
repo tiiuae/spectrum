@@ -24,6 +24,7 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [ meson' ninja rustc ];
 
+  doCheck = true;
   dontStrip = true;
 }
 ) { }
