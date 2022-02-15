@@ -17,17 +17,17 @@
 
 int if_up(const char *name)
 {
-	struct ifreq req;
+	struct ifreq ifr;
 	int fd, r = -1;
 
 	if ((fd = socket(AF_UNIX, SOCK_STREAM|SOCK_CLOEXEC, 0)) == -1)
 		return -1;
 
-	strncpy(req.ifr_name, name, IFNAMSIZ);
-	if (ioctl(fd, SIOCGIFFLAGS, &req) == -1)
+	strncpy(ifr.ifr_name, name, IFNAMSIZ);
+	if (ioctl(fd, SIOCGIFFLAGS, &ifr) == -1)
 		goto out;
-	req.ifr_flags |= IFF_UP;
-	r = ioctl(fd, SIOCSIFFLAGS, &req);
+	ifr.ifr_flags |= IFF_UP;
+	r = ioctl(fd, SIOCSIFFLAGS, &ifr);
 out:
 	close(fd);
 	return r;
