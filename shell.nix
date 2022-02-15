@@ -4,5 +4,5 @@
 { pkgs ? import <nixpkgs> {} }: with pkgs;
 
 mkShell {
-  nativeBuildInputs = [ reuse ];
+  nativeBuildInputs = [ reuse rustfmt ];
 }
