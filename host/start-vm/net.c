@@ -18,15 +18,6 @@
 
 #include <linux/if_tun.h>
 
-#define MAC_STR_LEN 17
-
-int format_mac(char s[static MAC_STR_LEN + 1], const uint8_t mac[6])
-{
-	return snprintf(s, MAC_STR_LEN + 1,
-			"%.2hhX:%.2hhX:%.2hhX:%.2hhX:%.2hhX:%.2hhX",
-			mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-}
-
 static int setup_tap(const char *bridge_name, const char *tap_prefix)
 {
 	int fd;

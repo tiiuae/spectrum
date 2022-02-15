@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: EUPL-1.2
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
-use std::os::raw::{c_char, c_int};
+use std::os::raw::c_char;
 
 #[repr(C)]
 pub struct NetConfig {
@@ -14,20 +14,10 @@ extern "C" {
 }
 
 pub fn format_mac(mac: &[u8; 6]) -> String {
-    extern "C" {
-        fn format_mac(s: *mut c_char, mac: *const [u8; 6]) -> c_int;
-    }
-
-    let mut s = vec![0; 18];
-
-    // Safe because s and mac are correctly sized.
-    assert_ne!(unsafe { format_mac(s.as_mut_ptr() as _, mac) }, -1);
-
-    // Drop the null byte.
-    s.pop();
-
-    // Safe because a formatted MAC address is always UTF-8.
-    unsafe { String::from_utf8_unchecked(s) }
+    format!(
+        "{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}",
+        mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]
+    )
 }
 
 #[cfg(test)]
@@ -41,6 +31,7 @@ mod tests {
 
     #[test]
     fn format_mac_hex() {
-        assert_eq!(format_mac(&[0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54]), "FE:DC:BA:98:76:54");
+        let mac = [0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54];
+        assert_eq!(format_mac(&mac), "FE:DC:BA:98:76:54");
     }
 }
