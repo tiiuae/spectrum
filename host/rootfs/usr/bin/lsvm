@@ -1,0 +1,17 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+
+foreground { s6-rc -bu change ext }
+foreground { printf "NAME                \tSTATUS\n" }
+cd /ext/svc/data
+elglob -0 vms *
+forx -E vm { $vms }
+if { printf "%-20s\t" $vm }
+ifte {
+  ifte { echo "[31mSTOPPED[0m" }
+  { echo "[32;1mRUNNING[0m" }
+  test -f /run/service/ext-${vm}-vmm/down
+}
+{ echo "[33mUNKNOWN[0m" }
+test -d /run/service/ext-${vm}-vmm

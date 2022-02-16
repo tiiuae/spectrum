@@ -33,7 +33,10 @@ FILES = \
 	etc/service/getty-tty4/run \
 	etc/service/getty-ttyS0/run \
 	etc/xdg/weston/autolaunch \
-	etc/xdg/weston/weston.ini
+	etc/xdg/weston/weston.ini \
+	usr/bin/lsvm \
+	usr/bin/vm-start \
+	usr/bin/vm-stop
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
