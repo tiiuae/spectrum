@@ -1,25 +1,59 @@
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 // SPDX-License-Identifier: GFDL-1.3-or-later OR CC-BY-SA-4.0
 
-= Spectrum guest interface
+= Creating VMs
 
-This document describes the interface between a Spectrum guest VM, and
-the host system and other VMs.  Using this information, it should be
-possible to create custom VMs that integrate correctly with the
-Spectrum system.
+== Configuration
 
-== Logging
+Each VM is configured using a directory under svc/data/ on the user
+partition.  The name of the directory determines the name of the VM.
+
+The directory can contain the following files:
+
+vmlinux:: An uncompressed Linux kernel image for the VM to boot.
+*Required.*
+
+rootfs.ext4:: A disk image that will be provided to the guest as a
+virtio-blk device.  *Required.*
+
+providers/net:: A directory containing a file named for each VM that
+should provide networking to this VM.  The contents of these files are
+ignored.
+
+=== Example
+
+A configuration directory for a VM called "appvm-lynx" dedicated to
+the https://lynx.invisible-island.net[Lynx] web browser, set up to
+have networking provided by a VM named "netvm" would look like this:
+
+----
+appvm-lynx
+├── providers/
+│   └── net/
+│       └── netvm
+├── rootfs.ext4
+└── vmlinux*
+----
+
+== Devices
+
+The virtual devices described here are always created for Spectrum
+VMs.  It's important for guests to recognize these devices and use
+them in the intended way so that they integrate into the rest of the
+system.
+
+=== Logging
 
 Every VM has a serial console that is connected to the host system's
 logging infrastructure.  The console is write-only — there will never
 be any input to read from the console.
 
-== User interface
+=== User interface
 
 Every VM has a virtio-console device to use to interact with the user
 of the Spectrum system.
 
-== Networking
+=== Networking
 
 The Spectrum host system can create network connections between VMs.
 These take the form of virtio-net devices.  Guests must support the
