@@ -1,0 +1,47 @@
+// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: GFDL-1.3-or-later OR CC-BY-SA-4.0
+
+= Getting Spectrum
+
+To get Spectrum, you need to build it from source.  As long as you're
+running Linuxfootnote:[Building from other operating systems might
+work, but hasn't been tested.  Patches are welcome to support building
+from other operating systems, as long as they're not too invasive.]
+and have https://nixos.org/[Nix] and https://git-scm.com/[git]
+installed, it's very easy to do.
+
+== Trying Spectrum
+
+If you want to try Spectrum out to get a feel for it, without
+installing it, you can run it in a development VM with some example
+applications.
+
+----
+git clone https://spectrum-os.org/git/spectrum
+git clone https://github.com/NixOS/nixpkgs
+git clone -b rootfs --reference nixpkgs \
+  https://spectrum-os.org/git/nixpkgs nixpkgs-spectrum
+cd spectrum/host/rootfs
+nix-shell -I nixpkgs=../../../nixpkgs-spectrum --run 'make run'
+----
+
+This builds just enough of Spectrum to try it out in a VM, but it will
+still take a very long time.
+
+== Building an installer
+
+----
+git clone https://spectrum-os.org/git/spectrum
+nix-build spectrum/img/combined \
+  -I nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-master.tar.gz
+----
+
+This will take a very long time, but when it's done, a symbolic link
+named "result" will appear, pointing to a Spectrum USB installer
+image.
+
+CAUTION: Spectrum is not yet suitable for real-world use.  Do not use
+your Spectrum system for anything important or sensitive.  Spectrum is
+currently missing many important security properties, and there is no
+procedure for updating to new versions of Spectrum — you have to
+reinstall.
