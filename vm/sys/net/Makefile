@@ -9,10 +9,6 @@ CLOUD_HYPERVISOR = cloud-hypervisor
 
 VMM = qemu
 
-# These don't have the host/ prefix because they're not referring to
-# paths in the source tree.
-HOST_DIRECTORIES = s6-rc/netvm-vmm/env
-
 HOST_BUILD_FILES = \
 	build/host/data/netvm/rootfs.ext4 \
 	build/host/data/netvm/vmlinux
@@ -29,7 +25,6 @@ build/svc: $(HOST_BUILD_FILES)
 	mkdir -p $@
 
 	tar -c $(HOST_BUILD_FILES) | tar -C $@ -x --strip-components 2
-	cd $@ && mkdir -p $(HOST_DIRECTORIES)
 
 build/host/data/netvm/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
