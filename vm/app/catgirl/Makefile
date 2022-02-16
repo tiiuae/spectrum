@@ -9,9 +9,9 @@ CLOUD_HYPERVISOR = cloud-hypervisor
 
 VMM = qemu
 
-HOST_S6_RC_FILES = host/data/appvm-catgirl/providers/net/netvm
+HOST_FILES = host/data/appvm-catgirl/providers/net/netvm
 
-HOST_S6_RC_BUILD_FILES = \
+HOST_BUILD_FILES = \
 	build/host/data/appvm-catgirl/rootfs.ext4 \
 	build/host/data/appvm-catgirl/vmlinux
 
@@ -22,12 +22,12 @@ HOST_S6_RC_BUILD_FILES = \
 # intended to be part of the input, like temporary editor files or
 # .license files.  So for all these reasons, only explicitly listed
 # files are included in the build result.
-build/svc: $(HOST_S6_RC_FILES) $(HOST_S6_RC_BUILD_FILES)
+build/svc: $(HOST_FILES) $(HOST_BUILD_FILES)
 	rm -rf $@
 	mkdir -p $@
 
-	tar -c $(HOST_S6_RC_FILES) | tar -C $@ -x --strip-components 1
-	tar -c $(HOST_S6_RC_BUILD_FILES) | tar -C $@ -x --strip-components 2
+	tar -c $(HOST_FILES) | tar -C $@ -x --strip-components 1
+	tar -c $(HOST_BUILD_FILES) | tar -C $@ -x --strip-components 2
 
 build/host/data/appvm-catgirl/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
