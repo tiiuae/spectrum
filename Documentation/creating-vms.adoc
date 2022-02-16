@@ -45,7 +45,7 @@ system.
 === Logging
 
 Every VM has a serial console that is connected to the host system's
-logging infrastructure.  The console is write-only — there will never
+logging infrastructure.  The console is write-only -- there will never
 be any input to read from the console.
 
 === User interface

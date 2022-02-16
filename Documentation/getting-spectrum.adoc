@@ -43,5 +43,5 @@ image.
 CAUTION: Spectrum is not yet suitable for real-world use.  Do not use
 your Spectrum system for anything important or sensitive.  Spectrum is
 currently missing many important security properties, and there is no
-procedure for updating to new versions of Spectrum — you have to
+procedure for updating to new versions of Spectrum -- you have to
 reinstall.
