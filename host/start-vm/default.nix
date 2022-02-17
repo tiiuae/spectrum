@@ -7,7 +7,7 @@
 let
   inherit (lib) cleanSource;
 
-  meson' = pkgsBuildHost.meson_0_60.overrideAttrs ({ patches ? [], ... }: {
+  meson' = pkgsBuildHost.meson.overrideAttrs ({ patches ? [], ... }: {
     patches = patches ++ [
       (fetchpatch {
         url = "https://github.com/alyssais/meson/commit/e8464d47fa8971098d626744b14db5d066ebf753.patch";
