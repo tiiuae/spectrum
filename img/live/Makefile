@@ -34,7 +34,7 @@ build/bootx64.efi: etc/os-release build/cmdline $(INITRAMFS)
 	    $(EFI_STUB) $@
 
 build/boot.fat: build/bootx64.efi
-	$(TRUNCATE) -s 157286400 $@
+	$(TRUNCATE) -s 209715200 $@
 	$(MKFS_FAT) $@
 	$(MMD) -i $@ ::/EFI ::/EFI/BOOT
 	$(MCOPY) -i $@ build/bootx64.efi ::/EFI/BOOT
