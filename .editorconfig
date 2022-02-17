@@ -1,0 +1,4 @@
+root = true
+
+[*.awk]
+indent_style = tab
