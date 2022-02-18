@@ -184,7 +184,8 @@ struct net_config net_setup(const char *router_vm_name)
 	// Set up a process that will listen for this process dying,
 	// and remove the interface from the netvm, and delete the
 	// bridge.
-	exit_listener_setup(router_vm_name, router_vm_net_device);
+	if (exit_listener_setup(router_vm_name, router_vm_net_device) == -1)
+		goto fail_bridge;
 
 	goto out;
 
