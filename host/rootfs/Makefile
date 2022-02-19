@@ -16,7 +16,6 @@ build/rootfs.ext4: build/rootfs.tar
 FILES = \
 	etc/fonts/fonts.conf \
 	etc/fstab \
-	etc/graphical-console \
 	etc/group \
 	etc/init \
 	etc/login \
@@ -35,6 +34,7 @@ FILES = \
 	etc/xdg/weston/autolaunch \
 	etc/xdg/weston/weston.ini \
 	usr/bin/lsvm \
+	usr/bin/vm-console \
 	usr/bin/vm-start \
 	usr/bin/vm-stop
 

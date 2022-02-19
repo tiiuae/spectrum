@@ -11,7 +11,7 @@ if { printf "%-20s\t" $vm }
 ifte {
   ifte { echo "[31mSTOPPED[0m" }
   { echo "[32;1mRUNNING[0m" }
-  test -f /run/service/ext-${vm}-vmm/down
+  test -f /run/service/ext-${vm}/down
 }
 { echo "[33mUNKNOWN[0m" }
-test -d /run/service/ext-${vm}-vmm
+test -d /run/service/ext-${vm}

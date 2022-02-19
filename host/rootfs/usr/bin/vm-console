@@ -1,0 +1,10 @@
+#!/bin/execlineb -S1
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+
+backtick -E pty {
+  pipeline -w { jq -r .config.console.file }
+  ch-remote --api-socket /run/service/ext-${1}/env/cloud-hypervisor.sock info
+}
+
+foot -T $1 --pty $pty

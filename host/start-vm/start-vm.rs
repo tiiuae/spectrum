@@ -45,9 +45,6 @@ fn main() {
         .into_os_string()
         .into_vec();
 
-    if dir.ends_with(b"-vmm") && !dir.ends_with(b"/-vmm") {
-        dir.truncate(dir.len() - b"-vmm".len());
-    }
     let dir = PathBuf::from(OsString::from_vec(dir));
 
     let vm_name = dir

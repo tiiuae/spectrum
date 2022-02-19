@@ -7,5 +7,6 @@ Running VMs can be managed with the following commands, available in a
 host terminal:
 
 `lsvm`:: List available VMs, along with whether they are currently running.
+`vm-console <name>`:: Open a terminal emulator for a VM's console.
 `vm-start <name>`:: Start a VM.
 `vm-stop <name>`:: Stop a VM.
