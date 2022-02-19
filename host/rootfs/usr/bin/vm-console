@@ -7,4 +7,14 @@ backtick -E pty {
   ch-remote --api-socket /run/service/ext-${1}/env/cloud-hypervisor.sock info
 }
 
-foot -T $1 --pty $pty
+foreground {
+  flock -n $pty
+  foot -T $1 --pty $pty
+}
+importas -iu ? ?
+foreground {
+  if { test $? != 230 }
+  fdmove -c 1 2
+  printf "%s: a console for %s is already open\n" $0 $1
+}
+exit $?
