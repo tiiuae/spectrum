@@ -40,11 +40,10 @@ fn main() {
     command.args(&["--memory", "size=128M"]);
     command.args(&["--console", "pty"]);
 
-    let mut dir = current_dir()
+    let dir = current_dir()
         .unwrap_or_else(err!(1, "getting current directory"))
         .into_os_string()
         .into_vec();
-
     let dir = PathBuf::from(OsString::from_vec(dir));
 
     let vm_name = dir
