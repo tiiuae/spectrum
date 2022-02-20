@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
 #include <err.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <net/if.h>
 #include <string.h>
@@ -130,11 +131,16 @@ int tap_open(const char *name, int flags)
 	struct ifreq ifr;
 	int fd;
 
-	if ((fd = open("/dev/net/tun", O_RDWR)) == -1)
-		return -1;
-
 	strncpy(ifr.ifr_name, name, IFNAMSIZ);
 	ifr.ifr_flags = IFF_TAP|flags;
+
+	if (ifr.ifr_name[IFNAMSIZ - 1]) {
+		errno = ENAMETOOLONG;
+		return -1;
+	}
+
+	if ((fd = open("/dev/net/tun", O_RDWR)) == -1)
+		return -1;
 	if (!ioctl(fd, TUNSETIFF, &ifr))
 		return fd;
 
