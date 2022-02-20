@@ -11,4 +11,3 @@ int bridge_remove_if(const char *brname, const char *ifname);
 int bridge_delete(const char *name);
 
 int tap_open(const char *name, int flags);
-int tap_delete(const char *name);
