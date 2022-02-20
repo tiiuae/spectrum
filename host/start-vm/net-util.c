@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: EUPL-1.2
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
+#include "net-util.h"
+
 #include <err.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <net/if.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -126,7 +127,7 @@ int bridge_delete(const char *name)
 	return r;
 }
 
-int tap_open(const char *name, int flags)
+int tap_open(char name[static IFNAMSIZ], int flags)
 {
 	struct ifreq ifr;
 	int fd;
@@ -141,9 +142,11 @@ int tap_open(const char *name, int flags)
 
 	if ((fd = open("/dev/net/tun", O_RDWR)) == -1)
 		return -1;
-	if (!ioctl(fd, TUNSETIFF, &ifr))
-		return fd;
+	if (ioctl(fd, TUNSETIFF, &ifr) == -1) {
+		close(fd);
+		return -1;
+	}
 
-	close(fd);
-	return -1;
+	strncpy(name, ifr.ifr_name, IFNAMSIZ);
+	return fd;
 }

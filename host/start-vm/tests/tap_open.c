@@ -6,10 +6,16 @@
 #include <assert.h>
 #include <errno.h>
 #include <sched.h>
+#include <string.h>
+
+#include <sys/ioctl.h>
+
+#include <linux/if_tun.h>
 
 int main(void)
 {
-	char name[] = "tap%d";
+	char name[IFNAMSIZ] = "tap%d";
+	struct ifreq ifr;
 	int fd;
 
 	unshare(CLONE_NEWUSER|CLONE_NEWNET);
@@ -17,5 +23,6 @@ int main(void)
 	fd = tap_open(name, 0);
 	if (fd == -1 && errno == EPERM)
 		return 77;
-	assert(fd != -1);
+	assert(!ioctl(fd, TUNGETIFF, &ifr));
+	assert(!strcmp(name, ifr.ifr_name));
 }
