@@ -143,13 +143,13 @@ int tap_open(char name[static IFNAMSIZ], int flags)
 	struct ifreq ifr;
 	int fd;
 
-	strncpy(ifr.ifr_name, name, IFNAMSIZ);
-	ifr.ifr_flags = IFF_TAP|flags;
-
-	if (ifr.ifr_name[IFNAMSIZ - 1]) {
+	if (name[IFNAMSIZ - 1]) {
 		errno = ENAMETOOLONG;
 		return -1;
 	}
+
+	strncpy(ifr.ifr_name, name, IFNAMSIZ - 1);
+	ifr.ifr_flags = IFF_TAP|flags;
 
 	if ((fd = open("/dev/net/tun", O_RDWR)) == -1)
 		return -1;
