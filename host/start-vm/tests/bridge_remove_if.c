@@ -19,8 +19,10 @@ int main(void)
 	int r, tap;
 	struct stat statbuf;
 
-	if (!unshare(CLONE_NEWUSER|CLONE_NEWNET|CLONE_NEWNS))
-		assert(!mount("sysfs", "/sys", "sysfs", 0, NULL));
+	if (!unshare(CLONE_NEWUSER|CLONE_NEWNET|CLONE_NEWNS)) {
+		if (mount("sysfs", "/sys", "sysfs", 0, NULL) == -1)
+			return errno == ENOENT ? 77 : 1;
+	}
 
 	tap = tap_open(tap_name, 0);
 	if (tap == -1)
