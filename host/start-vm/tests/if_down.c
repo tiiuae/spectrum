@@ -20,7 +20,7 @@ int main(void)
 
 	unshare(CLONE_NEWUSER|CLONE_NEWNET);
 
-	if (tap_open(name, 0) == -1 && errno == EPERM)
+	if (tap_open(name, 0) == -1 && (errno == EPERM || errno == ENOENT))
 		return 77;
 	assert(!if_up(name));
 	assert(!if_down(name));

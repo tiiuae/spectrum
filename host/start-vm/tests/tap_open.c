@@ -21,7 +21,7 @@ int main(void)
 	unshare(CLONE_NEWUSER|CLONE_NEWNET);
 
 	fd = tap_open(name, 0);
-	if (fd == -1 && errno == EPERM)
+	if (fd == -1 && (errno == EPERM || errno == ENOENT))
 		return 77;
 	assert(!ioctl(fd, TUNGETIFF, &ifr));
 	assert(!strcmp(name, ifr.ifr_name));

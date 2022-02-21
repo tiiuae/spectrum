@@ -17,7 +17,7 @@ int main(void)
 
 	memset(newname, 'a', sizeof newname);
 	if (tap_open(name, 0) == -1)
-		return errno == EPERM ? 77 : 1;
+		return errno == EPERM || errno == ENOENT ? 77 : 1;
 	assert(if_rename(name, newname) == -1);
 	assert(errno == ENAMETOOLONG);
 }

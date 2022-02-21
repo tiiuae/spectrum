@@ -24,7 +24,7 @@ int main(void)
 
 	tap = tap_open(tap_name, 0);
 	if (tap == -1)
-		return errno == EPERM ? 77 : 1;
+		return errno == EPERM || errno == ENOENT ? 77 : 1;
 
 	r = snprintf(bridge_name, sizeof bridge_name, "br%d", rand());
 	assert(r > 0 && (size_t)r < sizeof bridge_name);

@@ -26,7 +26,7 @@ int main(void)
 	r = snprintf(newname, sizeof newname, "_tap%d", rand());
 	assert(r > 0 && (size_t)r < sizeof newname);
 	if ((fd = tap_open(name, 0)) == -1)
-		return errno == EPERM ? 77 : 1;
+		return errno == EPERM || errno == ENOENT ? 77 : 1;
 	assert(!if_rename(name, newname));
 	assert(!ioctl(fd, TUNGETIFF, &ifr));
 	assert(!strcmp(ifr.ifr_name, newname));
