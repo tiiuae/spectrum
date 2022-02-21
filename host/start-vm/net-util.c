@@ -48,6 +48,11 @@ int if_rename(const char *name, const char *newname)
 		return -1;
 	}
 
+	if (strchr(ifr.ifr_newname, '%')) {
+		errno = EINVAL;
+		return -1;
+	}
+
 	if ((fd = socket(AF_UNIX, SOCK_STREAM|SOCK_CLOEXEC, 0)) == -1)
 		return -1;
 	r = ioctl(fd, SIOCSIFNAME, &ifr);
