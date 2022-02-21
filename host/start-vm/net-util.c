@@ -43,6 +43,11 @@ int if_rename(const char *name, const char *newname)
 	strncpy(ifr.ifr_name, name, sizeof ifr.ifr_name);
 	strncpy(ifr.ifr_newname, newname, sizeof ifr.ifr_newname);
 
+	if (ifr.ifr_newname[sizeof ifr.ifr_newname - 1]) {
+		errno = ENAMETOOLONG;
+		return -1;
+	}
+
 	if ((fd = socket(AF_UNIX, SOCK_STREAM|SOCK_CLOEXEC, 0)) == -1)
 		return -1;
 	r = ioctl(fd, SIOCSIFNAME, &ifr);
