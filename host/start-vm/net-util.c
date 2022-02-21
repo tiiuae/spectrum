@@ -72,6 +72,11 @@ int bridge_add(const char *name)
 {
 	int fd, r;
 
+	if (strnlen(name, IFNAMSIZ) == IFNAMSIZ) {
+		errno = ENAMETOOLONG;
+		return -1;
+	}
+
 	if (strchr(name, '%')) {
 		errno = EINVAL;
 		return -1;
