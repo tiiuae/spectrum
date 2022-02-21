@@ -71,6 +71,12 @@ out:
 int bridge_add(const char *name)
 {
 	int fd, r;
+
+	if (strchr(name, '%')) {
+		errno = EINVAL;
+		return -1;
+	}
+
 	if ((fd = socket(AF_UNIX, SOCK_STREAM|SOCK_CLOEXEC, 0)) == -1)
 		return -1;
 	r = ioctl(fd, SIOCBRADDBR, name);
