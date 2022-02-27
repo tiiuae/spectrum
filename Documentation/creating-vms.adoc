@@ -5,8 +5,9 @@
 
 == Configuration
 
-Each VM is configured using a directory under svc/data/ on the user
-partition.  The name of the directory determines the name of the VM.
+Each VM is configured using a directory under svc/data/ on the
+xref:user-partition.adoc[user partition].  The name of the directory
+determines the name of the VM.
 
 The directory can contain the following files:
 
