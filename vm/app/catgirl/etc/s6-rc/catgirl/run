@@ -26,6 +26,6 @@ unexport ?
 foreground { printf "IRC nick (to join #spectrum): " }
 foreground {
   backtick -E nick { head -1 }
-  catgirl -h irc.libera.chat -j "#spectrum-test" -n $nick
+  catgirl -h irc.libera.chat -j "#spectrum" -n $nick
 }
 exec -l sh
