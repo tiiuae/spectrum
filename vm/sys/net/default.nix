@@ -9,7 +9,7 @@ pkgs.pkgsStatic.callPackage (
 
 { lib, stdenv, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4, xorg
-, busybox, connmanMinimal, dbus, execline, linux, mdevd, nftables, s6
+, busybox, connmanMinimal, dbus, execline, mdevd, nftables, s6
 , s6-linux-utils, s6-portable-utils
 }:
 

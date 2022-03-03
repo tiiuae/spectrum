@@ -9,7 +9,7 @@ pkgs.pkgsStatic.callPackage (
 
 { lib, stdenv, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4
-, busybox, cacert, execline, linux, lynx, mdevd, s6, s6-linux-utils
+, busybox, cacert, execline, lynx, mdevd, s6, s6-linux-utils
 , s6-portable-utils
 }:
 
