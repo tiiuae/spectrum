@@ -51,7 +51,6 @@ let
       VIRTIO_PCI = yes;
       VIRTIO_BLK = yes;
       EXT4_FS = yes;
-      MODPROBE_PATH = freeform "/sbin/modprobe";
     };
   };
 
