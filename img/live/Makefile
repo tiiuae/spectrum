@@ -10,7 +10,7 @@ MCOPY = mcopy
 MKFS_FAT = mkfs.fat
 MMD = mmd
 OBJCOPY = objcopy
-SCRIPTS = ../scripts
+SCRIPTS = ../../scripts
 TRUNCATE = truncate
 VERITYSETUP = veritysetup
 
