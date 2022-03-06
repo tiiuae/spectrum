@@ -10,7 +10,7 @@ if -n {
     backtick -E type { lsblk -lnpo PARTTYPE $mdev }
     test $type = 56a3bbc3-aefa-43d9-a64d-7b3fd59bbc4e
   }
-  if { forx -Ep module { exfat loop } modprobe $module }
+  if { modprobe loop }
   backtick -E uuid { lsblk -lnpo PARTUUID $mdev }
   if { mkdir -p /mnt/${uuid} }
   if { mount $mdev /mnt/${uuid} }
