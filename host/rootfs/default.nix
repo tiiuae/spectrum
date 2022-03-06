@@ -72,36 +72,6 @@ let
     tar -cf $out --sort=name --mtime=@0 --verbatim-files-from \
         -T ${writeReferencesToFile packagesSysroot} .
   '';
-
-  netvm = import ../../vm/sys/net {
-    inherit pkgs;
-    inherit (foot) terminfo;
-  };
-
-  appvm-catgirl = import ../../vm/app/catgirl {
-    inherit pkgs;
-    inherit (foot) terminfo;
-  };
-
-  appvm-lynx = import ../../vm/app/lynx {
-    inherit pkgs;
-    inherit (foot) terminfo;
-  };
-
-  extFs = runCommand "ext.ext4" {
-    nativeBuildInputs = [ tar2ext4 s6-rc ];
-  } ''
-    mkdir svc
-
-    tar -C ${netvm} -c data | tar -C svc -x
-    chmod +w svc/data
-    tar -C ${appvm-catgirl} -c data | tar -C svc -x
-    chmod +w svc/data
-    tar -C ${appvm-lynx} -c data | tar -C svc -x
-
-    tar -cf ext.tar svc
-    tar2ext4 -i ext.tar -o $out
-  '';
 in
 
 stdenv.mkDerivation {
@@ -114,7 +84,6 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [ s6-rc tar2ext4 ];
 
-  EXT_FS = extFs;
   MODULES_ALIAS = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.alias";
   MODULES_ORDER = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.order";
   PACKAGES_TAR = packagesTar;

@@ -13,5 +13,6 @@ with pkgs;
     jq netcat qemu_kvm reuse screen util-linux
   ];
 
+  EXT_FS = pkgsStatic.callPackage ../initramfs/extfs.nix { inherit pkgs; };
   KERNEL = "${passthru.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
 })
