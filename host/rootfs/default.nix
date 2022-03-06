@@ -4,8 +4,8 @@
 { pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
 
 { lib, stdenv, runCommand, writeReferencesToFile, s6-rc, tar2ext4
-, busybox, cloud-hypervisor, cryptsetup, curl, execline, jq, mdevd, mktuntap, s6
-, s6-linux-utils, s6-portable-utils, screen, socat, util-linuxMinimal, xorg
+, busybox, cloud-hypervisor, cryptsetup, execline, jq, mdevd, s6
+, s6-linux-utils, s6-portable-utils, socat, util-linuxMinimal, xorg
 }:
 
 let
@@ -20,8 +20,8 @@ let
   foot = pkgsGui.foot.override { allowPgo = false; };
 
   packages = [
-    cloud-hypervisor curl execline jq mdevd mktuntap s6 s6-linux-utils
-    s6-portable-utils s6-rc screen socat start-vm
+    cloud-hypervisor execline jq mdevd s6 s6-linux-utils
+    s6-portable-utils s6-rc socat start-vm
 
     (cryptsetup.override {
       programs = {
