@@ -16,7 +16,9 @@ in
 with pkgs;
 
 initramfs.overrideAttrs ({ nativeBuildInputs ? [], ... }: {
-  nativeBuildInputs = nativeBuildInputs ++ [ cryptsetup jq util-linux ];
+  nativeBuildInputs = nativeBuildInputs ++ [
+    cryptsetup jq qemu_kvm util-linux
+  ];
 
   EXT_FS = extfs;
   KERNEL = "${rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
