@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
 { pkgs ? import <nixpkgs> {} }: pkgs.callPackage (
-{ pkgsBuildHost, lib, stdenv, fetchpatch, rust, ninja, rustc }:
+{ pkgsBuildHost, lib, stdenv, fetchpatch, ninja, rustc }:
 
 let
   inherit (lib) cleanSource;
