@@ -33,7 +33,7 @@ still take a very long time.
 ----
 git clone https://spectrum-os.org/git/spectrum
 nix-build spectrum/img/combined \
-  -I nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-master.tar.gz
+  -I nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-rootfs.tar.gz
 ----
 
 This will take a very long time, but when it's done, a symbolic link
