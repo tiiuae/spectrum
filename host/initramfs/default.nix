@@ -16,7 +16,7 @@ let
   linux = rootfs.kernel;
 
   packages = [
-    pkgsStatic.mdevd pkgsStatic.execline
+    pkgsStatic.execline pkgsStatic.kmod pkgsStatic.mdevd
 
     (pkgsStatic.cryptsetup.override {
       programs = {
@@ -29,7 +29,13 @@ let
     (busybox.override {
       enableStatic = true;
       extraConfig = ''
+        CONFIG_DEPMOD n
         CONFIG_FINDFS n
+        CONFIG_INSMOD n
+        CONFIG_LSMOD n
+        CONFIG_MODINFO n
+        CONFIG_MODPROBE n
+        CONFIG_RMMOD n
       '';
     })
   ];

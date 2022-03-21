@@ -4,7 +4,7 @@
 { pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
 
 { lib, stdenv, runCommand, writeReferencesToFile, s6-rc, tar2ext4
-, busybox, cloud-hypervisor, cryptsetup, execline, jq, mdevd, s6
+, busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod, mdevd, s6
 , s6-linux-utils, s6-portable-utils, socat, util-linuxMinimal, xorg
 }:
 
@@ -20,7 +20,7 @@ let
   foot = pkgsGui.foot.override { allowPgo = false; };
 
   packages = [
-    cloud-hypervisor execline jq mdevd s6 s6-linux-utils
+    cloud-hypervisor execline jq kmod mdevd s6 s6-linux-utils
     s6-portable-utils s6-rc socat start-vm
 
     (cryptsetup.override {
@@ -33,8 +33,14 @@ let
 
     (busybox.override {
       extraConfig = ''
+        CONFIG_DEPMOD n
         CONFIG_FINDFS n
         CONFIG_INIT n
+        CONFIG_INSMOD n
+        CONFIG_LSMOD n
+        CONFIG_MODINFO n
+        CONFIG_MODPROBE n
+        CONFIG_RMMOD n
       '';
     })
   ] ++ (with pkgsGui; [ foot westonLite ]);

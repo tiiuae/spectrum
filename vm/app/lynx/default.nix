@@ -9,7 +9,7 @@ pkgs.pkgsStatic.callPackage (
 
 { lib, stdenv, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4
-, busybox, cacert, execline, lynx, mdevd, s6, s6-linux-utils
+, busybox, cacert, execline, kmod, lynx, mdevd, s6, s6-linux-utils
 , s6-portable-utils
 }:
 
@@ -17,7 +17,18 @@ let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
   packages = [
-    busybox execline lynx mdevd s6 s6-linux-utils s6-portable-utils s6-rc
+    execline kmod lynx mdevd s6 s6-linux-utils s6-portable-utils s6-rc
+
+    (busybox.override {
+      extraConfig = ''
+        CONFIG_DEPMOD n
+        CONFIG_INSMOD n
+        CONFIG_LSMOD n
+        CONFIG_MODINFO n
+        CONFIG_MODPROBE n
+        CONFIG_RMMOD n
+      '';
+    })
   ];
 
   packagesSysroot = runCommand "packages-sysroot" {
