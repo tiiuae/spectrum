@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
 mod ch;
-mod modprobe;
 mod net;
 
 use std::env::{args, current_dir};
@@ -12,7 +11,6 @@ use std::os::unix::prelude::*;
 use std::path::PathBuf;
 use std::process::{exit, Command};
 
-use modprobe::modprobe;
 use net::{format_mac, net_setup, NetConfig};
 
 macro_rules! errx {
@@ -30,8 +28,6 @@ macro_rules! err {
 }
 
 fn main() {
-    modprobe(&["kvm-intel"]).unwrap_or_else(err!(1, "modprobe kvm-intel"));
-
     let mut command = Command::new("s6-notifyoncheck");
     command.args(&["-dc", "test -S env/cloud-hypervisor.sock"]);
     command.arg("cloud-hypervisor");

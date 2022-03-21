@@ -5,10 +5,7 @@
 # Assign the whole IOMMU group containing this device to the network
 # VM.
 
-if {
-  forx -pE module { vfio-pci vfio_iommu_type1 }
-  modprobe $module
-}
+if { modprobe vfio-pci }
 
 importas -i devpath DEVPATH
 
