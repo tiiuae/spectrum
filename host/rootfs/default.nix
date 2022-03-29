@@ -5,7 +5,7 @@
 
 { lib, stdenv, runCommand, writeReferencesToFile, s6-rc, tar2ext4
 , busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod, mdevd, s6
-, s6-linux-utils, s6-portable-utils, socat, util-linuxMinimal, xorg
+, s6-portable-utils, socat, util-linuxMinimal, xorg
 }:
 
 let
@@ -20,8 +20,8 @@ let
   foot = pkgsGui.foot.override { allowPgo = false; };
 
   packages = [
-    cloud-hypervisor execline jq kmod mdevd s6 s6-linux-utils
-    s6-portable-utils s6-rc socat start-vm
+    cloud-hypervisor execline jq kmod mdevd s6 s6-portable-utils s6-rc
+    socat start-vm
 
     (cryptsetup.override {
       programs = {
