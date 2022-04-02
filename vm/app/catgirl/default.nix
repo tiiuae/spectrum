@@ -9,15 +9,14 @@ pkgs.pkgsStatic.callPackage (
 
 { lib, stdenv, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4
-, busybox, cacert, catgirl, execline, kmod, mdevd, s6, s6-linux-utils
-, s6-portable-utils
+, busybox, cacert, catgirl, execline, kmod, mdevd, s6, s6-portable-utils
 }:
 
 let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
   packages = [
-    catgirl execline kmod mdevd s6 s6-linux-utils s6-portable-utils s6-rc
+    catgirl execline kmod mdevd s6 s6-portable-utils s6-rc
 
     (busybox.override {
       extraConfig = ''
