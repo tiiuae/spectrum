@@ -94,11 +94,6 @@ stdenv.mkDerivation {
   MODULES_ORDER = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.order";
   PACKAGES_TAR = packagesTar;
 
-  postPatch = ''
-    mkdir $NIX_BUILD_TOP/empty
-    substituteInPlace Makefile --replace /var/empty $NIX_BUILD_TOP/empty
-  '';
-
   installPhase = ''
     cp build/rootfs.ext4 $out
   '';

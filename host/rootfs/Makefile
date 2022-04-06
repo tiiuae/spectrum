@@ -45,15 +45,18 @@ LINKS = bin sbin
 BUILD_FILES = build/etc/mdev/modalias.sh build/etc/s6-rc
 MOUNTPOINTS = dev ext run proc sys
 
-build/rootfs.tar: $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
+build/empty:
+	mkdir -p $@
+
+build/rootfs.tar: build/empty $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
 	cp --no-preserve=mode -f $(PACKAGES_TAR) $@
 	tar $(TARFLAGS) --append -f $@ $(FILES) $(LINKS)
 	echo $(BUILD_FILES) | cut -d/ -f2 | \
 	    tar $(TARFLAGS) --append -f $@ -C build -T -
 	for m in $(MOUNTPOINTS); do \
-	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," /var/empty ; \
+	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," build/empty ; \
 	done
-	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' /var/empty
+	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' build/empty
 
 build/etc/mdev/modules.map: scripts/modprobe/gen_modules.map.awk
 	mkdir -p $$(dirname $@)

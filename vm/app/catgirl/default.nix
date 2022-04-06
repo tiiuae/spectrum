@@ -74,11 +74,6 @@ stdenv.mkDerivation {
   PACKAGES_TAR = packagesTar;
   VMLINUX = "${kernel.dev}/vmlinux";
 
-  postPatch = ''
-    mkdir $NIX_BUILD_TOP/empty
-    substituteInPlace Makefile --replace /var/empty $NIX_BUILD_TOP/empty
-  '';
-
   installPhase = ''
     mv build/svc $out
   '';

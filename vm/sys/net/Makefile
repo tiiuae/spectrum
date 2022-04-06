@@ -55,15 +55,18 @@ VM_LINKS = bin var/run
 VM_BUILD_FILES = build/etc/s6-rc
 VM_MOUNTPOINTS = dev run proc sys var/lib/connman
 
-build/rootfs.tar: $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
+build/empty:
+	mkdir -p $@
+
+build/rootfs.tar: build/empty $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
 	cp --no-preserve=mode -f $(PACKAGES_TAR) $@
 	tar $(TARFLAGS) --append -f $@ $(VM_FILES) $(VM_LINKS)
 	echo $(VM_BUILD_FILES) | cut -d/ -f2 | \
 	    tar $(TARFLAGS) --append -f $@ -C build -T -
 	for m in $(VM_MOUNTPOINTS); do \
-	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," /var/empty ; \
+	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," build/empty ; \
 	done
-	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' /var/empty
+	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' build/empty
 
 VM_S6_RC_FILES = \
 	etc/s6-rc/connman/dependencies \
