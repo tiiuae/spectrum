@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: EUPL-1.2
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
 insmod efi_gop
 insmod efi_uga
@@ -13,7 +13,8 @@ terminal_output gfxterm
 
 menuentry "Try Spectrum" {
   loopback live (hd0,gpt3)/Spectrum-0.0-x86_64-generic.0.Live.img
-  chainloader (live,gpt1)/efi/boot/bootx64.efi
+  linux (live,gpt1)/spectrum/linux @spectrumKernelParams@
+  initrd (live,gpt1)/spectrum/initrd
 }
 
 menuentry "Install Spectrum" {
