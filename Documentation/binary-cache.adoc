@@ -1,0 +1,53 @@
+// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: GFDL-1.3-or-later OR CC-BY-SA-4.0
+
+= Binary cache
+
+Building Spectrum from source can take a very long time.  To avoid
+having to wait when building the system to try it out or test patches,
+an x86_64 binary cache service is available.  If configured to do so,
+Nix will download build outputs from the cache, instead of building
+them locally.
+
+Builds are run on the latest NixOS unstable on
+https://www.vultr.com/[Vultr], and are signed to ensure authenticity.
+The build infrastructure and signing key are accessible by Alyssa Ross
+and Puck Meerburg.  Storage is provided by Daniel Kuehn.  Please
+https://spectrum-os.org/participating.html[get in touch] if you
+encounter any trouble with it.
+
+The binary cache is currently not able to provide logs, due to a
+https://github.com/NixOS/nix/issues/6403[Nix bug].
+
+== Setting up the binary cache
+
+=== NixOS
+
+The following configuration adds the Spectrum binary cache as a
+substituter, and tells Nix to trust builds signed with its public key.
+
+[source,nix]
+----
+{ ... }:
+
+{
+  nix.settings.substituters = [ "https://cache.dataaturservice.se/spectrum/" ];
+  nix.settings.trusted-public-keys = [
+    "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    "spectrum-os.org-1:rnnSumz3+Dbs5uewPlwZSTP0k3g/5SRG4hD7Wbr9YuQ="
+  ];
+}
+----
+
+=== Non-NixOS systems
+
+Add the following configuration to /etc/nix/nix.conf:
+
+----
+substituters = https://cache.dataaturservice.se/spectrum/ https://cache.nixos.org/
+trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= spectrum-os.org-1:rnnSumz3+Dbs5uewPlwZSTP0k3g/5SRG4hD7Wbr9YuQ=
+----
+
+If you have other binary caches configured besides cache.nixos.org,
+make sure to add the Spectrum cache URL and public key to the existing
+configuration lines in your nix.conf file.

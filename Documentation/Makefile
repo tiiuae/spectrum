@@ -8,6 +8,7 @@ datarootdir = $(prefix)/share
 docdir = $(datarootdir)/doc/spectrum
 
 SOURCES = \
+	binary-cache.adoc \
 	creating-vms.adoc \
 	development.adoc \
 	getting-spectrum.adoc \
