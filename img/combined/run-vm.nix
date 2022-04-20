@@ -16,9 +16,9 @@ writeShellScript "run-spectrum-installer-vm.sh" ''
   exec qemu-kvm -cpu host -m 4G -machine q35 -snapshot \
     -display gtk,gl=on \
     -device virtio-vga-gl \
-    -bios ${OVMF.fd}/FV/OVMF.fd \
     -device qemu-xhci \
     -device usb-storage,drive=drive1,removable=true \
+    -drive file=${qemu_kvm}/share/qemu/edk2-${stdenv.hostPlatform.qemuArch}-code.fd,format=raw,if=pflash,readonly=true \
     -drive file=${image},id=drive1,format=raw,if=none,readonly=true \
     -drive file=/proc/self/fd/3,format=raw,if=virtio
 ''

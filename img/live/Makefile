@@ -61,11 +61,11 @@ clean:
 
 run: build/live.img
 	$(QEMU_KVM) -m 4G \
-	    -bios $(OVMF_FD) \
 	    -cpu host \
 	    -display gtk,gl=on \
 	    -device virtio-vga-gl \
 	    -device qemu-xhci \
 	    -device usb-storage,drive=drive1,removable=true \
+	    -drive file=$(OVMF_CODE),format=raw,if=pflash,readonly=true \
 	    -drive file=build/live.img,id=drive1,format=raw,if=none,readonly=true
 .PHONY: run

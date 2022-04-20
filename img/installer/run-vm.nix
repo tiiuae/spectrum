@@ -5,7 +5,7 @@
 
 let
   inherit (builtins) storeDir;
-  inherit (pkgs) OVMF coreutils qemu_kvm writeShellScript;
+  inherit (pkgs) coreutils qemu_kvm writeShellScript;
   inherit (pkgs.lib) makeBinPath escapeShellArg;
 
   eosimages = import ../combined/eosimages.nix { inherit pkgs; };
@@ -36,9 +36,9 @@ writeShellScript "run-spectrum-installer-vm.sh" ''
     -display gtk,gl=on \
     -device virtio-vga-gl \
     -virtfs local,mount_tag=store,path=/nix/store,security_model=none,readonly=true \
+    -drive file=${qemu_kvm}/share/qemu/edk2-${stdenv.hostPlatform.qemuArch}-code.fd,format=raw,if=pflash,readonly=true \
     -drive file=${eosimages},format=raw,if=virtio,readonly=true \
     -drive file=/proc/self/fd/3,format=raw,if=virtio \
-    -bios ${OVMF.fd}/FV/OVMF.fd \
     -kernel ${installer.kernel} \
     -initrd ${installer.initramfs} \
     -append ${escapeShellArg installer.kernelParams}
