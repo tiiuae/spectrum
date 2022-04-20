@@ -5,8 +5,8 @@
 
 let
   inherit (builtins) storeDir;
-  inherit (pkgs) OVMF qemu_kvm writeShellScript;
-  inherit (pkgs.lib) escapeShellArg;
+  inherit (pkgs) OVMF coreutils qemu_kvm writeShellScript;
+  inherit (pkgs.lib) makeBinPath escapeShellArg;
 
   eosimages = import ../combined/eosimages.nix { inherit pkgs; };
 
@@ -27,11 +27,12 @@ let
 in
 
 writeShellScript "run-spectrum-installer-vm.sh" ''
+  export PATH=${makeBinPath [ coreutils qemu_kvm ]}
   img="$(mktemp spectrum-installer-target.XXXXXXXXXX.img)"
   truncate -s 10G "$img"
   exec 3<>"$img"
   rm -f "$img"
-  exec ${qemu_kvm}/bin/.qemu-system-x86_64-wrapped -enable-kvm -cpu host -m 4G -machine q35 -snapshot \
+  exec qemu-kvm -cpu host -m 4G -machine q35 -snapshot \
     -display gtk,gl=on \
     -device virtio-vga-gl \
     -virtfs local,mount_tag=store,path=/nix/store,security_model=none,readonly=true \

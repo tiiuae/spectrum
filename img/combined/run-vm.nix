@@ -8,11 +8,12 @@ let
 in
 
 writeShellScript "run-spectrum-installer-vm.sh" ''
+  export PATH=${lib.makeBinPath [ coreutils qemu_kvm ]}
   img="$(mktemp spectrum-installer-target.XXXXXXXXXX.img)"
   truncate -s 10G "$img"
   exec 3<>"$img"
   rm -f "$img"
-  exec ${qemu_kvm}/bin/qemu-kvm -cpu host -m 4G -machine q35 -snapshot \
+  exec qemu-kvm -cpu host -m 4G -machine q35 -snapshot \
     -display gtk,gl=on \
     -device virtio-vga-gl \
     -bios ${OVMF.fd}/FV/OVMF.fd \

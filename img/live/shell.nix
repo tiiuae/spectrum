@@ -5,6 +5,8 @@
 
 with pkgs;
 
-(import ./. { inherit pkgs; }).overrideAttrs ({ ... }: {
+(import ./. { inherit pkgs; }).overrideAttrs ({ nativeBuildInputs ? [], ... }: {
+  nativeBuildInputs = nativeBuildInputs ++ [ qemu_kvm ];
+
   OVMF_FD = "${OVMF.fd}/FV/OVMF.fd";
 })
