@@ -22,22 +22,21 @@ build/live.img: $(SCRIPTS)/format-uuid.sh $(SCRIPTS)/make-gpt.sh build/boot.fat 
 	    $(EXT_FS):9293e1ff-cee4-4658-88be-898ec863944f
 	mv $@.tmp $@
 
-build/cmdline: build/rootfs.verity.roothash
-	printf "ro console=ttyS0 roothash=" > $@
+build/spectrum.conf: build/rootfs.verity.roothash
+	printf "title Spectrum\n" > $@
+	printf "linux /spectrum/linux\n" >> $@
+	printf "initrd /spectrum/initrd\n" >> $@
+	printf "options ro console=ttyS0 roothash=" >> $@
 	cat build/rootfs.verity.roothash >> $@
 
-build/bootx64.efi: etc/os-release build/cmdline $(INITRAMFS)
-	$(OBJCOPY) --add-section .osrel=etc/os-release --change-section-vma .osrel=0x20000 \
-	    --add-section .cmdline=build/cmdline --change-section-vma .cmdline=0x30000 \
-	    --add-section .linux=$(KERNEL) --change-section-vma .linux=0x40000 \
-	    --add-section .initrd=$(INITRAMFS) --change-section-vma .initrd=0x3000000 \
-	    $(EFI_STUB) $@
-
-build/boot.fat: build/bootx64.efi
+build/boot.fat: $(KERNEL) $(INITRAMFS) $(SYSTEMD_BOOT_EFI) build/spectrum.conf
 	$(TRUNCATE) -s 220200960 $@
 	$(MKFS_FAT) $@
-	$(MMD) -i $@ ::/EFI ::/EFI/BOOT
-	$(MCOPY) -i $@ build/bootx64.efi ::/EFI/BOOT
+	$(MMD) -i $@ ::/EFI ::/EFI/BOOT ::/loader ::/loader/entries ::/spectrum
+	$(MCOPY) -i $@ build/spectrum.conf ::/loader/entries
+	$(MCOPY) -i $@ $(KERNEL) ::/spectrum/linux
+	$(MCOPY) -i $@ $(INITRAMFS) ::/spectrum/initrd
+	$(MCOPY) -i $@ $(SYSTEMD_BOOT_EFI) ::/EFI/BOOT/BOOTX64.EFI
 
 # veritysetup format produces two files, but Make only (portably)
 # supports one output per rule, so we combine the two outputs then

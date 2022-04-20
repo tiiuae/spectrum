@@ -26,11 +26,11 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [ cryptsetup dosfstools jq mtools util-linux ];
 
-  EFI_STUB = "${systemd}/lib/systemd/boot/efi/linuxx64.efi.stub";
   EXT_FS = extfs;
   INITRAMFS = initramfs;
   KERNEL = "${rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
   ROOT_FS = rootfs;
+  SYSTEMD_BOOT_EFI = "${systemd}/lib/systemd/boot/efi/systemd-bootx64.efi";
 
   buildFlags = [ "build/live.img" ];
   makeFlags = [ "SCRIPTS=${scripts}" ];
