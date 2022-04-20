@@ -49,6 +49,7 @@ let
       "efiemu32.o" "efiemu64.o" "moddep.lst" "command.lst" "fs.lst" "partmap.lst"
       "parttool.lst" "video.lst" "crypto.lst" "terminal.lst" "modinfo.sh"
     ];
+    passthru = { inherit grubCfg; };
   } ''
     truncate -s 15M $out
     faketime "1970-01-01 00:00:00" mkfs.vfat -i 0x2178694e -n EFI $out
