@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: EUPL-1.2
 
 ASCIIDOCTOR = asciidoctor
+ALL_ASCIIDOCTORFLAGS = -a source-highlighter=rouge $(ASCIIDOCTORFLAGS)
 
 prefix = /usr/local
 datarootdir = $(prefix)/share
@@ -22,7 +23,7 @@ all: $(SOURCES:adoc=html)
 .SUFFIXES: .adoc .html
 
 .adoc.html:
-	$(ASCIIDOCTOR) $<
+	$(ASCIIDOCTOR) $(ALL_ASCIIDOCTORFLAGS) $<
 
 install: all
 	mkdir -p -- $(docdir)
