@@ -9,7 +9,7 @@ from other operating systems, as long as they're not too invasive.]
 and have https://nixos.org/[Nix] and https://git-scm.com/[git]
 installed, it's very easy to do.
 
-Before you start, consider setting up the
+TIP: Before you start, consider setting up the
 xref:binary-cache.adoc[Spectrum binary cache], which will save you a
 lot of time waiting for builds.
 
