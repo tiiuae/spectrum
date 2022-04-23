@@ -1,7 +1,6 @@
-// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
-// SPDX-License-Identifier: GFDL-1.3-or-later OR CC-BY-SA-4.0
-
 = Running VMs
+:SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+:SPDX-License-Identifier: GFDL-1.3-or-later OR CC-BY-SA-4.0
 
 Running VMs can be managed with the following commands, available in a
 host terminal:

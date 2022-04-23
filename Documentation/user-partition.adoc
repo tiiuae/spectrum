@@ -1,7 +1,6 @@
-// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
-// SPDX-License-Identifier: GFDL-1.3-or-later OR CC-BY-SA-4.0
-
 = The User Partition
+:SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+:SPDX-License-Identifier: GFDL-1.3-or-later OR CC-BY-SA-4.0
 
 The Spectrum host system is immutable, so configuration and user data
 lives on a separate partition.  The host system discovers the user

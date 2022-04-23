@@ -1,7 +1,6 @@
-// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
-// SPDX-License-Identifier: GFDL-1.3-or-later OR CC-BY-SA-4.0
-
 = Binary cache
+:SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+:SPDX-License-Identifier: GFDL-1.3-or-later OR CC-BY-SA-4.0
 
 Building Spectrum from source can take a very long time.  To avoid
 having to wait when building the system to try it out or test patches,
