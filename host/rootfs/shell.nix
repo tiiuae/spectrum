@@ -10,7 +10,7 @@ with pkgs;
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [
-    jq netcat qemu_kvm reuse screen util-linux
+    jq netcat qemu_kvm reuse util-linux
   ];
 
   EXT_FS = pkgsStatic.callPackage ../initramfs/extfs.nix { inherit pkgs; };

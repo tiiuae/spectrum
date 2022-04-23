@@ -5,7 +5,6 @@
 # Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
 # QEMU_KVM = qemu-system-x86_64 -enable-kvm.
 QEMU_KVM = qemu-kvm
-SCREEN = screen
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
@@ -131,7 +130,3 @@ run: build/rootfs.ext4 $(EXT_FS)
 	    -device virtio-vga-gl \
 	    -device vhost-vsock-pci,guest-cid=3
 .PHONY: run
-
-console:
-	@$(SCREEN) "$$(scripts/qemu-pty.sh vmm.sock virtiocon0)"
-.PHONY: console
