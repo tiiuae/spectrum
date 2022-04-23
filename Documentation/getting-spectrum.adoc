@@ -19,6 +19,7 @@ If you want to try Spectrum out to get a feel for it, without
 installing it, you can run it in a development VM with some example
 applications.
 
+[source,shell]
 ----
 git clone https://spectrum-os.org/git/spectrum
 git clone https://github.com/NixOS/nixpkgs
@@ -33,6 +34,7 @@ still take a very long time.
 
 == Building an installer
 
+[source,shell]
 ----
 git clone https://spectrum-os.org/git/spectrum
 nix-build spectrum/img/combined \

@@ -17,6 +17,7 @@ host/rootfs directory (which automatically sets up a virtio-vsock
 device), the running this command on the development Linux system will
 listen for a core file from Spectrum, and write it to a file:
 
+[source,shell]
 ----
 socat -u VSOCK-LISTEN:1129271877 CREATE:spectrum.core
 ----
