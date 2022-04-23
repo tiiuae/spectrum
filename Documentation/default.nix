@@ -3,25 +3,23 @@
 
 { pkgs ? import <nixpkgs> {} }: pkgs.callPackage (
 
-{ lib, stdenv, asciidoctor }:
+{ lib, runCommand, jekyll }:
 
-let
-  inherit (lib) cleanSource cleanSourceWith hasSuffix;
-in
-
-stdenv.mkDerivation {
-  name = "spectrum-doc";
-
-  src = cleanSourceWith {
-    filter = name: _type: !(hasSuffix name ".html");
+runCommand "spectrum-docs" {
+  src = with lib; cleanSourceWith {
     src = cleanSource ./.;
+    filter = name: _type:
+      name != ".jekyll-cache" &&
+      name != "_site" &&
+      !(hasSuffix ".nix" name);
   };
 
-  nativeBuildInputs = [ asciidoctor ];
+  nativeBuildInputs = [ jekyll ];
 
-  makeFlags = [ "prefix=$(out)" ];
-
-  enableParallelBuilding = true;
+  passthru = { inherit jekyll; };
+} ''
+  jekyll build --disable-disk-cache -s $src -d $out
+''
+) {
+  jekyll = import ./jekyll.nix { inherit pkgs; };
 }
-
-) { }

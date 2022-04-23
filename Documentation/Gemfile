@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+# SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-License-Identifier: CC0-1.0
+
+source "https://rubygems.org"
+
+gem "jekyll"
+gem "jekyll-asciidoc"
+gem "just-the-docs"
