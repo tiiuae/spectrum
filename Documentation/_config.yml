@@ -3,6 +3,13 @@
 ---
 title: Spectrum docs
 theme: just-the-docs
+aux_links:
+  Home:
+    - "https://spectrum-os.org/"
+  Git:
+    - "https://spectrum-os.org/git/"
+  Lists:
+    - "https://spectrum-os.org/lists/"
 plugins:
   - jekyll-asciidoc
 exclude:
