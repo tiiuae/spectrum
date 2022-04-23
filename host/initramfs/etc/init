@@ -1,5 +1,5 @@
 #!/bin/execlineb -S0
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: EUPL-1.2
 
 export PATH /bin
@@ -19,7 +19,7 @@ if { mkfifo /dev/rootfs.poll }
 
 background {
   fdclose 3
-  mdevd -C
+  mdevd -C -b134217728
 }
 importas -iu mdevd_pid !
 
