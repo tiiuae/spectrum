@@ -2,4 +2,4 @@
 # SPDX-License-Identifier: EUPL-1.2
 # SPDX-FileCopyrightText: 2020-2022 Alyssa Ross <hi@alyssa.is>
 
-mdevd -D3 -b134217728
+mdevd -D3 -O4 -b134217728
