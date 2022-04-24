@@ -1,4 +1,4 @@
-proc	/proc		proc	defaults
-devpts	/dev/pts	devpts	defaults,gid=4,mode=620
-tmpfs	/dev/shm	tmpfs	defaults
-sysfs	/sys		sysfs	defaults
+proc	/proc		proc	defaults		0	0
+devpts	/dev/pts	devpts	defaults,gid=4,mode=620	0	0
+tmpfs	/dev/shm	tmpfs	defaults		0	0
+sysfs	/sys		sysfs	defaults		0	0
