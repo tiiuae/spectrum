@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 devtmpfs	/dev	devtmpfs	defaults	0	0
 proc		/proc	proc		defaults	0	0
 sysfs		/sys	sysfs		defaults	0	0
