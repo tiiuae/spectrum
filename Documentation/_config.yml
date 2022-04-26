@@ -13,6 +13,7 @@ aux_links:
 plugins:
   - jekyll-asciidoc
 exclude:
+  - '*.license'
   - '*.nix'
   - result*
 asciidoctor:
