@@ -50,3 +50,11 @@ Spectrum combined live system / installer image.
 === `6e23b026-9f1e-479d-8a58-a0cda382e1ce`
 
 The Spectrum installer system.
+
+'''
+
+== Finding Undocumented UUIDs
+
+Running the Documentation/scripts/undocumented-uuids.sh script from
+the root of the Spectrum repository will scan the entire tree for
+UUIDs not mentioned in this document.

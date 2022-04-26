@@ -15,6 +15,7 @@ plugins:
 exclude:
   - '*.license'
   - '*.nix'
+  - /scripts
   - result*
 asciidoctor:
   attributes:
