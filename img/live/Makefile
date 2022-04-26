@@ -30,7 +30,7 @@ build/spectrum.conf: build/rootfs.verity.roothash
 	cat build/rootfs.verity.roothash >> $@
 
 build/boot.fat: $(KERNEL) $(INITRAMFS) $(SYSTEMD_BOOT_EFI) build/spectrum.conf
-	$(TRUNCATE) -s 220200960 $@
+	$(TRUNCATE) -s 440401920 $@
 	$(MKFS_FAT) $@
 	$(MMD) -i $@ ::/EFI ::/EFI/BOOT ::/loader ::/loader/entries ::/spectrum
 	$(MCOPY) -i $@ build/spectrum.conf ::/loader/entries
