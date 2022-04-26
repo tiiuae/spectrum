@@ -2,19 +2,10 @@
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
 { pkgs ? import <nixpkgs> {} }: pkgs.callPackage (
-{ pkgsBuildHost, lib, stdenv, fetchpatch, ninja, rustc }:
+{ lib, stdenv, fetchpatch, meson, ninja, rustc }:
 
 let
   inherit (lib) cleanSource;
-
-  meson' = pkgsBuildHost.meson.overrideAttrs ({ patches ? [], ... }: {
-    patches = patches ++ [
-      (fetchpatch {
-        url = "https://github.com/alyssais/meson/commit/e8464d47fa8971098d626744b14db5d066ebf753.patch";
-        sha256 = "0naxj0s16w6ffk6d7xg1m6kkx2a7zd0hz8mbvn70xy1k12a0c5gy";
-      })
-    ];
-  });
 in
 
 stdenv.mkDerivation {
@@ -22,7 +13,7 @@ stdenv.mkDerivation {
 
   src = cleanSource ./.;
 
-  nativeBuildInputs = [ meson' ninja rustc ];
+  nativeBuildInputs = [ meson ninja rustc ];
 
   doCheck = true;
 }
