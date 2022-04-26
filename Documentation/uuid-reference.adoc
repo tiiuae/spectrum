@@ -1,0 +1,52 @@
+= UUID Reference
+:toc: preamble
+:toclevels: 1
+
+// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+https://en.wikipedia.org/wiki/Universally_unique_identifier[UUIDs] are
+used extensively throughout Spectrum.  When encountering a UUID in the
+codebase, it can be difficult to understand what exactly the UUID
+means, and where it originates from -- is it from some standard, or
+Spectrum-specific?
+
+To solve this problem, this reference documents all of the UUIDs used
+in Spectrum.
+
+== https://en.wikipedia.org/wiki/GUID_Partition_Table[GPT] Partition Types
+
+=== `c12a7328-f81f-11d2-ba4b-00a0c93ec93b`
+
+"EFI System Partition", from the https://uefi.org/specifications[UEFI
+Specification].
+
+=== `4f68bce3-e8cd-4db1-96e7-fbcaf984b709`
+
+"Root Partition (amd64/x86_64)" from the
+https://systemd.io/DISCOVERABLE_PARTITIONS/[Discoverable Partitions
+Specification].
+
+=== `2c7357ed-ebd2-46d9-aec1-23d437ec2bf5`
+
+"Root Verity Partition (amd64/x86_64)" from the
+https://systemd.io/DISCOVERABLE_PARTITIONS/[Discoverable Partitions
+Specification].
+
+=== `9293e1ff-cee4-4658-88be-898ec863944f`
+
+xref:user-partition.adoc[Spectrum user partition].
+
+=== `56a3bbc3-aefa-43d9-a64d-7b3fd59bbc4e`
+
+https://github.com/endlessm/eos-installer["eosimages"] partition on the 
+Spectrum combined live system / installer image.
+
+== Combined Image Partition IDs
+
+These UUIDs are used as the unique partition identifiers for the
+Spectrum combined live system / installer image.
+
+=== `6e23b026-9f1e-479d-8a58-a0cda382e1ce`
+
+The Spectrum installer system.
