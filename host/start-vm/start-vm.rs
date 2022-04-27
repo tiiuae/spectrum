@@ -13,21 +13,14 @@ use std::process::{exit, Command};
 
 use net::{format_mac, net_setup, NetConfig};
 
-macro_rules! errx {
-    ($code:expr, $fmt:expr $(,$args:expr)*) => ({
-        let argv0_option = args().next();
-        let argv0 = argv0_option.as_ref().map(String::as_str).unwrap_or("start-vm");
-        eprintln!(concat!("{}: ", $fmt), argv0 $(,$args)*);
-        exit($code);
-    })
-}
+fn vm_command(dir: PathBuf) -> Result<Command, String> {
+    let dir = dir.into_os_string().into_vec();
+    let dir = PathBuf::from(OsString::from_vec(dir));
 
-macro_rules! err {
-    ($code:expr, $fmt:expr $(,$args:expr)*) =>
-        (|e| errx!($code, concat!($fmt, ": {}") $(,$args)*, e))
-}
+    let vm_name = dir
+        .file_name()
+        .ok_or_else(|| "directory has no name".to_string())?;
 
-fn main() {
     let mut command = Command::new("s6-notifyoncheck");
     command.args(&["-dc", "test -S env/cloud-hypervisor.sock"]);
     command.arg("cloud-hypervisor");
@@ -35,16 +28,6 @@ fn main() {
     command.args(&["--cmdline", "console=ttyS0 root=/dev/vda"]);
     command.args(&["--memory", "size=128M"]);
     command.args(&["--console", "pty"]);
-
-    let dir = current_dir()
-        .unwrap_or_else(err!(1, "getting current directory"))
-        .into_os_string()
-        .into_vec();
-    let dir = PathBuf::from(OsString::from_vec(dir));
-
-    let vm_name = dir
-        .file_name()
-        .unwrap_or_else(|| errx!(1, "current directory has no name"));
 
     let mut net_providers_dir = PathBuf::new();
     net_providers_dir.push("/ext/svc/data");
@@ -55,7 +38,7 @@ fn main() {
         Ok(entries) => {
             for r in entries {
                 let entry = r
-                    .unwrap_or_else(err!(1, "examining directory entry"))
+                    .map_err(|e| format!("examining directory entry: {}", e))?
                     .file_name();
 
                 // Safe because prov is the name of a directory entry, so
@@ -66,7 +49,7 @@ fn main() {
                 let NetConfig { fd, mac } = unsafe { net_setup(provider_name.as_ptr()) };
                 if fd == -1 {
                     let e = io::Error::last_os_error();
-                    errx!(1, "setting up networking failed: {}", e);
+                    return Err(format!("setting up networking failed: {}", e));
                 }
 
                 command
@@ -79,7 +62,7 @@ fn main() {
             }
         }
         Err(e) if e.kind() == ErrorKind::NotFound => {}
-        Err(e) => errx!(1, "reading directory {:?}: {}", net_providers_dir, e),
+        Err(e) => return Err(format!("reading directory {:?}: {}", net_providers_dir, e)),
     }
 
     command.arg("--kernel").arg({
@@ -103,5 +86,27 @@ fn main() {
         serial
     });
 
-    errx!(1, "failed to exec: {}", command.exec());
+    Ok(command)
+}
+
+fn run() -> String {
+    let dir = match current_dir().map_err(|e| format!("getting current directory: {}", e)) {
+        Ok(dir) => dir,
+        Err(e) => return e,
+    };
+
+    match vm_command(dir) {
+        Ok(mut command) => format!("failed to exec: {}", command.exec()),
+        Err(e) => e,
+    }
+}
+
+fn main() {
+    let argv0_option = args().next();
+    let argv0 = argv0_option
+        .as_ref()
+        .map(String::as_str)
+        .unwrap_or("start-vm");
+    eprintln!("{}: {}", argv0, run());
+    exit(1);
 }
