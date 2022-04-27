@@ -45,8 +45,8 @@ fn vm_command(dir: PathBuf) -> Result<Command, String> {
                     .map_err(|e| format!("examining directory entry: {}", e))?
                     .file_name();
 
-                // Safe because prov is the name of a directory entry, so
-                // con't contain a null byte.
+                // Safe because provider_name is the name of a directory entry, so
+                // can't contain a null byte.
                 let provider_name = unsafe { CString::from_vec_unchecked(entry.into_vec()) };
 
                 // Safe because we pass a valid pointer and check the result.
