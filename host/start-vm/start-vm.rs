@@ -21,6 +21,10 @@ fn vm_command(dir: PathBuf) -> Result<Command, String> {
         .file_name()
         .ok_or_else(|| "directory has no name".to_string())?;
 
+    if vm_name.as_bytes().contains(&b',') {
+        return Err(format!("VM name may not contain a comma: {:?}", vm_name));
+    }
+
     let mut command = Command::new("s6-notifyoncheck");
     command.args(&["-dc", "test -S env/cloud-hypervisor.sock"]);
     command.arg("cloud-hypervisor");
@@ -109,4 +113,14 @@ fn main() {
         .unwrap_or("start-vm");
     eprintln!("{}: {}", argv0, run());
     exit(1);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_vm_name_comma() {
+        assert!(vm_command("/v,m".into()).unwrap_err().contains("comma"));
+    }
 }
