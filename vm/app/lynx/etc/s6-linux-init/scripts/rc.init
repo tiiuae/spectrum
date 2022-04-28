@@ -4,7 +4,7 @@
 
 if { s6-rc-init -c /etc/s6-rc /run/service }
 
-if { s6-mkdir -p /dev/pts /dev/shm }
+if { mkdir -p /dev/pts /dev/shm }
 if { mount -a }
 
 s6-rc change ok-all
