@@ -1,18 +1,5 @@
-#!/bin/execlineb -P
+#!/bin/execlineb -s0
 # SPDX-License-Identifier: EUPL-1.2
-# SPDX-FileCopyrightText: 2020-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
-/bin/export PATH /bin
-/bin/s6-setsid -qb --
-
-umask 022
-if { mount -t tmpfs -o mode=0755 tmpfs /run }
-if { s6-dumpenv /run/param }
-if { s6-hiercopy /etc/s6-linux-init/run-image /run }
-emptyenv -p
-
-background { s6-setsid -- /etc/s6-linux-init/scripts/rc.init }
-
-unexport !
-cd /run/service
-s6-svscan
+/bin/s6-linux-init -Bc /etc/s6-linux-init -s /run/param -- $@

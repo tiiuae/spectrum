@@ -10,7 +10,7 @@ pkgs.pkgsStatic.callPackage (
 { lib, stdenv, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4, xorg
 , busybox, connmanMinimal, dbus, execline, kmod, mdevd, nftables, s6
-, s6-portable-utils
+, s6-linux-init, s6-portable-utils
 }:
 
 let
@@ -19,7 +19,7 @@ let
   connman = connmanMinimal;
 
   packages = [
-    connman dbus execline kmod mdevd s6 s6-portable-utils s6-rc
+    connman dbus execline kmod mdevd s6 s6-linux-init s6-portable-utils s6-rc
 
     (busybox.override {
       extraConfig = ''
