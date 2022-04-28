@@ -66,7 +66,6 @@ build/rootfs.tar: build/empty $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
 	for m in $(VM_MOUNTPOINTS); do \
 	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," build/empty ; \
 	done
-	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' build/empty
 
 VM_S6_RC_FILES = \
 	etc/s6-rc/connman/dependencies \
