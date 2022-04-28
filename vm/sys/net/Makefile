@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: EUPL-1.2
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
 # qemu-kvm is non-standard, but is present in at least Fedora and
 # Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
@@ -45,7 +45,8 @@ VM_FILES = \
 	etc/mdev/iface \
 	etc/nftables.conf \
 	etc/passwd \
-	etc/service/getty-hvc0/run \
+	etc/s6-linux-init/run-image/service/getty-hvc0/run \
+	etc/s6-linux-init/scripts/rc.init \
 	etc/sysctl.conf
 
 # These are separate because they need to be included, but putting

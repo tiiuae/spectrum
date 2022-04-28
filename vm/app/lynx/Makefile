@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: EUPL-1.2
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
 # qemu-kvm is non-standard, but is present in at least Fedora and
 # Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
@@ -46,7 +46,8 @@ VM_FILES = \
 	etc/mdev.conf \
 	etc/mdev/iface \
 	etc/passwd \
-	etc/resolv.conf
+	etc/resolv.conf \
+	etc/s6-linux-init/scripts/rc.init
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
@@ -66,7 +67,8 @@ build/rootfs.tar: build/empty $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
 	for m in $(VM_MOUNTPOINTS); do \
 	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," build/empty ; \
 	done
-	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' build/empty
+	tar $(TARFLAGS) --append -hf $@ \
+		--xform='s,.*,etc/s6-linux-init/run-image/service,' build/empty
 
 VM_S6_RC_FILES = \
 	etc/s6-rc/lynx/run \
