@@ -56,7 +56,6 @@ build/rootfs.tar: build/empty $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
 	for m in $(MOUNTPOINTS); do \
 	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," build/empty ; \
 	done
-	tar $(TARFLAGS) --append -hf $@ --xform='s,.*,etc/service,' build/empty
 
 build/etc/mdev/modules.map: scripts/modprobe/gen_modules.map.awk
 	mkdir -p $$(dirname $@)
