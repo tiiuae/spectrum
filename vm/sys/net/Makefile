@@ -48,13 +48,13 @@ VM_FILES = \
 	etc/s6-linux-init/run-image/service/getty-hvc0/run \
 	etc/s6-linux-init/scripts/rc.init \
 	etc/sysctl.conf
+VM_DIRS = dev etc/s6-linux-init/env run proc sys var/lib/connman
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
 VM_LINKS = bin var/run
 
 VM_BUILD_FILES = build/etc/s6-rc
-VM_MOUNTPOINTS = dev run proc sys var/lib/connman
 
 build/empty:
 	mkdir -p $@
@@ -64,7 +64,7 @@ build/rootfs.tar: build/empty $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
 	tar $(TARFLAGS) --append -f $@ $(VM_FILES) $(VM_LINKS)
 	echo $(VM_BUILD_FILES) | cut -d/ -f2 | \
 	    tar $(TARFLAGS) --append -f $@ -C build -T -
-	for m in $(VM_MOUNTPOINTS); do \
+	for m in $(VM_DIRS); do \
 	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," build/empty ; \
 	done
 

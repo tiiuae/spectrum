@@ -37,13 +37,13 @@ FILES = \
 	usr/bin/vm-console \
 	usr/bin/vm-start \
 	usr/bin/vm-stop
+DIRS = dev etc/s6-linux-init/env ext run proc sys
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
 LINKS = bin sbin
 
 BUILD_FILES = build/etc/mdev/modalias.sh build/etc/s6-rc
-MOUNTPOINTS = dev ext run proc sys
 
 build/empty:
 	mkdir -p $@
@@ -53,7 +53,7 @@ build/rootfs.tar: build/empty $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
 	tar $(TARFLAGS) --append -f $@ $(FILES) $(LINKS)
 	echo $(BUILD_FILES) | cut -d/ -f2 | \
 	    tar $(TARFLAGS) --append -f $@ -C build -T -
-	for m in $(MOUNTPOINTS); do \
+	for m in $(DIRS); do \
 	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," build/empty ; \
 	done
 

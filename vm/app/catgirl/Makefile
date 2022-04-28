@@ -48,6 +48,9 @@ VM_FILES = \
 	etc/passwd \
 	etc/resolv.conf \
 	etc/s6-linux-init/scripts/rc.init
+VM_DIRS = dev run proc sys \
+	etc/s6-linux-init/env \
+	etc/s6-linux-init/run-image/service
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
@@ -64,11 +67,9 @@ build/rootfs.tar: build/empty $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
 	tar $(TARFLAGS) --append -f $@ $(VM_FILES) $(VM_LINKS)
 	echo $(VM_BUILD_FILES) | cut -d/ -f2 | \
 	    tar $(TARFLAGS) --append -f $@ -C build -T -
-	for m in $(VM_MOUNTPOINTS); do \
+	for m in $(VM_DIRS); do \
 	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," build/empty ; \
 	done
-	tar $(TARFLAGS) --append -hf $@ \
-	    --xform='s,.*,etc/s6-linux-init/run-image/service,' build/empty
 
 VM_S6_RC_FILES = \
 	etc/s6-rc/catgirl/run \
