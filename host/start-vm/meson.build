@@ -7,11 +7,12 @@ project('start-vm', 'rust', 'c',
 add_project_arguments('-D_GNU_SOURCE', language : 'c')
 add_project_arguments('-C', 'panic=abort', language : 'rust')
 
-c_lib = static_library('start-vm-c', 'net.c', 'net-util.c')
+c_lib = static_library('start-vm', 'net.c', 'net-util.c')
+rust_lib = static_library('start_vm', 'lib.rs', link_with : c_lib)
 
-executable('start-vm', 'start-vm.rs', link_with : c_lib, install : true)
+executable('start-vm', 'start-vm.rs', link_with : rust_lib, install : true)
 
-test('Rust unit tests', executable('start-vm-test', 'start-vm.rs',
+test('Rust unit tests', executable('start-vm-test', 'lib.rs',
   rust_args : ['--test', '-C', 'panic=unwind'],
   link_with : c_lib))
 
