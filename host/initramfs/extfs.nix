@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-{ pkgs, runCommand, s6-rc, tar2ext4 }:
+{ pkgs, runCommand, tar2ext4 }:
 
 let
   netvm = import ../../vm/sys/net {
