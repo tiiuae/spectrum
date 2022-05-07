@@ -105,7 +105,7 @@ run-qemu: build/host/data/appvm-lynx/rootfs.ext4
 run-cloud-hypervisor: build/host/data/appvm-lynx/rootfs.ext4
 	$(CLOUD_HYPERVISOR) \
 	    --api-socket path=vmm.sock \
-	    --memory size=128M
+	    --memory size=128M \
 	    --disk path=build/host/data/appvm-lynx/rootfs.ext4,readonly=on \
 	    --net tap=tap0,mac=0A:B3:EC:00:00:00 \
 	    --kernel $(KERNEL) \
