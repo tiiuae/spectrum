@@ -118,8 +118,8 @@ run-cloud-hypervisor: build/host/data/netvm/rootfs.ext4
 	    --net tap=tap0 tap=tap1,mac=0A:B3:EC:80:00:00 \
 	    --kernel $(KERNEL) \
 	    --cmdline "console=ttyS0 root=/dev/vda" \
-	    --console pty \
-	    --serial tty
+	    --console tty \
+	    --serial pty
 .PHONY: run-cloud-hypervisor
 
 run: run-$(VMM)

@@ -98,7 +98,7 @@ run-qemu: build/host/data/appvm-catgirl/rootfs.ext4
 	  -append "console=ttyS0 root=/dev/vda" \
 	  -netdev user,id=net0 \
 	  -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
-	  -chardev pty,id=virtiocon0 \
+	  -chardev vc,id=virtiocon0 \
 	  -device virtio-serial-pci \
 	  -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
@@ -111,8 +111,8 @@ run-cloud-hypervisor: build/host/data/appvm-catgirl/rootfs.ext4
 	    --net tap=tap0,mac=0A:B3:EC:00:00:00 \
 	    --kernel $(KERNEL) \
 	    --cmdline "console=ttyS0 root=/dev/vda" \
-	    --console pty \
-	    --serial tty
+	    --console tty \
+	    --serial pty
 .PHONY: run-cloud-hypervisor
 
 run: run-$(VMM)
