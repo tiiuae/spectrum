@@ -8,6 +8,7 @@
 pkgs.callPackage (
 { lib, stdenv, makeModulesClosure, nixos, runCommand, writeReferencesToFile
 , pkgsStatic, busybox, cpio, cryptsetup, linux-firmware, lvm2
+, microcodeAmd, microcodeIntel
 }:
 
 let
@@ -63,6 +64,16 @@ let
     cp ${pkgsStatic.util-linuxMinimal}/bin/{findfs,lsblk} $out/bin
   '';
 
+  microcode = if stdenv.hostPlatform.isx86_64 then
+    runCommand "microcode.cpio" {
+      nativeBuildInputs = [ cpio ];
+    } ''
+      cpio -id < ${microcodeAmd}/amd-ucode.img
+      cpio -id < ${microcodeIntel}/intel-ucode.img
+      find kernel | cpio -oH newc -R +0:+0 --reproducible > $out
+    ''
+  else null;
+
   packagesCpio = runCommand "packages.cpio" {
     nativeBuildInputs = [ cpio ];
     storePaths = writeReferencesToFile packagesSysroot;
@@ -81,6 +92,7 @@ stdenv.mkDerivation {
     src = cleanSource ./.;
   };
 
+  MICROCODE = microcode;
   PACKAGES_CPIO = packagesCpio;
 
   nativeBuildInputs = [ cpio ];

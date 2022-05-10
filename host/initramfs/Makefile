@@ -11,8 +11,9 @@ CPIOFLAGS = --reproducible -R +0:+0 -H newc
 SCRIPTS = ../../scripts
 VERITYSETUP = veritysetup
 
-build/initramfs: build/local.cpio $(PACKAGES_CPIO)
-	cat build/local.cpio $(PACKAGES_CPIO) | gzip -9n > $@
+build/initramfs: $(MICROCODE) build/local.cpio $(PACKAGES_CPIO)
+	cat $(MICROCODE) > $@
+	cat build/local.cpio $(PACKAGES_CPIO) | gzip -9n >> $@
 
 # etc/init isn't included in ETC_FILES, because it gets installed to
 # the root.
