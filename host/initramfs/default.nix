@@ -6,14 +6,25 @@
 }:
 
 pkgs.callPackage (
-{ lib, stdenv, runCommand, writeReferencesToFile, pkgsStatic
-, busybox, cpio, cryptsetup, lvm2
+{ lib, stdenv, makeModulesClosure, nixos, runCommand, writeReferencesToFile
+, pkgsStatic, busybox, cpio, cryptsetup, linux-firmware, lvm2
 }:
 
 let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
 
   linux = rootfs.kernel;
+
+  nixosAllHardware = nixos ({ modulesPath, ... }: {
+    imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
+  });
+
+  modules = makeModulesClosure {
+    inherit (rootfs) kernel;
+    firmware = linux-firmware;
+    rootModules = with nixosAllHardware.config.boot.initrd;
+      availableKernelModules ++ kernelModules ++ [ "dm-verity" "loop" ];
+  };
 
   packages = [
     pkgsStatic.execline pkgsStatic.kmod pkgsStatic.mdevd
@@ -43,7 +54,7 @@ let
   packagesSysroot = runCommand "packages-sysroot" {} ''
     mkdir -p $out/bin
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/bin
-    cp -R ${linux}/lib $out
+    cp -R ${modules}/lib $out
     ln -s /bin $out/sbin
 
     # TODO: this is a hack and we should just build the util-linux
