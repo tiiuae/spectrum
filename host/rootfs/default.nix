@@ -4,8 +4,8 @@
 { pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
 
 { lib, stdenv, runCommand, writeReferencesToFile, s6-rc, tar2ext4
-, busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod, mdevd, s6
-, s6-linux-init, socat, util-linuxMinimal, xorg
+, busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod, linux-firmware
+, mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg
 }:
 
 let
@@ -57,14 +57,14 @@ let
   packagesSysroot = runCommand "packages-sysroot" {
     nativeBuildInputs = [ xorg.lndir ];
   } ''
-    mkdir -p $out/usr/bin
+    mkdir -p $out/lib $out/usr/bin
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
 
     for pkg in ${lib.escapeShellArgs [ pkgsGui.mesa.drivers pkgsGui.dejavu_fonts ]}; do
         lndir -silent "$pkg" "$out/usr"
     done
 
-    ln -s ${kernel}/lib $out/lib
+    ln -s ${kernel}/lib/modules ${linux-firmware}/lib/firmware $out/lib
 
     # TODO: this is a hack and we should just build the util-linux
     # programs we want.
