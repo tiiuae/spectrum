@@ -12,7 +12,7 @@ pkgs.callPackage (
 }:
 
 let
-  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
+  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep hasSuffix;
 
   linux = rootfs.kernel;
 
@@ -88,7 +88,9 @@ stdenv.mkDerivation {
   name = "initramfs";
 
   src = cleanSourceWith {
-    filter = name: _type: name != "${toString ./.}/build";
+    filter = name: _type:
+      name != "${toString ./.}/build" &&
+      !(hasSuffix ".nix" name);
     src = cleanSource ./.;
   };
 

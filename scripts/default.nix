@@ -3,4 +3,11 @@
 
 { pkgs ? import <nixpkgs> {} }:
 
-pkgs.lib.cleanSource ./.
+let
+  inherit (pkgs.lib) cleanSource cleanSourceWith hasSuffix;
+in
+
+cleanSourceWith {
+  src = cleanSource ./.;
+  filter = name: _type: !(hasSuffix ".nix" name);
+}

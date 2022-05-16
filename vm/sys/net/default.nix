@@ -14,7 +14,7 @@ pkgs.pkgsStatic.callPackage (
 }:
 
 let
-  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
+  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep hasSuffix;
 
   connman = connmanMinimal;
 
@@ -74,7 +74,9 @@ stdenv.mkDerivation {
   name = "spectrum-netvm";
 
   src = cleanSourceWith {
-    filter = name: _type: name != "${toString ./.}/build";
+    filter = name: _type:
+      name != "${toString ./.}/build" &&
+      !(hasSuffix ".nix" name);
     src = cleanSource ./.;
   };
 

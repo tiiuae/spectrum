@@ -13,7 +13,7 @@ pkgs.pkgsStatic.callPackage (
 }:
 
 let
-  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
+  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep hasSuffix;
 
   packages = [
     execline kmod lynx mdevd s6 s6-linux-init s6-rc
@@ -65,7 +65,9 @@ stdenv.mkDerivation {
   name = "spectrum-appvm-lynx";
 
   src = cleanSourceWith {
-    filter = name: _type: name != "${toString ./.}/build";
+    filter = name: _type:
+      name != "${toString ./.}/build" &&
+      !(hasSuffix ".nix" name);
     src = cleanSource ./.;
   };
 

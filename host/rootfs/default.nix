@@ -9,7 +9,7 @@
 }:
 
 let
-  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep;
+  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep hasSuffix;
 
   start-vm = import ../start-vm { pkgs = pkgs.pkgsStatic; };
 
@@ -83,7 +83,8 @@ stdenv.mkDerivation {
   name = "spectrum-rootfs";
 
   src = cleanSourceWith {
-    filter = name: _type: name != "${toString ./.}/build";
+    filter = name: _type:
+      name != "${toString ./.}/build" && !(hasSuffix ".nix" name);
     src = cleanSource ./.;
   };
 

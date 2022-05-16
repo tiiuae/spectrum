@@ -4,7 +4,7 @@
 { pkgs ? import <nixpkgs> {} }:
 
 let
-  inherit (pkgs.lib) cleanSource cleanSourceWith;
+  inherit (pkgs.lib) cleanSource cleanSourceWith hasSuffix;
 
   extfs = pkgs.pkgsStatic.callPackage ../../host/initramfs/extfs.nix {
     inherit pkgs;
@@ -20,7 +20,9 @@ stdenv.mkDerivation {
   name = "spectrum-live.img";
 
   src = cleanSourceWith {
-    filter = name: _type: name != "${toString ./.}/build";
+    filter = name: _type:
+      name != "${toString ./.}/build" &&
+      !(hasSuffix ".nix" name);
     src = cleanSource ./.;
   };
 
