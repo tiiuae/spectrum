@@ -3,13 +3,14 @@
 
 { pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
 
-{ lib, stdenv, runCommand, writeReferencesToFile, s6-rc, tar2ext4
-, busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod, linux-firmware
+{ lib, stdenv, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
+, busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod
 , mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg
 }:
 
 let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep hasSuffix;
+  inherit (nixosAllHardware.config.hardware) firmware;
 
   start-vm = import ../start-vm { pkgs = pkgs.pkgsStatic; };
 
@@ -45,6 +46,10 @@ let
     })
   ] ++ (with pkgsGui; [ foot westonLite ]);
 
+  nixosAllHardware = nixos ({ modulesPath, ... }: {
+    imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
+  });
+
   kernel = pkgs.linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
       VIRTIO = yes;
@@ -64,7 +69,7 @@ let
         lndir -silent "$pkg" "$out/usr"
     done
 
-    ln -s ${kernel}/lib/modules ${linux-firmware}/lib/firmware $out/lib
+    ln -s ${kernel}/lib/modules ${firmware}/lib/firmware $out/lib
 
     # TODO: this is a hack and we should just build the util-linux
     # programs we want.
@@ -100,7 +105,7 @@ stdenv.mkDerivation {
 
   enableParallelBuilding = true;
 
-  passthru = { inherit kernel; };
+  passthru = { inherit firmware kernel nixosAllHardware; };
 
   meta = with lib; {
     license = licenses.eupl12;

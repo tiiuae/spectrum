@@ -6,9 +6,8 @@
 }:
 
 pkgs.callPackage (
-{ lib, stdenv, makeModulesClosure, nixos, runCommand, writeReferencesToFile
-, pkgsStatic, busybox, cpio, cryptsetup, linux-firmware, lvm2
-, microcodeAmd, microcodeIntel
+{ lib, stdenv, makeModulesClosure, runCommand, writeReferencesToFile, pkgsStatic
+, busybox, cpio, cryptsetup, lvm2, microcodeAmd, microcodeIntel
 }:
 
 let
@@ -16,14 +15,9 @@ let
 
   linux = rootfs.kernel;
 
-  nixosAllHardware = nixos ({ modulesPath, ... }: {
-    imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
-  });
-
   modules = makeModulesClosure {
-    inherit (rootfs) kernel;
-    firmware = linux-firmware;
-    rootModules = with nixosAllHardware.config.boot.initrd;
+    inherit (rootfs) firmware kernel;
+    rootModules = with rootfs.nixosAllHardware.config.boot.initrd;
       availableKernelModules ++ kernelModules ++ [ "dm-verity" "loop" ];
   };
 
