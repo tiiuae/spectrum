@@ -18,7 +18,7 @@ runCommand "spectrum-docs" {
 
   passthru = { inherit jekyll; };
 } ''
-  jekyll build --disable-disk-cache -s $src -d $out
+  jekyll build --disable-disk-cache -b /doc -s $src -d $out
 ''
 ) {
   jekyll = import ./jekyll.nix { inherit pkgs; };
