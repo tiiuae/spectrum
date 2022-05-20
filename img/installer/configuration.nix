@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ modulesPath, pkgs, ... }:
+{ lib, modulesPath, pkgs, ... }:
 
 let
   inherit (builtins) readFile;
@@ -52,4 +52,6 @@ in
   systemd.tmpfiles.rules = [
     "L+ /var/lib/eos-image-defaults/vendor-customer-support.ini - - - - ${app/vendor-customer-support.ini}"
   ];
+
+  system.stateVersion = lib.trivial.release;
 }
