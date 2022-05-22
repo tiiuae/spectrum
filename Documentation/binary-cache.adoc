@@ -20,9 +20,7 @@ encounter any trouble with it.
 The binary cache is currently not able to provide logs, due to a
 https://github.com/NixOS/nix/issues/6403[Nix bug].
 
-== Setting up the binary cache
-
-=== NixOS
+== On NixOS
 
 The following configuration adds the Spectrum binary cache as a
 substituter, and tells Nix to trust builds signed with its public key.
@@ -40,7 +38,7 @@ substituter, and tells Nix to trust builds signed with its public key.
 }
 ----
 
-=== Non-NixOS systems
+== On Non-NixOS systems
 
 Add the following configuration to /etc/nix/nix.conf:
 
