@@ -18,7 +18,7 @@ https://spectrum-os.org/participating.html[get in touch] if you
 encounter any trouble with it.
 
 The binary cache is currently not able to provide logs, due to a
-https://github.com/NixOS/nix/issues/6403[Nix bug].
+https://github.com/NixOS/nix/pull/6051[Nix bug].
 
 == On NixOS
 
