@@ -1,7 +1,7 @@
 #!/bin/sh -eu
 #
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
-# SPDX-License-Identifier: EUPL-1.2
+# SPDX-License-Identifier: EUPL-1.2+
 #
 # usage: make-gpt.sh GPT_PATH PATH:PARTTYPE[:PARTUUID]...
 

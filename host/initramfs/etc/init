@@ -1,6 +1,6 @@
 #!/bin/execlineb -S0
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
-# SPDX-License-Identifier: EUPL-1.2
+# SPDX-License-Identifier: EUPL-1.2+
 
 export PATH /bin
 

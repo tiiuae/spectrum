@@ -1,5 +1,5 @@
 #!/bin/awk -f
-# SPDX-License-Identifier: EUPL-1.2
+# SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
 # Parses modules.devname into space-separated arguments suitable for mknod(1).

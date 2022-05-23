@@ -1,6 +1,6 @@
 #!/bin/sh -eu
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
-# SPDX-License-Identifier: EUPL-1.2
+# SPDX-License-Identifier: EUPL-1.2+
 
 cd "$(dirname "$0")/../.."
 

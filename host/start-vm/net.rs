@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: EUPL-1.2
+// SPDX-License-Identifier: EUPL-1.2+
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
 use std::os::raw::c_char;

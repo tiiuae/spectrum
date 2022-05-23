@@ -1,5 +1,5 @@
 #!/usr/bin/awk -f
-# SPDX-License-Identifier: EUPL-1.2
+# SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
 function driver(type) {

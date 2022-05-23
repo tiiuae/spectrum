@@ -1,5 +1,5 @@
 #!/usr/bin/awk -f
-# SPDX-License-Identifier: EUPL-1.2
+# SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 #
 # This program generates a shell script expected to be run with a

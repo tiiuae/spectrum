@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: EUPL-1.2
+# SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
 test('if_up', executable('if_up', 'if_up.c', '../net-util.c'))
