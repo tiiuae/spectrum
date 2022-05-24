@@ -1,0 +1,76 @@
+= Architecture
+:page-parent: Explanation
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+== Introduction
+
+Spectrum operating system stack is based on the principle of security by
+compartmentalization. The high level system stack is illustrated in the
+following diagram.
+
+image::diagrams/stack.svg[]
+
+=== Kernel space
+
+In the stack, kernel space security by compartmentalization is supported with
+linux kernel that includes kernel-based virtual machine (KVM) module enabling
+the kernel to work as virtual-machine manager, hypervisor. The kernel-side
+hypervisor supports virtualization of hardware resources - computational cores,
+memory and devices - securely. User space virtual machine guests are managed
+with cloud-hypervisor. Linux with KVM also supports portability to several
+hardware architectures. Currently Spectrum is supported only on x86_64 but ARM64
+is under work. In addition, hardened kernel will be investigated.
+
+=== Host user space
+
+This section provides high level overview of host user space tools and
+libraries.
+
+User space stack is build on musl standard C library with
+https://www.etalabs.net/compare_libcs.html[added safety on resource exhaustion
+and security hardening on memory allocation].
+
+https://skarnet.org/software/s6-rc/overview.html[s6-rc] service manager is used
+for services. kmod, util-linux and busybox are provided for essential system
+administration.
+
+https://github.com/cloud-hypervisor/cloud-hypervisor[cloud-hypervisor] is a host
+tooling for virtual machine management, written in Rust with a strong focus on
+security.
+
+Wayland refers to whole display stack providing communication with compositor
+(weston) for desktop services, including libraries and drivers for direct
+rendering and event devices. Clients are implemented as application virtual
+machines (see next section). Minimal host provides only Wayland terminal client,
+foot. Wayland, a simpler and more secure, protocol for compositor could provide
+support for legacy X applications as well but as of now none are provided.
+https://wayland.freedesktop.org/architecture.html[Wayland architecture] is well
+documented here.
+
+=== Application and system virtual machines
+
+Security by compartmentalization in Spectrum is implemented with virtual
+machines. Virtual machines currently launch using terminal and support only
+virtio-console. Wayland graphics support for appvms is under work. Please refer
+to xref:running-vms.html[running VMs] for more
+information.
+
+Reference set of virtual machines includes system machine, netvm, and
+application VMs, appvm-catgirl and appvm-elinks. Please refer to
+xref:creating-vms.html[creating VMs] for more
+information.
+
+== Details of Spectrum dependency tree
+
+High level overview of Spectrum stack is limited view to the system. For
+detailed, interactive view to dependencies please use `nix-tree` under the
+spectrum repository:
+
+`nix-build img/live -I
+nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-rootfs.tar.gz
+--no-out-link | xargs -o nix-tree`
+
+https://diode.zone/w/8DBDQ6HQUe5UUdLkpDuL35[See video of Spectrum live image
+interactive analysis with nix-tree]
