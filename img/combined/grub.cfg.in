@@ -22,3 +22,6 @@ menuentry "Install Spectrum" {
   linux @linux@ @kernelParams@
   initrd @initrd@
 }
+
+default="Try Spectrum"
+timeout=5
