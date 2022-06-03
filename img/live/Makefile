@@ -26,7 +26,7 @@ build/spectrum.conf: build/rootfs.verity.roothash
 	printf "title Spectrum\n" > $@
 	printf "linux /spectrum/linux\n" >> $@
 	printf "initrd /spectrum/initrd\n" >> $@
-	printf "options ro console=tty console=ttyS0 roothash=" >> $@
+	printf "options ro console=tty roothash=" >> $@
 	cat build/rootfs.verity.roothash >> $@
 
 build/boot.fat: $(KERNEL) $(INITRAMFS) $(SYSTEMD_BOOT_EFI) build/spectrum.conf

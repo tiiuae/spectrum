@@ -1,0 +1,5 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2
+# SPDX-FileCopyrightText: 2021-2022 Tero Tervala <tero.tervala@unikie.com>
+
+getty -i -n -l /etc/login 115200 ttyUSB0 dumb
