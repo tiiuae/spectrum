@@ -4,5 +4,10 @@
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
-If you're new to Spectrum, you probably want to start with
-xref:getting-spectrum.adoc[Getting Spectrum].
+Spectrum is a compartmentalized operating system.
+
+If you'd like to try Spectrum, see xref:getting-spectrum.adoc[Getting
+Spectrum].
+
+To learn about what Spectrum is and how it's implemented, start with
+the xref:architecture.adoc[architecture overview].
