@@ -1,0 +1,21 @@
+= Replying to Messages in the Mailing List Archives
+:page-parent: Tutorials
+
+// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+Discussion of Spectrum takes place on
+https://spectrum-os.org/participating.html#mailing-lists[mailing
+lists].
+
+You may want to reply to a mailing list message that you don't have a
+copy of in your mail client, because you aren't subscribed to the
+list, or because you subscribed after the message was sent.
+
+To do this, find the message you want to reply to in the
+https://spectrum-os.org/lists/archives[public-inbox list archives],
+click on the "reply" link at the bottom of the message, then click the
+"mbox" link.  Save the result to a file, then open it in your mail
+client.  This should import the message and allow you to reply to it
+as normal.  Remember to Reply All so that the masseg is sent to the
+mailing list and not just to the person you're replying to.

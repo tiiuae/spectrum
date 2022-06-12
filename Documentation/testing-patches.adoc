@@ -1,0 +1,71 @@
+= Testing Patches
+:page-parent: How-to Guides
+
+// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+Potential changes to Spectrum are posted to and discussed on the
+https://spectrum-os.org/participating.html#spectrum-devel[devel@spectrum-os.org]
+mailing list.
+
+== Apply the patch
+
+If you haven't already, you'll first need to xref:b4.adoc[install and
+configure] https://git.kernel.org/pub/scm/utils/b4/b4.git/about/[b4].
+Then:
+
+. Find the patch series you want to test on
+  https://spectrum-os.org/lists/archives/spectrum-devel/[public-inbox].
+. Navigate to the "permalink" page for any patch in the series.
+. Copy the Message-Id for the patch, as shown on the permalink page, e.g.
+  \20220511092352.70E54C980@atuin.qyliss.net.
+. In a copy of the https://spectrum-os.org/git/spectrum[Spectrum git
+  repository], Run `b4 am` with the patch's Message-Id to download all
+  the patches in the series into a file.
++
+[example]
+[source,shell]
+----
+b4 am 20220511092352.70E54C980@atuin.qyliss.net
+----
+
+. b4 will indicate the file name it has downloaded the patches into
+  with a line like:
++
+[example]
+[listing]
+Writing ./20220424_hi_host_rootfs_fix_weston_hotplugging.mbx
++
+Run `git am` on that file to apply the patches, for example:
++
+[example]
+[source,shell]
+----
+git am 20220424_hi_host_rootfs_fix_weston_hotplugging.mbx
+----
+
+== Post your test results
+
+When you've tested a patch, it's really helpful to
+xref:replying.adoc[reply] with your test results.
+
+If the patch worked for you, please reply to it and include a line
+like the following, separated from any reply text:
+
+----
+Tested-by: John Smith <john@example.com>
+----
+
+This format is recognized by tooling, so any lines in this format in
+patch replies will be automatically included in the commit message
+when a patch is applied.
+
+It's also helpful to explain in your reply how you tested the patch,
+but you don't have to if it's obvious.  (For example, if a patch is
+supposed to fix a bug, and you verified that after applying the patch
+the bug is fixed, just the Tested-by line on its own is enough to
+indicate that.)
+
+If you found an issue with the patch, do not include a Tested-by line,
+and instead reply to the patch explaining what you tested, what you
+expected to happen, and what actually happened.

@@ -1,0 +1,41 @@
+= Installing and Configuring b4
+:page-parent: Tutorials
+
+// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+https://git.kernel.org/pub/scm/utils/b4/b4.git/about/[b4] is a utility
+for working with patches sent to a mailing list, such as
+https://spectrum-os.org/participating.html#spectrum-devel[devel@spectrum-os.org].
+
+== Installing b4
+
+You should be able to install b4 from your package manager.
+
+Using Nix, you can start a shell with b4 available by running
+
+[listing]
+[source,shell]
+nix-shell -p b4
+
+== Configuring b4
+
+As b4 was originally written for Linux development, it will default to
+searching for patches on the Linux mailing lists.  So to use it for
+Spectrum, it needs to be configured to search the Spectrum mailing
+lists instead.
+
+To do this, in the https://spectrum-os.org/git/spectrum[Spectrum git
+repository], run:
+
+[listing]
+[source,shell]
+git config b4.midmask https://spectrum-os.org/lists/archives/spectrum-devel/%s
+
+From now on, any b4 command run in the Spectrum git repository will
+search the Spectrum devel mailing list.
+
+== Using b4
+
+Using b4 to fetch and apply a patch from the Spectrum mailing list is
+described in the xref:testing-patches.adoc[Testing Patches] how-to guide.
