@@ -25,15 +25,16 @@ searching for patches on the Linux mailing lists.  So to use it for
 Spectrum, it needs to be configured to search the Spectrum mailing
 lists instead.
 
-To do this, in the https://spectrum-os.org/git/spectrum[Spectrum git
-repository], run:
+To do this, in a checkout of the appropriate git repository
+(https://spectrum-os.org/git/spectrum[Spectrum] or
+https://spectrum-os.org/git/nixpkgs[Spectrum Nixpkgs]), run:
 
 [listing]
 [source,shell]
 git config b4.midmask https://spectrum-os.org/lists/archives/spectrum-devel/%s
 
-From now on, any b4 command run in the Spectrum git repository will
-search the Spectrum devel mailing list.
+From now on, any b4 command run in Spectrum repositories will search
+the Spectrum devel mailing list.
 
 == Using b4
 

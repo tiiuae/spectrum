@@ -19,9 +19,11 @@ Then:
 . Navigate to the "permalink" page for any patch in the series.
 . Copy the Message-Id for the patch, as shown on the permalink page, e.g.
   \20220511092352.70E54C980@atuin.qyliss.net.
-. In a copy of the https://spectrum-os.org/git/spectrum[Spectrum git
-  repository], Run `b4 am` with the patch's Message-Id to download all
-  the patches in the series into a file.
+. In a checkout of the appropriate git repository
+  (https://spectrum-os.org/git/spectrum[Spectrum] or
+  https://spectrum-os.org/git/nixpkgs[Spectrum Nixpkgs]), Run `b4 am`
+  with the patch's Message-Id to download all the patches in the
+  series into a file.
 +
 [example]
 [source,shell]
