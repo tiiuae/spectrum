@@ -7,4 +7,9 @@
 
 {
   combined = import img/combined/run-vm.nix { inherit pkgs; };
+
+  aarch64-musl-bootstrap =
+    (import (pkgs.path + "/pkgs/stdenv/linux/make-bootstrap-tools.nix") {
+      pkgs = pkgs.pkgsCross.aarch64-multiplatform.pkgsMusl;
+    }).build;
 }
