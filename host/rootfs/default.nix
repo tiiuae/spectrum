@@ -50,7 +50,7 @@ let
     imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
   });
 
-  kernel = pkgs.linux_latest.override {
+  kernel = pkgs.linux_imx8.override {
     structuredExtraConfig = with lib.kernel; {
       VIRTIO = yes;
       VIRTIO_PCI = yes;
