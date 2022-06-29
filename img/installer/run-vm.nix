@@ -5,7 +5,7 @@
 
 let
   inherit (builtins) storeDir;
-  inherit (pkgs) coreutils qemu_kvm writeShellScript;
+  inherit (pkgs) coreutils qemu_kvm stdenv writeShellScript;
   inherit (pkgs.lib) makeBinPath escapeShellArg;
 
   eosimages = import ../combined/eosimages.nix { inherit pkgs; };
