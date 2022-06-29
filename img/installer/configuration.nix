@@ -31,7 +31,8 @@ in
   fileSystems."/" = { fsType = "tmpfs"; };
 
   services.cage.enable = true;
-  services.cage.program = "gnome-image-installer";
+  services.cage.program =
+    "${pkgs.callPackage ./app {}}/bin/gnome-image-installer";
   users.users.demo = { group = "demo"; isSystemUser = true; };
   users.groups.demo = {};
   security.polkit.extraConfig = readFile ./seat.rules;
@@ -44,10 +45,7 @@ in
 
   boot.loader.systemd-boot.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    (callPackage ./app { })
-    gnome.adwaita-icon-theme
-  ];
+  environment.systemPackages = with pkgs; [ gnome.adwaita-icon-theme ];
 
   systemd.tmpfiles.rules = [
     "L+ /var/lib/eos-image-defaults/vendor-customer-support.ini - - - - ${app/vendor-customer-support.ini}"
