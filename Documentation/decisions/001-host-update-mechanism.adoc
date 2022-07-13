@@ -1,0 +1,22 @@
+# Host update mechanism
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+## Status
+Proposed
+
+## Context
+Spectrum OS has no implementation for software update. The host - consisting of
+Linux kernel, KVM, cloud-hypervisor and minimal user space tools - software
+updates are required to support feature development and security fixes.
+
+## Decision
+A-B partitioning created by Spectrum installer Installer sets up the system on
+partition A of the block device A-B update scheme where user (or installer)
+writes the update image to partition B Bootloader provides four boot options:
+A, A mutable, B, B mutable
+
+## Consequences
+Default boot selection, incremental updates (e.g. overlays), network update
+postponed for later.

@@ -1,0 +1,20 @@
+# Drivers on host
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+## Status
+Accepted
+
+## Context
+To harden the trusted computing base and make it more minimal, the target is to
+minimize the amount of drivers on the Spectrum host kernel.
+
+## Decision
+We are aiming to have as few drivers as possible on the host.
+
+## Consequences
+No networking on the host. Responsibilities of the host are expected to get
+smaller over time. More flexible management of devices. We need to decouple
+device classes - like net, usb, bluetooth and gui - from host to their
+respective VMs.

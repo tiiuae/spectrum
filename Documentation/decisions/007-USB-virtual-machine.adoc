@@ -1,0 +1,17 @@
+# USB Virtual Machine
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+## Status
+Proposed
+
+## Context
+To support specific USB devices on specific VMs
+
+## Decision
+The decision is to pass-through USB controller to a VM with authorization
+controls inside the VMs to forward a specific USB device using USBIP.
+
+## Consequences
+We need to modify the upstream USBIP daemon to support authorization.

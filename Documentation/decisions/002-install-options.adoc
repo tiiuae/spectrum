@@ -1,0 +1,21 @@
+# Install options
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+## Status
+Proposed
+
+## Context
+Based on identified different audiences for the Spectrum OS release it is
+proposed we support three base configurations to use with Spectrum OS in the
+first boot.
+
+## Decision
+* Minimal - Spectrum OS host + system VMs: netvm, guivm, usbvm + home-directory
+  encrypted (see 004-disk-encryption.md)
+* Common - Minimal + browser app VM + 2-3 selected app VMs
+* Power - Common + NixOS VM
+
+## Consequences
+Requires first-boot-vm (like wizard) to support user to get started.

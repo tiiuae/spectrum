@@ -1,0 +1,21 @@
+### Inter VM communication mechanisms
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+### Status
+Proposed
+
+### Context
+Guest VM software needs to communicate with software in other guest VMs
+
+### Decision
+Spectrum provides two mechanism
+- TCP/IP with virtio-net
+- Wayland with virtio-gpu (nevermind the semantics) for streamed IPC protocol to
+  send references to shared memory
+
+
+### Consequences
+- Examples required on how to write applications which communicate over
+  virtio-gpu
