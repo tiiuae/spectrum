@@ -7,7 +7,7 @@
 
 pkgs.pkgsStatic.callPackage (
 
-{ lib, stdenv, runCommand, writeReferencesToFile, buildPackages
+{ lib, stdenvNoCC, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4
 , busybox, cacert, execline, kmod, lynx, mdevd, s6, s6-linux-init
 }:
@@ -61,7 +61,7 @@ let
   };
 in
 
-stdenv.mkDerivation {
+stdenvNoCC.mkDerivation {
   name = "spectrum-appvm-lynx";
 
   src = cleanSourceWith {

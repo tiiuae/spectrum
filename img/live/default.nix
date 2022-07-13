@@ -16,7 +16,7 @@ in
 
 with pkgs;
 
-stdenv.mkDerivation {
+stdenvNoCC.mkDerivation {
   name = "spectrum-live.img";
 
   src = cleanSourceWith {

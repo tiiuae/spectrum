@@ -7,7 +7,7 @@
 
 pkgs.pkgsStatic.callPackage (
 
-{ lib, stdenv, runCommand, writeReferencesToFile, buildPackages
+{ lib, stdenvNoCC, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4, xorg
 , busybox, connmanMinimal, dbus, execline, kmod, mdevd, nftables, s6
 , s6-linux-init
@@ -70,7 +70,7 @@ let
   };
 in
 
-stdenv.mkDerivation {
+stdenvNoCC.mkDerivation {
   name = "spectrum-netvm";
 
   src = cleanSourceWith {

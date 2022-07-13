@@ -7,7 +7,7 @@
 
 pkgs.pkgsStatic.callPackage (
 
-{ lib, stdenv, runCommand, writeReferencesToFile, buildPackages
+{ lib, stdenvNoCC, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4
 , busybox, cacert, catgirl, execline, kmod, mdevd, s6, s6-linux-init
 }:
@@ -61,7 +61,7 @@ let
   };
 in
 
-stdenv.mkDerivation {
+stdenvNoCC.mkDerivation {
   name = "spectrum-appvm-catgirl";
 
   src = cleanSourceWith {

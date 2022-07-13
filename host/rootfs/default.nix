@@ -3,7 +3,7 @@
 
 { pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
 
-{ lib, stdenv, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
+{ lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
 , busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod
 , mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg
 }:
@@ -84,7 +84,7 @@ let
   '';
 in
 
-stdenv.mkDerivation {
+stdenvNoCC.mkDerivation {
   name = "spectrum-rootfs";
 
   src = cleanSourceWith {
