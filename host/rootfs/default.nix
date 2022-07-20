@@ -50,14 +50,21 @@ let
     imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
   });
 
-  kernel = pkgs.linux_latest.override {
-    structuredExtraConfig = with lib.kernel; {
-      VIRTIO = yes;
-      VIRTIO_PCI = yes;
-      VIRTIO_BLK = yes;
-      EXT4_FS = yes;
+  kernelPackages = pkgs.linuxPackagesFor (pkgs.linuxKernel.manualConfig {
+    inherit (pkgs) stdenv lib;
+
+    version = "5.15.5-hardened1";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/Pekkari/linux-imx/archive/refs/tags/lf-5.15.y-hardened1.tar.gz";
+      sha256 = "5d2e8083d70d9c37192d03c6c6eec9f8a235895edfb742ae1b7f1b4298ef0ea5";
     };
-  };
+
+    configfile = ./generated_arm64_imx8qmmek_kvm-nixos_host_release_defconfig;
+    allowImportFromDerivation = true;
+  });
+
+  kernel = kernelPackages.kernel;
 
   packagesSysroot = runCommand "packages-sysroot" {
     nativeBuildInputs = [ xorg.lndir ];
