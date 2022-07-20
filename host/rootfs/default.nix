@@ -50,14 +50,21 @@ let
     imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
   });
 
-  kernel = pkgs.linux_latest.override {
-    structuredExtraConfig = with lib.kernel; {
-      VIRTIO = yes;
-      VIRTIO_PCI = yes;
-      VIRTIO_BLK = yes;
-      EXT4_FS = yes;
+  kernelPackages = pkgs.linuxPackagesFor (pkgs.linuxKernel.manualConfig {
+    inherit (pkgs) stdenv lib;
+
+    version = "5.15.53-hardened1";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/anthraxx/linux-hardened/archive/refs/tags/5.15.53-hardened1.tar.gz";
+      sha256 = "3157a4cadd167e0892cd4257f778dbe8d00b7ff6300c9c2dafaabb13852fa2fc";
     };
-  };
+
+    configfile = ./generated_x86_qemu-nixos_host_release_defconfig;
+    allowImportFromDerivation = true;
+  });
+
+  kernel = kernelPackages.kernel;
 
   packagesSysroot = runCommand "packages-sysroot" {
     nativeBuildInputs = [ xorg.lndir ];
