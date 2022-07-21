@@ -1,0 +1,17 @@
+= Architecture Decision Records
+:page-has_children: true
+:page-parent: Explanation
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+https://en.wikipedia.org/wiki/Architectural_decision[Architecturally
+significant decisions] are recorded as lightweight
+https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions/[ADRs].
+
+Statuses Spectrum ADRs can be in are:
+
+Accepted :: Implemented and likely not to change.
+Proposed :: Designed and possibly partially implemented.  May change.
+
+Comments and contributions to ADRs are welcome.

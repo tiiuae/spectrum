@@ -1,0 +1,24 @@
+= 007 USB Virtual Machine
+:page-parent: Architecture Decision Records
+:page-grand_parent: Explanation
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+== Status
+
+Proposed
+
+== Context
+
+Certain VMs will need access to specific USB devices, but with passthrough from
+the host we can only pass through whole USB controllers, not individual devices.
+
+== Decision
+
+USB controllers will be passed through to a VM with authorization controls
+inside the VMs to forward a specific USB device using USBIP.
+
+== Consequences
+
+We need to modify the upstream USBIP daemon to support authorization.

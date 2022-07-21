@@ -1,0 +1,27 @@
+= 008 Inter-VM Communication Mechanisms
+:page-parent: Architecture Decision Records
+:page-grand_parent: Explanation
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+== Status
+
+Proposed
+
+== Context
+
+Guest VM software needs to communicate with software in other guest VMs.
+
+== Decision
+
+Spectrum provides two mechanisms for inter-guest communication:
+
+- TCP/IP with virtio-net
+- Cross-domain virtio-gpu which can send references to shared memory
+  and be used as a transport for a stream protocol, e.g. Wayland.
+
+== Consequences
+
+- Examples will be required on how to write applications which
+  communicate over virtio-gpu.

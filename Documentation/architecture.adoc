@@ -20,18 +20,11 @@ devices and provides network services to application VMs).  Refer to
 xref:creating-vms.adoc[Creating VMs] and xref:running-vms.adoc[Running
 VMs] for more information about using VMs in Spectrum.
 
-== Architecture Decision Record (ADR)
+== Architecture Decision Records (ADRs)
 
-https://adr.github.io/[Architecturally significant decisions] are
-recorded as https://github.com/joelparkerhenderson/architecture-decision-record/blob/main/templates/decision-record-template-by-michael-nygard/index.md[light-weight ADRs]
-
-Status of Spectrum OS ADRs:
-Accepted - Implemented and likely not to change.
-Proposed - Designed and possibly partially implmented. May change.
-Other - Not yet in use.
-
-Comments and contributions to ADRs are welcome. ADRs can be found at
-Documentation/decisions
+https://en.wikipedia.org/wiki/Architectural_decision[Architecturally significant
+decisions] are xref:decisions/index.adoc[recorded] as lightweight
+https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions/[ADRs].
 
 == The Spectrum host system
 

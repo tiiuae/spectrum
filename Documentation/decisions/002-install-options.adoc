@@ -1,21 +1,28 @@
-# Install options
+= 002 Install options
+:page-parent: Architecture Decision Records
+:page-grand_parent: Explanation
 
 // SPDX-FileCopyrightText: 2022 Unikie
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
-## Status
+== Status
+
 Proposed
 
-## Context
-Based on identified different audiences for the Spectrum OS release it is
-proposed we support three base configurations to use with Spectrum OS in the
-first boot.
+== Context
 
-## Decision
-* Minimal - Spectrum OS host + system VMs: netvm, guivm, usbvm + home-directory
-  encrypted (see 004-disk-encryption.md)
-* Common - Minimal + browser app VM + 2-3 selected app VMs
-* Power - Common + NixOS VM
+Based on identified different audiences for the Spectrum release it is
+proposed we support three base configurations to use with Spectrum, to
+be chosen from at the first boot.
 
-## Consequences
-Requires first-boot-vm (like wizard) to support user to get started.
+== Decision
+
+Minimal :: Spectrum host + system VMs: network VM, GUI VM, USB VM.
+xref:004-data-at-rest-encryption.adoc[Encrypted] user data partition.
+Common :: Minimal + browser app VM + 2-3 selected application VMs.
+Power :: Common + NixOS VM.
+
+== Consequences
+
+Requires a first boot VM (like a wizard) to allow the user to choose
+their configuration and get started.

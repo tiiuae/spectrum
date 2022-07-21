@@ -1,15 +1,21 @@
-# Partitioning
+= 003 Partitioning
+:page-parent: Architecture Decision Records
+:page-grand_parent: Explanation
 
 // SPDX-FileCopyrightText: 2022 Unikie
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
-## Status
+== Status
+
 Proposed
 
-## Context
-Partitions are required to install the Spectrum OS, VMs and store user data.
+== Context
 
-## Decision
+Partitions are required to install the Spectrum operating system, VMs
+and store user data.
+
+== Decision
+
 ----
 <blockdevice>                        # EFI system partition
 <blockdevice>                        # XBOOTLDR
@@ -21,8 +27,10 @@ Partitions are required to install the Spectrum OS, VMs and store user data.
 <blockdevice>n to the end of disk    # user data
 ----
 
-## Consequences
-LVM may support resizing - both increasing and decreasing with some limitation
-when there's alreay data on volume(s). Does LVM work with all disk types? We
-have to implement XBOOTLDR to support EFI system partition created by Windows -
-to support dual boot
+== Consequences
+
+- LVM may support resizing - both increasing and decreasing with some limitation
+when there's alreay data on volume(s).
+- Does LVM work with all disk types?
+- We have to implement XBOOTLDR to support EFI system partition
+  created by Windows -- to support dual boot.
