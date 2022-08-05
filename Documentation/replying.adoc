@@ -17,5 +17,5 @@ https://spectrum-os.org/lists/archives[public-inbox list archives],
 click on the "reply" link at the bottom of the message, then click the
 "mbox" link.  Save the result to a file, then open it in your mail
 client.  This should import the message and allow you to reply to it
-as normal.  Remember to Reply All so that the masseg is sent to the
+as normal.  Remember to Reply All so that the message is sent to the
 mailing list and not just to the person you're replying to.
