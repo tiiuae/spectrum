@@ -49,6 +49,6 @@ runCommand "spectrum-vm-${name}" {
   fi
 
   ln -s /usr/img/appvm/blk/root.img "$out/data/${name}/blk"
-  ln -s /usr/img/appvm/vmlinux "$out/data/${name}"
+  ln -s /usr/img/appvm/Image "$out/data/${name}"
 ''
 ) {}
