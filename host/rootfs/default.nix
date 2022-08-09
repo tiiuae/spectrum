@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Unikie
 
 { pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
 
@@ -16,6 +17,20 @@ let
 
   pkgsGui = pkgs.pkgsMusl.extend (final: super: {
     systemd = final.libudev-zero;
+
+    colord = super.colord.overrideAttrs ({ mesonFlags ? [], ... }: {
+      mesonFlags = mesonFlags ++ [
+        "-Dsystemd=false"
+        "-Dudev_rules=false"
+      ];
+    });
+
+    weston = super.weston.overrideAttrs ({ mesonFlags ? [], ... }: {
+      mesonFlags = mesonFlags ++ [
+        "-Dlauncher-logind=false"
+        "-Dsystemd=false"
+      ];
+    });
   });
 
   foot = pkgsGui.foot.override { allowPgo = false; };
