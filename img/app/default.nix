@@ -49,8 +49,10 @@ let
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
-  kernel = config.pkgs.pkgsCross.aarch64-multiplatform.linux_imx8.override {
+  kernel = config.pkgs.linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
+      EFI_STUB=yes;
+      EFI=yes;
       VIRTIO = yes;
       VIRTIO_PCI = yes;
       VIRTIO_BLK = yes;
@@ -78,6 +80,7 @@ stdenvNoCC.mkDerivation {
 
   PACKAGES_TAR = packagesTar;
   VMLINUX = "${kernel.dev}/vmlinux";
+  IMAGE = "${kernel}/Image";
 
   makeFlags = [ "SCRIPTS=${scripts}" "prefix=$(out)" ];
 
@@ -91,3 +94,4 @@ stdenvNoCC.mkDerivation {
   };
 }
 ) {}
+
