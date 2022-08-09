@@ -18,7 +18,7 @@ SCRIPTS = ../../scripts
 
 HOST_BUILD_FILES = \
 	build/host/appvm/blk/root.img \
-	build/host/appvm/vmlinux
+	build/host/appvm/Image
 
 all: $(HOST_BUILD_FILES)
 .PHONY: all
@@ -28,9 +28,9 @@ install: $(HOST_BUILD_FILES)
 	tar -c $(HOST_BUILD_FILES) | tar -C $(imgdir) -x --strip-components 2
 .PHONY: install
 
-build/host/appvm/vmlinux: $(VMLINUX)
+build/host/appvm/Image: $(IMAGE)
 	mkdir -p $$(dirname $@)
-	cp $(VMLINUX) $@
+	cp $(IMAGE) $$(dirname $@)/Image
 
 build/host/appvm/blk/root.img: $(SCRIPTS)/make-gpt.sh $(SCRIPTS)/sfdisk-field.awk build/rootfs.ext4
 	mkdir -p $$(dirname $@)
