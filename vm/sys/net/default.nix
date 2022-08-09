@@ -56,8 +56,10 @@ let
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
-  kernel = buildPackages.linux.override {
+  kernel = pkgs.linux_hardened.override {
     structuredExtraConfig = with lib.kernel; {
+      EFI_STUB=yes;
+      EFI=yes;
       VIRTIO = yes;
       VIRTIO_PCI = yes;
       VIRTIO_BLK = yes;
@@ -84,6 +86,7 @@ stdenvNoCC.mkDerivation {
 
   PACKAGES_TAR = packagesTar;
   VMLINUX = "${kernel.dev}/vmlinux";
+  IMAGE = "${kernel}/Image";
 
   installPhase = ''
     mv build/svc $out
