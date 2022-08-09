@@ -7,7 +7,7 @@
 
 https://en.wikipedia.org/wiki/Architectural_decision[Architecturally
 significant decisions] are recorded as lightweight
-https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions/[ADRs].
+https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions[ADRs].
 
 Statuses Spectrum ADRs can be in are:
 
