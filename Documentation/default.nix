@@ -9,8 +9,8 @@ runCommand "spectrum-docs" {
   src = with lib; cleanSourceWith {
     src = cleanSource ./.;
     filter = name: _type:
-      name != ".jekyll-cache" &&
-      name != "_site" &&
+      builtins.baseNameOf name != ".jekyll-cache" &&
+      builtins.baseNameOf name != "_site" &&
       !(hasSuffix ".nix" name) &&
       !(hasSuffix ".svg" name);
   };
