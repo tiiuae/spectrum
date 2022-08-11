@@ -11,7 +11,8 @@ runCommand "spectrum-docs" {
     filter = name: _type:
       name != ".jekyll-cache" &&
       name != "_site" &&
-      !(hasSuffix ".nix" name);
+      !(hasSuffix ".nix" name) &&
+      !(hasSuffix ".svg" name);
   };
 
   nativeBuildInputs = [ jekyll drawio-headless ];
