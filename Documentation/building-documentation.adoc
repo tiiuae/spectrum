@@ -8,27 +8,32 @@ This tutorial assumes that you have https://nixos.org/[Nix] installed.
 
 1. Get a copy of the Spectrum source code:
 +
+[source,shell]
 ----
 git clone https://spectrum-os.org/git/spectrum
 ----
 2. Enter the documentation directory:
 +
+[source,shell]
 ----
 cd spectrum/Documentation
 ----
 3. Enter the development environment:
 +
+[source,shell]
 ----
 nix-shell -I nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-rootfs.tar.gz
 ----
 4. In the development shell, do an initial build of the documentation
 site:
 +
+[source,shell]
 ----
 scripts/build.sh
 ----
 5. Run a development server for previewing changes locally:
 +
+[source,shell]
 ----
 jekyll serve
 ----

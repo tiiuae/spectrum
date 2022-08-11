@@ -21,12 +21,14 @@ your changes will probably be very familiar.
 
 1. Create a branch for your changes:
 +
+[source,shell]
 ----
 git checkout -b fix-docs # for example
 ----
 2. Make changes in your editor.
 3. Stage and commit your changes:
 +
+[source,shell]
 ----
 git add Documentation/first-patch.adoc # for example
 git commit -s
@@ -41,6 +43,7 @@ Certificate of Origin], which is mandatory for Spectrum patches.
 
 Once you're happy with how the commits on your branch look, run:
 
+[source,shell]
 ----
 git send-email --to devel@spectrum-os.org --confirm=always origin/main
 ----
@@ -69,6 +72,7 @@ If you need to make changes to your patch, and submit a new version,
 use https://git-rebase.io/[`git rebase`] to create a new version of
 your patch(es), and submit it like this:
 
+[source,shell]
 ----
 git send-email -v2 --to devel@spectrum-os.org --confirm=always origin/main
 ----
