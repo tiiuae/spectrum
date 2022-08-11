@@ -47,7 +47,7 @@ let
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
-  kernel = pkgs.linux_hardened.override {
+  kernel = pkgs.linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
       EFI_STUB=yes;
       EFI=yes;
