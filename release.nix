@@ -6,5 +6,7 @@
 { pkgs ? import <nixpkgs> {} }:
 
 {
+  doc = import ./Documentation { inherit pkgs; };
+
   combined = import img/combined/run-vm.nix { inherit pkgs; };
 }
