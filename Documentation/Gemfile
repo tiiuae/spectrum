@@ -6,4 +6,4 @@ source "https://rubygems.org"
 
 gem "jekyll"
 gem "jekyll-asciidoc"
-gem "just-the-docs"
+gem "just-the-docs", ">= 0.4.0.rc1", "< 0.5"
