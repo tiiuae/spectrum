@@ -16,6 +16,7 @@ exclude:
   - '*.license'
   - '*.nix'
   - /scripts
+  - README
   - result*
 asciidoctor:
   attributes:
