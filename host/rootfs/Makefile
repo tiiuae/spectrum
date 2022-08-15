@@ -30,6 +30,7 @@ FILES = \
 	etc/s6-linux-init/run-image/service/getty-tty3/run \
 	etc/s6-linux-init/run-image/service/getty-tty4/run \
 	etc/s6-linux-init/run-image/service/getty-ttyS0/run \
+	etc/s6-linux-init/run-image/service/getty-ttyLP0/run \
 	etc/s6-linux-init/scripts/rc.init \
 	etc/xdg/weston/autolaunch \
 	etc/xdg/weston/weston.ini \
