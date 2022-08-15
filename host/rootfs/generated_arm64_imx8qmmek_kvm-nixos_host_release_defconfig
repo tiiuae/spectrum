@@ -1795,3 +1795,6 @@ CONFIG_VSOCKETS_DIAG=y
 CONFIG_VHOST_VSOCK=y
 CONFIG_VHOST=y
 CONFIG_FORTIFY_SOURCE=n # XXX: drivers cannot commpile if enabled
+
+CONFIG_CMDLINE="console=ttyLP0,115200 console=tty1 earlycon root=/dev/mmcblk1p2 rootfstype=ext4 rootwait rw quiet selinux=1 enforcing=0"
+CONFIG_DM_VERITY=y
