@@ -29,7 +29,7 @@ fn vm_command(dir: PathBuf) -> Result<Command, String> {
     command.args(&["-dc", "test -S env/cloud-hypervisor.sock"]);
     command.arg("cloud-hypervisor");
     command.args(&["--api-socket", "env/cloud-hypervisor.sock"]);
-    command.args(&["--cmdline", "console=ttyS0 root=/dev/vda"]);
+    command.args(&["--cmdline", "console=hvc0 root=/dev/vda"]);
     command.args(&["--memory", "size=128M"]);
     command.args(&["--console", "pty"]);
 
@@ -72,7 +72,7 @@ fn vm_command(dir: PathBuf) -> Result<Command, String> {
     command.arg("--kernel").arg({
         let mut kernel = OsString::from("/ext/svc/data/");
         kernel.push(&vm_name);
-        kernel.push("/vmlinux");
+        kernel.push("/Image");
         kernel
     });
 
