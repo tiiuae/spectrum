@@ -33,7 +33,7 @@ stdenvNoCC.mkDerivation {
   INITRAMFS = initramfs;
   KERNEL = "${rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
   ROOT_FS = rootfs;
-  SYSTEMD_BOOT_EFI = "${systemd}/lib/systemd/boot/efi/systemd-bootx64.efi";
+  SYSTEMD_BOOT_EFI = "${systemd}/lib/systemd/boot/efi/systemd-bootaa64.efi";
 
   buildFlags = [ "build/live.img" ];
   makeFlags = [ "SCRIPTS=${scripts}" ];
