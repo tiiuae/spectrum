@@ -1,7 +1,12 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Unikie
 
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> {
+    crossSystem = {
+      config = "aarch64-unknown-linux-musl";
+    };
+  }}:
 
 let
   inherit (pkgs.lib) cleanSource cleanSourceWith hasSuffix;
