@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Unikie
 
 # qemu-kvm is non-standard, but is present in at least Fedora and
 # Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
@@ -62,7 +63,6 @@ build/live.img: $(SCRIPTS)/format-uuid.sh $(SCRIPTS)/make-gpt.sh build/rootfs.ve
 clean:
 	rm -rf build
 .PHONY: clean
-extfs: $(EXT_FS)
 
 run: build/initramfs build/rootfs.verity.roothash build/live.img
 	$(QEMU_KVM) -m 4G \

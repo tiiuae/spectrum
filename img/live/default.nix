@@ -1,7 +1,12 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Unikie
 
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> {
+    crossSystem = {
+      config = "aarch64-unknown-linux-musl";
+    };
+  }}:
 
 let
   inherit (pkgs.lib) cleanSource cleanSourceWith hasSuffix;
@@ -32,7 +37,7 @@ stdenvNoCC.mkDerivation {
   INITRAMFS = initramfs;
   KERNEL = "${rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
   ROOT_FS = rootfs;
-  SYSTEMD_BOOT_EFI = "${systemd}/lib/systemd/boot/efi/systemd-bootx64.efi";
+  SYSTEMD_BOOT_EFI = "${systemd}/lib/systemd/boot/efi/systemd-bootaa64.efi";
 
   buildFlags = [ "build/live.img" ];
   makeFlags = [ "SCRIPTS=${scripts}" ];

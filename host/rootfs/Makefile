@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Unikie
 
 # qemu-kvm is non-standard, but is present in at least Fedora and
 # Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
@@ -8,10 +9,9 @@ QEMU_KVM = qemu-kvm
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
-build/rootfs.ext4: build/rootfs.tar $(EXT_FS)
+build/rootfs.ext4: build/rootfs.tar
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
-	cp -f $(EXT_FS) build/extfs.ext4
 
 FILES = \
 	etc/fonts/fonts.conf \
@@ -31,6 +31,7 @@ FILES = \
 	etc/s6-linux-init/run-image/service/getty-tty3/run \
 	etc/s6-linux-init/run-image/service/getty-tty4/run \
 	etc/s6-linux-init/run-image/service/getty-ttyS0/run \
+	etc/s6-linux-init/run-image/service/getty-ttyLP0/run \
 	etc/s6-linux-init/scripts/rc.init \
 	etc/xdg/weston/autolaunch \
 	etc/xdg/weston/weston.ini \
