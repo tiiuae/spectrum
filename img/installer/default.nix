@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs ? import <nixpkgs> {}, extraConfig ? {} }: with pkgs;
+{ config ? import ../../nix/eval-config.nix {}, extraConfig ? {} }:
+with config.pkgs;
 
 let
   inherit (builtins) head match storeDir;

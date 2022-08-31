@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-{ pkgs ? import <nixpkgs> {} }: with pkgs;
+{ config ? import nix/eval-config.nix {} }: with config.pkgs;
 
 mkShell {
   nativeBuildInputs = [ reuse rustfmt ];

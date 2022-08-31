@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs ? import <nixpkgs> {} }: pkgs.callPackage (
+{ config ? import ../../nix/eval-config.nix {} }: config.pkgs.callPackage (
 { lib, stdenv, fetchpatch, meson, ninja, rustc }:
 
 let

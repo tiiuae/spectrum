@@ -1,12 +1,15 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs ? import <nixpkgs> {} }:
+{ config ? import ../../nix/eval-config.nix {} }:
 
-with pkgs;
+with config.pkgs;
 
-(import ./. { inherit pkgs; }).overrideAttrs ({ nativeBuildInputs ? [], ... }: {
-  nativeBuildInputs = nativeBuildInputs ++ [ qemu_kvm ];
+(import ./. { inherit config; }).overrideAttrs (
+  { nativeBuildInputs ? [], ... }:
+  {
+    nativeBuildInputs = nativeBuildInputs ++ [ qemu_kvm ];
 
-  OVMF_CODE = "${qemu_kvm}/share/qemu/edk2-${stdenv.hostPlatform.qemuArch}-code.fd";
-})
+    OVMF_CODE = "${qemu_kvm}/share/qemu/edk2-${stdenv.hostPlatform.qemuArch}-code.fd";
+  }
+)

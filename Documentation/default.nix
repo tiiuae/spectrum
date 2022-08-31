@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2022 Unikie
 # SPDX-License-Identifier: MIT
 
-{ pkgs ? import <nixpkgs> {} }: pkgs.callPackage (
+{ config ? import ../nix/eval-config.nix {} }: config.pkgs.callPackage (
 
 { lib, stdenvNoCC, jekyll, drawio-headless }:
 
@@ -31,5 +31,5 @@ stdenvNoCC.mkDerivation {
   passthru = { inherit jekyll; };
 }
 ) {
-  jekyll = import ./jekyll.nix { inherit pkgs; };
+  jekyll = import ./jekyll.nix { inherit config; };
 }

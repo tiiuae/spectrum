@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs ? import <nixpkgs> {} }: with pkgs;
+{ config ? import ../../nix/eval-config.nix {} }: with config.pkgs;
 
 runCommand "eosimages.img" {
   nativeBuildInputs = [ e2fsprogs tar2ext4 ];
   imageName = "Spectrum-0.0-x86_64-generic.0.Live.img";
-  image = import ../live { inherit pkgs; };
+  image = import ../live { inherit config; };
 } ''
   mkdir dir
   cd dir

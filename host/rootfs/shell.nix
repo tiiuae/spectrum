@@ -2,13 +2,13 @@
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-{ pkgs ? import <nixpkgs> {} }:
+{ config ? import ../../nix/eval-config.nix {} }:
 
 let
-  rootfs = import ./. { inherit pkgs; };
+  rootfs = import ./. { inherit config; };
 in
 
-with pkgs;
+with config.pkgs;
 
 rootfs.overrideAttrs (
 { passthru ? {}, nativeBuildInputs ? [], ... }:
@@ -18,7 +18,7 @@ rootfs.overrideAttrs (
     cryptsetup jq netcat qemu_kvm reuse util-linux
   ];
 
-  EXT_FS = pkgsStatic.callPackage ../initramfs/extfs.nix { inherit pkgs; };
-  INITRAMFS = import ../initramfs { inherit pkgs rootfs; };
+  EXT_FS = pkgsStatic.callPackage ../initramfs/extfs.nix { inherit config; };
+  INITRAMFS = import ../initramfs { inherit config rootfs; };
   KERNEL = "${passthru.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
 })

@@ -1,11 +1,10 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-{ pkgs ? import <nixpkgs> {}
-, rootfs ? import ../rootfs { inherit pkgs; }
+{ config ? import ../../nix/eval-config.nix {}
+, rootfs ? import ../rootfs { inherit config; }
 }:
-
-pkgs.callPackage (
+let inherit (config) pkgs; in pkgs.callPackage (
 { lib, stdenvNoCC, makeModulesClosure, runCommand, writeReferencesToFile
 , pkgsStatic, busybox, cpio, microcodeAmd, microcodeIntel
 }:
