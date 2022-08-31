@@ -1,0 +1,35 @@
+= Configuring the Build
+:page-parent: How-to Guides
+:example-caption: Test
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+Some aspects of a Spectrum build can be customised using a build
+configuration file.  By default, this configuration file should be
+called config.nix and located in the root of the Spectrum source tree,
+but this path can be overridden by setting `spectrum-config` in the
+https://nixos.org/manual/nix/stable/command-ref/env-common.html#env-NIX_PATH[NIX_PATH].
+
+The configuration file should contain an attribute set.  The only
+currently allowed attribute name is `pkgs`, which allows using a
+custom Nixpkgs to evaluate Spectrum.
+
+.config.nix to build Spectrum with a https://nixos.org/manual/nixpkgs/unstable/#sec-overlays-definition[Nixpkgs overlay]
+[example]
+[source,nix]
+----
+{
+  pkgs = import <nixpkgs> {
+    overlays = [
+      (final: super: {
+        weston = super.weston.overrideAttrs ({ patches ? [], ... }: {
+          patches = patches ++ [
+            path/to/weston.patch
+          ];
+        });
+      })
+    ];
+  };
+}
+----
