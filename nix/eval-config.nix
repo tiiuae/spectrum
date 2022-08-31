@@ -2,7 +2,10 @@
 # SPDX-FileCopyrightText: 2022 Unikie
 
 { config ?
-  if builtins.pathExists ../config.nix then import ../config.nix else {}
+  let customPath = builtins.tryEval <spectrum-config>; in
+  if customPath.success then import customPath.value
+  else if builtins.pathExists ../config.nix then import ../config.nix
+  else {}
 }:
 
 ({ pkgs ? import <nixpkgs> {} }: {
