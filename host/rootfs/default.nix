@@ -65,14 +65,7 @@ let
     imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
   });
 
-  kernel = pkgs.linux_latest.override {
-    structuredExtraConfig = with lib.kernel; {
-      VIRTIO = yes;
-      VIRTIO_PCI = yes;
-      VIRTIO_BLK = yes;
-      EXT4_FS = yes;
-    };
-  };
+  kernel = pkgs.linux_latest;
 
   packagesSysroot = runCommand "packages-sysroot" {
     nativeBuildInputs = [ xorg.lndir ];
