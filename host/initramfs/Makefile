@@ -53,7 +53,7 @@ build/rootfs.verity.roothash: build/rootfs.verity
 build/rootfs.verity.superblock: build/rootfs.verity
 	tail -n +2 build/rootfs.verity > $@
 
-build/live.img: $(SCRIPTS)/format-uuid.sh $(SCRIPTS)/make-gpt.sh build/rootfs.verity.superblock build/rootfs.verity.roothash $(ROOT_FS) $(EXT_FS)
+build/live.img: $(SCRIPTS)/format-uuid.sh $(SCRIPTS)/make-gpt.sh build/rootfs.verity.superblock build/rootfs.verity.roothash $(ROOT_FS)
 	$(SCRIPTS)/make-gpt.sh $@.tmp \
 	    build/rootfs.verity.superblock:2c7357ed-ebd2-46d9-aec1-23d437ec2bf5:$$($(SCRIPTS)/format-uuid.sh "$$(dd if=build/rootfs.verity.roothash bs=32 skip=1 count=1 status=none)") \
 	    $(ROOT_FS):4f68bce3-e8cd-4db1-96e7-fbcaf984b709:$$($(SCRIPTS)/format-uuid.sh "$$(head -c 32 build/rootfs.verity.roothash)")
