@@ -7,7 +7,7 @@
 
 pkgs.callPackage (
 { lib, stdenvNoCC, makeModulesClosure, runCommand, writeReferencesToFile
-, pkgsStatic, busybox, cpio, cryptsetup, lvm2, microcodeAmd, microcodeIntel
+, pkgsStatic, busybox, cpio, microcodeAmd, microcodeIntel
 }:
 
 let
