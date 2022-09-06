@@ -31,7 +31,7 @@ stdenvNoCC.mkDerivation {
     src = cleanSource ./.;
   };
 
-  nativeBuildInputs = [ cryptsetup dosfstools jq mtools util-linux ];
+  nativeBuildInputs = [ pkgsBuildHost.cryptsetup pkgsBuildHost.dosfstools pkgsBuildHost.jq pkgsBuildHost.mtools pkgsBuildHost.util-linux ];
 
   EXT_FS = extfs;
   INITRAMFS = initramfs;
@@ -49,4 +49,6 @@ stdenvNoCC.mkDerivation {
   '';
 
   enableParallelBuilding = true;
+
+  passthru = { inherit rootfs; };
 }
