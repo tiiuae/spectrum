@@ -3,3 +3,5 @@
 
 /.jekyll-cache
 /_site/
+
+*.svg

@@ -1,0 +1,24 @@
+= 004 Data at Rest Encryption
+:page-parent: Architecture Decision Records
+:page-grand_parent: Explanation
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+== Status
+
+Proposed
+
+== Context
+
+For privacy protection, encryption of user data at rest is required.
+
+== Decision
+
+User data is encrypted.
+
+== Consequences
+
+Spectrum needs to come with enough software to get the encryption key
+via different methods (password, usb, fido, etc.)  Can we use dm-crypt
+for everything instead of LUKS?

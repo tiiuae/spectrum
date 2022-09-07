@@ -8,6 +8,12 @@ Discussion of Spectrum takes place on
 https://spectrum-os.org/participating.html#mailing-lists[mailing
 lists].
 
+Make sure to Reply All when replying to messages, so that the message
+is sent to the mailing list and not just to the person you're
+replying to.
+
+== Getting a copy of a message
+
 You may want to reply to a mailing list message that you don't have a
 copy of in your mail client, because you aren't subscribed to the
 list, or because you subscribed after the message was sent.
@@ -16,6 +22,5 @@ To do this, find the message you want to reply to in the
 https://spectrum-os.org/lists/archives[public-inbox list archives],
 click on the "reply" link at the bottom of the message, then click the
 "mbox" link.  Save the result to a file, then open it in your mail
-client.  This should import the message and allow you to reply to it
-as normal.  Remember to Reply All so that the masseg is sent to the
-mailing list and not just to the person you're replying to.
+client.  This should import the message and allow you to Reply All to
+it as normal.

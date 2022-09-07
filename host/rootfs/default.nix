@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Unikie
 
 { pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
 
-{ lib, stdenv, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
+{ lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
 , busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod
 , mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg
 }:
@@ -16,6 +17,20 @@ let
 
   pkgsGui = pkgs.pkgsMusl.extend (final: super: {
     systemd = final.libudev-zero;
+
+    colord = super.colord.overrideAttrs ({ mesonFlags ? [], ... }: {
+      mesonFlags = mesonFlags ++ [
+        "-Dsystemd=false"
+        "-Dudev_rules=false"
+      ];
+    });
+
+    weston = super.weston.overrideAttrs ({ mesonFlags ? [], ... }: {
+      mesonFlags = mesonFlags ++ [
+        "-Dlauncher-logind=false"
+        "-Dsystemd=false"
+      ];
+    });
   });
 
   foot = pkgsGui.foot.override { allowPgo = false; };
@@ -84,7 +99,7 @@ let
   '';
 in
 
-stdenv.mkDerivation {
+stdenvNoCC.mkDerivation {
   name = "spectrum-rootfs";
 
   src = cleanSourceWith {

@@ -20,6 +20,12 @@ devices and provides network services to application VMs).  Refer to
 xref:creating-vms.adoc[Creating VMs] and xref:running-vms.adoc[Running
 VMs] for more information about using VMs in Spectrum.
 
+== Architecture Decision Records (ADRs)
+
+https://en.wikipedia.org/wiki/Architectural_decision[Architecturally significant
+decisions] are xref:decisions/index.adoc[recorded] as lightweight
+https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions/[ADRs].
+
 == The Spectrum host system
 
 Compartmentalization is implemented using

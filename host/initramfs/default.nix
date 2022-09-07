@@ -6,8 +6,8 @@
 }:
 
 pkgs.callPackage (
-{ lib, stdenv, makeModulesClosure, runCommand, writeReferencesToFile, pkgsStatic
-, busybox, cpio, cryptsetup, lvm2, microcodeAmd, microcodeIntel
+{ lib, stdenvNoCC, makeModulesClosure, runCommand, writeReferencesToFile
+, pkgsStatic, busybox, cpio, microcodeAmd, microcodeIntel
 }:
 
 let
@@ -58,7 +58,7 @@ let
     cp ${pkgsStatic.util-linuxMinimal}/bin/{findfs,lsblk} $out/bin
   '';
 
-  microcode = if stdenv.hostPlatform.isx86_64 then
+  microcode = if stdenvNoCC.hostPlatform.isx86_64 then
     runCommand "microcode.cpio" {
       nativeBuildInputs = [ cpio ];
     } ''
@@ -78,7 +78,7 @@ let
   '';
 in
 
-stdenv.mkDerivation {
+stdenvNoCC.mkDerivation {
   name = "initramfs";
 
   src = cleanSourceWith {

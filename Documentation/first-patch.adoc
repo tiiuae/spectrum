@@ -1,0 +1,100 @@
+= Sending Your First Patch
+:page-parent: Tutorials
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+== Prerequisites
+
+This tutorial assumes that you already have basic
+https://git-scm.com/[git] experience.
+
+Before beginning, you'll need to have a local git checkout of the
+https://spectrum-os.org/git/[Spectrum source tree].  You'll also need
+to have configured `git send-email` — a guide for this can be found at
+https://git-send-email.io/.
+
+== Making your changes
+
+If you've worked on any git repository before, the process for making
+your changes will probably be very familiar.
+
+1. Create a branch for your changes:
++
+[source,shell]
+----
+git checkout -b fix-docs # for example
+----
+2. Make changes in your editor.
+3. Stage and commit your changes:
++
+[source,shell]
+----
+git add Documentation/first-patch.adoc # for example
+git commit -s
+----
++
+TIP: The `-s` option adds a `Signed-off-by` line to the commit.  This
+indicates your acceptance of the
+https://spectrum-os.org/git/spectrum/tree/DCO-1.1.txt[Developer's
+Certificate of Origin], which is mandatory for Spectrum patches.
+
+== Submitting changes
+
+Once you're happy with how the commits on your branch look, run:
+
+[source,shell]
+----
+git send-email --to devel@spectrum-os.org --confirm=always origin/main
+----
+
+For each message, you will be prompted for confirmation, and then the
+change will be submitted to the Spectrum development mailing list.
+They will appear shortly on the
+https://spectrum-os.org/lists/hyperkitty/list/devel@spectrum-os.org/[web
+interface].
+
+[#cover-letter]
+TIP: If you're submitting multiple changes, and you'd like to provide
+an overall description for the whole series, you can add the
+`--compose` option, which will prompt you to compose a "cover letter"
+message that will be sent before all of your patches.
+
+== Feedback
+
+Once your patch has been submitted, wait for it to be reviewed.
+Feedback, if any, will be sent as email replies to your submitted
+patch.  You can respond to feedback in your mail client.  Please use
+the Reply All button to ensure that your messages are sent to the
+mailing list as well as to the person who sent the feedback.
+
+If you need to make changes to your patch, and submit a new version,
+use https://git-rebase.io/[`git rebase`] to create a new version of
+your patch(es), and submit it like this:
+
+[source,shell]
+----
+git send-email -v2 --to devel@spectrum-os.org --confirm=always origin/main
+----
+
+The added `-v2` flag indicates that this is version two of your
+patch set.  If your patches require more rounds of changes, submit
+subsequent rounds with `-v3`, `-v4`, etc. as appropriate.
+
+If you'd like to describe what has changed from the previous version
+of your patches, you can do so in a xref:cover-letter[cover letter]
+as described above.
+
+== Acceptance
+
+Once your patch has been accepted, it will be applied to the upstream
+Spectrum git repository.  You will receive an automated email
+confirmation when this happens.
+
+== Questions
+
+If you have any questions about the patch submission process, you can
+ask them either on the
+https://spectrum-os.org/participating.html#spectrum-devel[development
+mailing list], or in the
+https://spectrum-os.org/participating.html#irc[IRC/Matrix channel].

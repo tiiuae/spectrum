@@ -1,0 +1,27 @@
+= 006 Drivers on Host
+:page-parent: Architecture Decision Records
+:page-grand_parent: Explanation
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+== Status
+
+Accepted
+
+== Context
+
+It's important to minimize the amount of software in Spectrum's Trusted
+Computing Base (TCB).
+
+== Decision
+
+As few drivers as possible should be running on the Spectrum host.
+
+== Consequences
+
+- No networking on the host.
+- Responsibilities of the host are expected to get smaller over time.
+- More flexible management of devices. We need to decouple devices from the host
+  based on their class -- like net, usb, bluetooth and GUI -- and pass them
+  through to their respective device VMs.
