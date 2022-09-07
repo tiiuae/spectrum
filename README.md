@@ -44,7 +44,7 @@ Set up the Spectrum binary cache.
 
 To build the image, run:
 
-	$ nix-build spectrum/img/live -I nixpkgs=nixpkgs-spectrum
+	$ NIXPKGS_ALLOW_UNFREE=1 nix-build spectrum/img/imx8qxp/ -I nixpkgs=nixpkgs-spectrum
 
 After you can use the image from the `./result` directory and flash it to an SD card.
 
