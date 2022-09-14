@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs ? import <nixpkgs> {} }:
+{ config ? import ../nix/eval-config.nix {} }:
 
 let
-  inherit (pkgs.lib) cleanSource cleanSourceWith hasSuffix;
+  inherit (config.pkgs.lib) cleanSource cleanSourceWith hasSuffix;
 in
 
 cleanSourceWith {

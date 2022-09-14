@@ -6,6 +6,9 @@
 # QEMU_KVM = qemu-system-x86_64 -enable-kvm.
 QEMU_KVM = qemu-kvm
 
+SCRIPTS = ../../scripts
+VERITYSETUP = veritysetup
+
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
 build/rootfs.ext4: build/rootfs.tar
@@ -116,16 +119,37 @@ clean:
 	rm -rf build
 .PHONY: clean
 
-run: build/rootfs.ext4 $(EXT_FS)
+# veritysetup format produces two files, but Make only (portably)
+# supports one output per rule, so we combine the two outputs then
+# define two more rules to separate them again.
+build/rootfs.verity: build/rootfs.ext4
+	$(VERITYSETUP) format build/rootfs.ext4 build/rootfs.verity.superblock.tmp \
+	    | awk -F ':[[:blank:]]*' '$$1 == "Root hash" {print $$2; exit}' \
+	    > build/rootfs.verity.roothash.tmp
+	cat build/rootfs.verity.roothash.tmp build/rootfs.verity.superblock.tmp \
+	    > $@
+	rm build/rootfs.verity.roothash.tmp build/rootfs.verity.superblock.tmp
+build/rootfs.verity.roothash: build/rootfs.verity
+	head -n 1 build/rootfs.verity > $@
+build/rootfs.verity.superblock: build/rootfs.verity
+	tail -n +2 build/rootfs.verity > $@
+
+build/live.img: $(SCRIPTS)/format-uuid.sh $(SCRIPTS)/make-gpt.sh build/rootfs.verity.superblock build/rootfs.verity.roothash build/rootfs.ext4
+	$(SCRIPTS)/make-gpt.sh $@.tmp \
+	    build/rootfs.verity.superblock:2c7357ed-ebd2-46d9-aec1-23d437ec2bf5:$$($(SCRIPTS)/format-uuid.sh "$$(dd if=build/rootfs.verity.roothash bs=32 skip=1 count=1 status=none)") \
+	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:$$($(SCRIPTS)/format-uuid.sh "$$(head -c 32 build/rootfs.verity.roothash)")
+	mv $@.tmp $@
+
+run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	$(QEMU_KVM) -cpu host -m 2G \
-	    -machine q35,kernel=$(KERNEL),kernel-irqchip=split \
+	    -machine q35,kernel=$(KERNEL),kernel-irqchip=split,initrd=$(INITRAMFS) \
 	    -display gtk,gl=on \
 	    -qmp unix:vmm.sock,server,nowait \
 	    -monitor vc \
 	    -parallel none \
-	    -drive file=build/rootfs.ext4,if=virtio,format=raw,readonly=on \
+	    -drive file=build/live.img,if=virtio,format=raw,readonly=on \
 	    -drive file=$(EXT_FS),if=virtio,format=raw,readonly=on \
-	    -append "console=ttyS0 root=/dev/vda ext=/dev/vdb intel_iommu=on" \
+	    -append "console=ttyS0 roothash=$$(< build/rootfs.verity.roothash) ext=/dev/vdb intel_iommu=on" \
 	    -device intel-iommu,intremap=on \
 	    -device virtio-vga-gl \
 	    -device vhost-vsock-pci,guest-cid=3

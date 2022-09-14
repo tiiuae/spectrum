@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs ? import <nixpkgs> {} }:
+{ config ? import ../../../nix/eval-config.nix {} }:
 
-with pkgs;
+with config.pkgs;
 
-(import ./. { inherit pkgs; }).overrideAttrs (
+(import ./. { inherit config; }).overrideAttrs (
 { passthru ? {}, nativeBuildInputs ? [], ... }:
 
 {

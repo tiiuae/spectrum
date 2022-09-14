@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs ? import <nixpkgs> {} }: with pkgs;
+{ config ? import ../../nix/eval-config.nix {} }: with config.pkgs;
 
 let
-  image = import ./. { inherit pkgs; };
+  image = import ./. { inherit config; };
 in
 
 writeShellScript "run-spectrum-installer-vm.sh" ''

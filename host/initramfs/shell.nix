@@ -1,16 +1,17 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs ? import <nixpkgs> {} }:
+{ config ? import ../../nix/eval-config.nix {} }:
 
 let
+  inherit (config) pkgs;
   inherit (pkgs.lib) cleanSource cleanSourceWith;
 
   extfs = pkgs.pkgsStatic.callPackage ./extfs.nix {
-    inherit pkgs;
+    inherit config;
   };
-  rootfs = import ../rootfs { inherit pkgs; };
-  initramfs = import ./. { inherit pkgs rootfs; };
+  rootfs = import ../rootfs { inherit config; };
+  initramfs = import ./. { inherit config rootfs; };
 in
 
 with pkgs;

@@ -1,17 +1,18 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs ? import <nixpkgs> {} }:
+{ config ? import ../../nix/eval-config.nix {} }:
 
 let
   inherit (builtins) storeDir;
+  inherit (config) pkgs;
   inherit (pkgs) coreutils qemu_kvm stdenv writeShellScript;
   inherit (pkgs.lib) makeBinPath escapeShellArg;
 
-  eosimages = import ../combined/eosimages.nix { inherit pkgs; };
+  eosimages = import ../combined/eosimages.nix { inherit config; };
 
   installer = import ./. {
-    inherit pkgs;
+    inherit config;
 
     extraConfig = {
       boot.initrd.availableKernelModules = [ "9p" "9pnet_virtio" ];

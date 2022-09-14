@@ -2,7 +2,8 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-{ pkgs ? import <nixpkgs> {} }: pkgs.pkgsStatic.callPackage (
+{ config ? import ../../nix/eval-config.nix {} }: let inherit (config) pkgs; in
+pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
 , busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod
@@ -13,7 +14,9 @@ let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep hasSuffix;
   inherit (nixosAllHardware.config.hardware) firmware;
 
-  start-vm = import ../start-vm { pkgs = pkgs.pkgsStatic; };
+  start-vm = import ../start-vm {
+    config = config // { pkgs = pkgs.pkgsStatic; };
+  };
 
   pkgsGui = pkgs.pkgsMusl.extend (final: super: {
     systemd = final.libudev-zero;
@@ -65,14 +68,7 @@ let
     imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
   });
 
-  kernel = pkgs.linux_latest.override {
-    structuredExtraConfig = with lib.kernel; {
-      VIRTIO = yes;
-      VIRTIO_PCI = yes;
-      VIRTIO_BLK = yes;
-      EXT4_FS = yes;
-    };
-  };
+  kernel = pkgs.linux_latest;
 
   packagesSysroot = runCommand "packages-sysroot" {
     nativeBuildInputs = [ xorg.lndir ];

@@ -1,21 +1,21 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-{ pkgs, runCommand, tar2ext4 }:
+{ config, runCommand, tar2ext4 }:
 
 let
   netvm = import ../../vm/sys/net {
-    inherit pkgs;
+    inherit config;
     # inherit (foot) terminfo;
   };
 
   appvm-catgirl = import ../../vm/app/catgirl {
-    inherit pkgs;
+    inherit config;
     # inherit (foot) terminfo;
   };
 
   appvm-lynx = import ../../vm/app/lynx {
-    inherit pkgs;
+    inherit config;
     # inherit (foot) terminfo;
   };
 in

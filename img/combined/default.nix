@@ -2,17 +2,17 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2021 Yureka <yuka@yuka.dev>
 
-{ pkgs ? import <nixpkgs> {} }: with pkgs;
+{ config ? import ../../nix/eval-config.nix {} }: with config.pkgs;
 
 let
   inherit (builtins) storeDir;
   inherit (pkgs.lib) removePrefix;
 
-  eosimages = import ./eosimages.nix { inherit pkgs; };
+  eosimages = import ./eosimages.nix { inherit config; };
 
   installerPartUuid = "6e23b026-9f1e-479d-8a58-a0cda382e1ce";
   installer = import ../installer {
-    inherit pkgs;
+    inherit config;
 
     extraConfig = {
       boot.initrd.availableKernelModules = [ "squashfs" ];

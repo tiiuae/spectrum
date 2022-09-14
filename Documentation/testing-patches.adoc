@@ -2,6 +2,7 @@
 :page-parent: How-to Guides
 
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022 Unikie
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
 Potential changes to Spectrum are posted to and discussed on the
@@ -10,18 +11,20 @@ mailing list.
 
 == Apply the patch
 
-If you haven't already, you'll first need to xref:b4.adoc[install and
-configure] https://git.kernel.org/pub/scm/utils/b4/b4.git/about/[b4].
-Then:
-
 . Find the patch series you want to test on
   https://spectrum-os.org/lists/archives/spectrum-devel/[public-inbox].
 . Navigate to the "permalink" page for any patch in the series.
 . Copy the Message-Id for the patch, as shown on the permalink page, e.g.
   \20220511092352.70E54C980@atuin.qyliss.net.
+. In a checkout of the https://spectrum-os.org/git/spectrum[Spectrum]
+  git repository, run `nix-shell` to enter a shell environment with b4
+  set up correctly for Spectrum.
++
+TIP: You can manually xref:b4.adoc[set up b4] so that it works outside
+of the Spectrum root's nix-shell, which allows you to skip this step.
 . In a checkout of the appropriate git repository
   (https://spectrum-os.org/git/spectrum[Spectrum] or
-  https://spectrum-os.org/git/nixpkgs[Spectrum Nixpkgs]), Run `b4 am`
+  https://spectrum-os.org/git/nixpkgs[Spectrum Nixpkgs]), run `b4 am`
   with the patch's Message-Id to download all the patches in the
   series into a file.
 +

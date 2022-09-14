@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
-{ pkgs ? import <nixpkgs> {}
-, terminfo ? pkgs.foot.terminfo
+{ config ? import ../../../nix/eval-config.nix {}
+, terminfo ? config.pkgs.foot.terminfo
 }:
 
-pkgs.pkgsStatic.callPackage (
+config.pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4, xorg
