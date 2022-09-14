@@ -8,5 +8,5 @@
 {
   #doc = import ./Documentation { inherit pkgs; };
 
-  combined = import img/combined/default.nix { inherit pkgs; };
+  combined = import img/combined/default.nix;
 }
