@@ -2,11 +2,18 @@
 :page-parent: Tutorials
 
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022 Unikie <hi@alyssa.is>
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
 https://git.kernel.org/pub/scm/utils/b4/b4.git/about/[b4] is a utility
 for working with patches sent to a mailing list, such as
 https://spectrum-os.org/participating.html#spectrum-devel[devel@spectrum-os.org].
+
+NOTE: If you run `nix-shell` in the root of the Spectrum source tree,
+you'll be dropped into a development shell that has b4 set up
+correctly, and you don't need to do anything else.  You only need to
+configure it manually as described here if you want it to work outside
+of the Spectrum root's nix-shell.
 
 == Installing b4
 
