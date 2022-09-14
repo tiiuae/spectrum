@@ -10,6 +10,7 @@ let
   uboot = pkgs.ubootIMX8QXP;
   spectrum = import ../live { inherit pkgs; };
   kernel = spectrum.rootfs.kernel;
+  kvms = pkgs.kvms;
 in
 
 with pkgs;
@@ -35,6 +36,7 @@ stdenvNoCC.mkDerivation {
       .sectorsize * (.partitions[] | select(.type == ESP_GUID) | .start)
     ')
     mcopy -no -i spectrum-live-imx8qxp.img@@$ESP_OFFSET ${kernel}/dtbs/freescale/imx8qxp-mek.dtb ::/
+    mcopy -no -i spectrum-live-imx8qxp.img@@$ESP_OFFSET ${kvms.src}/platform/nxp/imx8qxp/bl1.bin ::/
     mv spectrum-live-imx8qxp.img $out
   '';
 }
