@@ -50,7 +50,7 @@ let
     imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
   });
 
-  kernel = pkgs.linux_imx8_kvmsed.override {
+  kernel = pkgs.linux_imx8.override {
     structuredExtraConfig = with lib.kernel; {
       EFI_STUB=yes;
       EFI=yes;
