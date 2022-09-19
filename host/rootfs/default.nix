@@ -75,13 +75,22 @@ let
 
   kernel = pkgs.linux_latest;
 
+  appvm = import ../../img/app {
+    inherit config;
+    inherit (foot) terminfo;
+  };
+
+  # Packages that should be fully linked into /usr,
+  # (not just their bin/* files).
+  usrPackages = [ appvm pkgsGui.mesa.drivers pkgsGui.dejavu_fonts ];
+
   packagesSysroot = runCommand "packages-sysroot" {
     nativeBuildInputs = [ xorg.lndir ];
   } ''
     mkdir -p $out/lib $out/usr/bin
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
 
-    for pkg in ${lib.escapeShellArgs [ pkgsGui.mesa.drivers pkgsGui.dejavu_fonts ]}; do
+    for pkg in ${lib.escapeShellArgs usrPackages}; do
         lndir -silent "$pkg" "$out/usr"
     done
 
