@@ -5,7 +5,7 @@ mod ch;
 mod net;
 
 use std::env::{args, current_dir};
-use std::ffi::{CString, OsString};
+use std::ffi::{CString, OsStr, OsString};
 use std::io::{self, ErrorKind};
 use std::os::unix::prelude::*;
 use std::path::PathBuf;
@@ -76,12 +76,39 @@ fn vm_command(dir: PathBuf) -> Result<Command, String> {
         kernel
     });
 
-    command.arg("--disk").arg({
-        let mut disk = OsString::from("path=/ext/svc/data/");
-        disk.push(&vm_name);
-        disk.push("/rootfs.ext4,readonly=on");
-        disk
-    });
+    command.arg("--disk");
+
+    let mut blk_dir = PathBuf::new();
+    blk_dir.push("/ext/svc/data");
+    blk_dir.push(vm_name);
+    blk_dir.push("blk");
+    match blk_dir.read_dir() {
+        Ok(entries) => {
+            for result in entries {
+                let entry = result
+                    .map_err(|e| format!("examining directory entry: {}", e))?
+                    .path();
+
+                if entry.extension() != Some(OsStr::new("img")) {
+                    continue;
+                }
+
+                if entry.as_os_str().as_bytes().contains(&b',') {
+                    return Err(format!("illegal ',' character in path {:?}", entry));
+                }
+
+                let mut arg = OsString::from("path=");
+                arg.push(entry);
+                arg.push(",readonly=on");
+                command.arg(arg);
+            }
+        }
+        Err(e) => return Err(format!("reading directory {:?}: {}", blk_dir, e)),
+    }
+
+    if command.get_args().last() == Some(OsStr::new("--disk")) {
+        return Err("no block devices specified".to_string());
+    }
 
     command.arg("--serial").arg({
         let mut serial = OsString::from("file=/run/");

@@ -15,8 +15,9 @@ The directory can contain the following files:
 vmlinux:: An uncompressed Linux kernel image for the VM to boot.
 *Required.*
 
-rootfs.ext4:: A disk image that will be provided to the guest as a
-virtio-blk device.  *Required.*
+blk:: A directory containing disk images (with file names ending in
+".img") that will be provided to the guest as a virtio-blk device.
+Order is not guaranteed.  At least one image is *required*.
 
 providers/net:: A directory containing a file named for each VM that
 should provide networking to this VM.  The contents of these files are
@@ -33,7 +34,8 @@ appvm-lynx
 ├── providers/
 │   └── net/
 │       └── netvm
-├── rootfs.ext4
+├── blk/
+│   └── root.img
 └── vmlinux*
 ----
 
