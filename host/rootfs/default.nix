@@ -20,6 +20,7 @@ let
 
   pkgsGui = pkgs.pkgsMusl.extend (final: super: {
     systemd = final.libudev-zero;
+    systemdMinimal = final.libudev-zero;
 
     colord = super.colord.overrideAttrs ({ mesonFlags ? [], ... }: {
       mesonFlags = mesonFlags ++ [
@@ -27,6 +28,10 @@ let
         "-Dudev_rules=false"
       ];
     });
+
+    polkit = super.polkit.override {
+      useSystemd = false;
+    };
 
     weston = super.weston.overrideAttrs ({ mesonFlags ? [], ... }: {
       mesonFlags = mesonFlags ++ [
