@@ -8,6 +8,7 @@ QEMU_KVM = qemu-kvm
 CLOUD_HYPERVISOR = cloud-hypervisor
 
 VMM = qemu
+SCRIPTS = ../../../scripts
 
 HOST_BUILD_FILES = \
 	build/host/data/netvm/blk/root.img \
@@ -30,9 +31,15 @@ build/host/data/netvm/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
 	cp $(VMLINUX) $@
 
+build/host/data/netvm/blk/root.img: $(SCRIPTS)/make-gpt.sh $(SCRIPTS)/sfdisk-field.awk build/rootfs.ext4
+	mkdir -p $$(dirname $@)
+	$(SCRIPTS)/make-gpt.sh $@.tmp \
+	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:ea21da27-0391-48da-9235-9d2ab2ca7844:root
+	mv $@.tmp $@
+
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
-build/host/data/netvm/blk/root.img: build/rootfs.tar
+build/rootfs.ext4: build/rootfs.tar
 	mkdir -p $$(dirname $@)
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
@@ -100,7 +107,7 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 run-qemu: build/host/data/netvm/blk/root.img
 	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
 	  -drive file=build/host/data/netvm/blk/root.img,if=virtio,format=raw,readonly=on \
-	  -append "console=ttyS0 root=/dev/vda" \
+	  -append "console=ttyS0 root=PARTLABEL=root" \
 	  -netdev user,id=net0 \
 	  -device e1000e,netdev=net0 \
 	  -netdev user,id=net1 \
@@ -117,7 +124,7 @@ run-cloud-hypervisor: build/host/data/netvm/blk/root.img
 	    --disk path=build/host/data/netvm/blk/root.img,readonly=on \
 	    --net tap=tap0 tap=tap1,mac=0A:B3:EC:80:00:00 \
 	    --kernel $(KERNEL) \
-	    --cmdline "console=ttyS0 root=/dev/vda" \
+	    --cmdline "console=ttyS0 root=PARTLABEL=root" \
 	    --console tty \
 	    --serial pty
 .PHONY: run-cloud-hypervisor
