@@ -12,5 +12,5 @@
 {
   doc = import ./Documentation { inherit config; };
 
-  combined = import img/combined/run-vm.nix { inherit config; };
+  combined = import release/combined/run-vm.nix { inherit config; };
 }
