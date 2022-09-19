@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
 { config ? import ../../../nix/eval-config.nix {}
 , terminfo ? config.pkgs.foot.terminfo
@@ -8,13 +8,15 @@
 config.pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, runCommand, writeReferencesToFile, buildPackages
-, s6-rc, tar2ext4, xorg
+, jq, s6-rc, tar2ext4, util-linux, xorg
 , busybox, connmanMinimal, dbus, execline, kmod, mdevd, nftables, s6
 , s6-linux-init
 }:
 
 let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep hasSuffix;
+
+  scripts = import ../../../scripts { inherit config; };
 
   connman = connmanMinimal;
 
@@ -80,10 +82,12 @@ stdenvNoCC.mkDerivation {
     src = cleanSource ./.;
   };
 
-  nativeBuildInputs = [ s6-rc tar2ext4 ];
+  nativeBuildInputs = [ jq s6-rc tar2ext4 util-linux ];
 
   PACKAGES_TAR = packagesTar;
   VMLINUX = "${kernel.dev}/vmlinux";
+
+  makeFlags = [ "SCRIPTS=${scripts}" ];
 
   installPhase = ''
     mv build/svc $out
