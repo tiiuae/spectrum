@@ -9,7 +9,7 @@ BEGIN {
 	# first field.
 	skip=1
 
-	split("type uuid", keys)
+	split("type uuid name", keys)
 	split(partition, fields, ":")
 
 	for (n in fields) {
