@@ -39,7 +39,7 @@ still take a very long time.
 [source,shell]
 ----
 git clone https://spectrum-os.org/git/spectrum
-nix-build spectrum/img/combined \
+nix-build spectrum/release/combined \
   -I nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-rootfs.tar.gz
 ----
 
