@@ -9,15 +9,8 @@ let
     # inherit (foot) terminfo;
   };
 
-  appvm-catgirl = import ../../vm/app/catgirl {
-    inherit config;
-    # inherit (foot) terminfo;
-  };
-
-  appvm-lynx = import ../../vm/app/lynx {
-    inherit config;
-    # inherit (foot) terminfo;
-  };
+  appvm-catgirl = import ../../vm/app/catgirl.nix { inherit config; };
+  appvm-lynx = import ../../vm/app/lynx.nix { inherit config; };
 in
 
 runCommand "ext.ext4" {
