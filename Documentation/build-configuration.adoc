@@ -8,8 +8,9 @@
 Some aspects of a Spectrum build can be customised using a build
 configuration file.  By default, this configuration file should be
 called config.nix and located in the root of the Spectrum source tree,
-but this path can be overridden by setting `spectrum-config` in the
-https://nixos.org/manual/nix/stable/command-ref/env-common.html#env-NIX_PATH[NIX_PATH].
+but this can be overridden by setting `spectrum-config` in the
+https://nixos.org/manual/nix/stable/command-ref/env-common.html#env-NIX_PATH[NIX_PATH]
+to the path of the configuration file.
 
 The configuration file should contain an attribute set.  The only
 currently allowed attribute name is `pkgs`, which allows using a
