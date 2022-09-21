@@ -14,9 +14,7 @@ Clone sources of spec and nix-spec (cross-compile branches for i.MX 8QXP):
 
 Set up the Spectrum binary cache.
 
-* Change non-NixOS machine configuration.
-
-	Note the following:
+Note the following:
 
 	- The custom binary cache is located here: <http://binarycache.vedenemo.dev>.
 	- The public key of this cache is:
@@ -25,11 +23,32 @@ Set up the Spectrum binary cache.
     - The public key of this cache is:
         `spectrum-os.org-1:rnnSumz3+Dbs5uewPlwZSTP0k3g/5SRG4hD7Wbr9YuQ=`
 
+
+* For NixOS based users.
+
+add the following to your `configuration.nix` file
+
+``` nix
+  nix.settings.trusted-substituters = [
+    "http://binarycache.vedenemo.dev"
+    "https://cache.dataaturservice.se/spectrum/"
+  ];
+
+  nix.settings.trusted-public-keys = [
+    "binarycache.vedenemo.dev:Yclq5TKpx2vK7WVugbdP0jpln0/dPHrbUYfsH3UXIps="
+    "spectrum-os.org-1:rnnSumz3+Dbs5uewPlwZSTP0k3g/5SRG4hD7Wbr9YuQ="
+  ];
+```
+See the [trusted-substitutors](https://nixos.org/manual/nix/stable/command-ref/conf-file.html#conf-trusted-substituters) configuration option for further details.
+
+
+* Change non-NixOS machine configuration.
+
     All configurations are made in the `/etc/nix/nix.conf` file. It should be possible to carry everything to the NixOS configuration with little effort.
 
     To get custom binary caches in use, add them to the `substitutes` list inside the `nix.conf` file and then add their public keys to the `trusted-public-keys` list in the same file:
 
-      substituters = http://binarycache.vedenemo.dev https://cache.dataaturservice.se/spectrum/ https://cache.nixos.org/
+      trusted-substituters = http://binarycache.vedenemo.dev https://cache.dataaturservice.se/spectrum/ https://cache.nixos.org/
       trusted-public-keys = binarycache.vedenemo.dev:Yclq5TKpx2vK7WVugbdP0jpln0/dPHrbUYfsH3UXIps= spectrum-os.org-1:rnnSumz3+Dbs5uewPlwZSTP0k3g/5SRG4hD7Wbr9YuQ= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
 
 	> After every change in the Nix configuration, run `systemctl restart nix-daemon.service`. In this case, the binary cache will be used automatically when `nix-build` is run.
@@ -42,7 +61,11 @@ Set up the Spectrum binary cache.
 
 	  $ curl <binary-cache-address>/<package-or-.drv-hashsum>.narinfo
 
-To build the image, run:
+To build the image utilizing binary-cache, run:
+
+	$ NIXPKGS_ALLOW_UNFREE=1 nix-build spectrum/img/imx8qm/ -I nixpkgs=nixpkgs-spectrum --option substituters http://binarycache.vedenemo.dev
+
+To build the image from source (slower complete build), run:
 
 	$ NIXPKGS_ALLOW_UNFREE=1 nix-build spectrum/img/imx8qxp/ -I nixpkgs=nixpkgs-spectrum
 
