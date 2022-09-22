@@ -45,4 +45,6 @@ stdenvNoCC.mkDerivation {
   '';
 
   enableParallelBuilding = true;
+
+  passthru = { inherit rootfs; };
 }
