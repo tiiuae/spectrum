@@ -13,9 +13,6 @@ let
   kvms = pkgs.kvms;
 
   kvers = "${kernel.version}";
-  v = builtins.splitVersion kvers;
-  f = i: builtins.elemAt v i;
-  kv = f 0 + ''.'' + f 1;
 in
 
 with pkgs;
@@ -41,7 +38,7 @@ stdenvNoCC.mkDerivation {
       .sectorsize * (.partitions[] | select(.type == ESP_GUID) | .start)
     ')
     mcopy -no -i spectrum-live-imx8qxp.img@@$ESP_OFFSET ${kernel}/dtbs/freescale/imx8qxp-mek.dtb ::/
-    mcopy -no -i spectrum-live-imx8qxp.img@@$ESP_OFFSET ${kvms.src}/platform/nxp/imx8qxp/${kv}/bl1.bin ::/
+    mcopy -no -i spectrum-live-imx8qxp.img@@$ESP_OFFSET ${kvms.src}/platform/nxp/imx8qxp/${kvers}/bl1.bin ::/
     mv spectrum-live-imx8qxp.img $out
   '';
 }
