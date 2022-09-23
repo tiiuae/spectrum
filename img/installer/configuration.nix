@@ -37,6 +37,8 @@ in
   users.groups.demo = {};
   security.polkit.extraConfig = readFile ./seat.rules;
 
+  services.udisks2.enable = true;
+
   documentation.enable = false;
   networking.firewall.enable = false;
   networking.resolvconf.enable = false;
