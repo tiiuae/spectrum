@@ -1,7 +1,11 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Unikie
 
-{ config ? import ../../nix/eval-config.nix {} }:
+{ config ? import ../../nix/eval-config.nix {} }: config.pkgs.callPackage (
+
+{ stdenvNoCC, cryptsetup, dosfstools, jq, mtools, util-linux, stdenv
+, systemd }:
 
 let
   inherit (config) pkgs;
@@ -14,8 +18,6 @@ let
   scripts = import ../../scripts { inherit config; };
   initramfs = import ../../host/initramfs { inherit config rootfs; };
 in
-
-with pkgs;
 
 stdenvNoCC.mkDerivation {
   name = "spectrum-live.img";
@@ -48,3 +50,4 @@ stdenvNoCC.mkDerivation {
 
   passthru = { inherit rootfs; };
 }
+) {}
