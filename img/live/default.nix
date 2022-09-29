@@ -9,7 +9,7 @@
 
 let
   inherit (config) pkgs;
-  inherit (pkgs.lib) cleanSource cleanSourceWith hasSuffix;
+  inherit (pkgs.lib) cleanSource cleanSourceWith hasSuffix toUpper;
 
   extfs = pkgs.pkgsStatic.callPackage ../../host/initramfs/extfs.nix {
     inherit config;
@@ -17,6 +17,7 @@ let
   rootfs = import ../../host/rootfs { inherit config; };
   scripts = import ../../scripts { inherit config; };
   initramfs = import ../../host/initramfs { inherit config rootfs; };
+  efiArch = stdenv.hostPlatform.efiArch;
 in
 
 stdenvNoCC.mkDerivation {
@@ -35,7 +36,8 @@ stdenvNoCC.mkDerivation {
   INITRAMFS = initramfs;
   KERNEL = "${rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
   ROOT_FS = rootfs;
-  SYSTEMD_BOOT_EFI = "${systemd}/lib/systemd/boot/efi/systemd-bootx64.efi";
+  SYSTEMD_BOOT_EFI = "${systemd}/lib/systemd/boot/efi/systemd-boot${efiArch}.efi";
+  EFINAME = "BOOT${toUpper efiArch}.EFI";
 
   buildFlags = [ "build/live.img" ];
   makeFlags = [ "SCRIPTS=${scripts}" ];

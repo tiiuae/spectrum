@@ -1,12 +1,13 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2021 Yureka <yuka@yuka.dev>
+# SPDX-FileCopyrightText: 2022 Unikie
 
 { config ? import ../../nix/eval-config.nix {} }: with config.pkgs;
 
 let
   inherit (builtins) storeDir;
-  inherit (pkgs.lib) removePrefix;
+  inherit (pkgs.lib) removePrefix toUpper;
 
   eosimages = import ./eosimages.nix { inherit config; };
 
@@ -30,6 +31,8 @@ let
         tar -C ${storeDir} -c --verbatim-files-from -T - \
             --owner 0 --group 0 | tar2sqfs $out
   '';
+
+  efiArch = stdenv.hostPlatform.efiArch;
 
   grub = grub2_efi;
 
@@ -74,8 +77,8 @@ let
     done
     mcopy -i $out ${grub}/share/grub/unicode.pf2 ::/grub/fonts
 
-    grub-mkimage -o grubx64.efi -p "(hd0,gpt1)/grub" -O ${grub.grubTarget} part_gpt fat
-    mcopy -i $out grubx64.efi ::/EFI/BOOT/BOOTX64.EFI
+    grub-mkimage -o grub${efiArch}.efi -p "(hd0,gpt1)/grub" -O ${grub.grubTarget} part_gpt fat
+    mcopy -i $out grub${efiArch}.efi ::/EFI/BOOT/BOOT${toUpper efiArch}.EFI
 
     fsck.vfat -n $out
   '';
