@@ -104,6 +104,15 @@ fn vm_command(dir: PathBuf) -> Result<Command, String> {
         Err(e) => return Err(format!("reading directory {:?}: {}", blk_dir, e)),
     }
 
+    if definition_path.join("wayland").exists() {
+        command.arg("--gpu").arg({
+            let mut gpu = OsString::from("socket=../");
+            gpu.push(vm_name);
+            gpu.push("-gpu/env/crosvm.sock");
+            gpu
+        });
+    }
+
     if command.get_args().last() == Some(OsStr::new("--disk")) {
         return Err("no block devices specified".to_string());
     }
