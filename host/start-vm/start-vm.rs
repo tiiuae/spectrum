@@ -33,6 +33,7 @@ fn vm_command(dir: PathBuf) -> Result<Command, String> {
     command.args(&["--cmdline", "console=ttyS0 root=PARTLABEL=root"]);
     command.args(&["--memory", "size=128M,shared=on"]);
     command.args(&["--console", "pty"]);
+    command.args(&["--seccomp", "log"]);
 
     let mut definition_path = PathBuf::new();
     definition_path.push("/ext/svc/data");
