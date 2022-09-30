@@ -9,10 +9,9 @@ QEMU_KVM = qemu-kvm
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
-build/rootfs.ext4: build/rootfs.tar $(EXT_FS)
+build/rootfs.ext4: build/rootfs.tar
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
-	cp -f $(EXT_FS) build/extfs.ext4
 
 FILES = \
 	etc/fonts/fonts.conf \
