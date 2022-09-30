@@ -10,6 +10,7 @@ let
   };
 
   appvm-catgirl = import ../../vm/app/catgirl.nix { inherit config; };
+  appvm-hello-wayland = import ../../vm/app/hello-wayland.nix { inherit config; };
   appvm-lynx = import ../../vm/app/lynx.nix { inherit config; };
 in
 
@@ -21,6 +22,8 @@ runCommand "ext.ext4" {
   tar -C ${netvm} -c data | tar -C svc -x
   chmod +w svc/data
   tar -C ${appvm-catgirl} -c data | tar -C svc -x
+  chmod +w svc/data
+  tar -C ${appvm-hello-wayland} -c data | tar -C svc -x
   chmod +w svc/data
   tar -C ${appvm-lynx} -c data | tar -C svc -x
 
