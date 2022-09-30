@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: EUPL-1.2+
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022 Unikie
 
 mod ch;
 mod net;
@@ -33,11 +34,11 @@ fn vm_command(dir: PathBuf) -> Result<Command, String> {
     command.args(&["--memory", "size=128M,shared=on"]);
     command.args(&["--console", "pty"]);
 
-    let mut net_providers_dir = PathBuf::new();
-    net_providers_dir.push("/ext/svc/data");
-    net_providers_dir.push(vm_name);
-    net_providers_dir.push("providers/net");
+    let mut definition_path = PathBuf::new();
+    definition_path.push("/ext/svc/data");
+    definition_path.push(vm_name);
 
+    let net_providers_dir = definition_path.join("providers/net");
     match net_providers_dir.read_dir() {
         Ok(entries) => {
             for r in entries {
@@ -78,10 +79,7 @@ fn vm_command(dir: PathBuf) -> Result<Command, String> {
 
     command.arg("--disk");
 
-    let mut blk_dir = PathBuf::new();
-    blk_dir.push("/ext/svc/data");
-    blk_dir.push(vm_name);
-    blk_dir.push("blk");
+    let blk_dir = definition_path.join("blk");
     match blk_dir.read_dir() {
         Ok(entries) => {
             for result in entries {
