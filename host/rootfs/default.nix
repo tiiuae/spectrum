@@ -44,8 +44,8 @@ let
   foot = pkgsGui.foot.override { allowPgo = false; };
 
   packages = [
-    cloud-hypervisor execline jq kmod mdevd s6 s6-linux-init s6-rc socat
-    start-vm
+    cloud-hypervisor pkgs.crosvm execline jq kmod mdevd s6 s6-linux-init s6-rc
+    socat start-vm
 
     (cryptsetup.override {
       programs = {
