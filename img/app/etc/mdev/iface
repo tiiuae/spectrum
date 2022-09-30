@@ -33,4 +33,4 @@ foreground {
   }
 }
 
-s6-rc -u change app
+/etc/mdev/listen network-online
