@@ -12,7 +12,7 @@ with config.pkgs;
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [
-    cloud-hypervisor jq qemu_kvm reuse
+    cloud-hypervisor crosvm jq qemu_kvm reuse
   ];
 
   KERNEL = "${passthru.kernel.dev}/vmlinux";
