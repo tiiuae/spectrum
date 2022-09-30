@@ -8,6 +8,7 @@ QEMU_KVM = qemu-kvm
 CLOUD_HYPERVISOR = cloud-hypervisor
 CROSVM = crosvm
 CROSVM_DEVICE_GPU = $(CROSVM) device gpu
+CROSVM_RUN = $(CROSVM) run
 
 prefix = /usr/local
 imgdir = $(prefix)/img
@@ -134,6 +135,17 @@ run-cloud-hypervisor: build/host/appvm/blk/root.img start-vhost-user-gpu
 	    --console tty \
 	    --serial pty
 .PHONY: run-cloud-hypervisor
+
+run-crosvm: build/host/appvm/blk/root.img start-vhost-user-gpu
+	$(CROSVM_RUN) \
+	    --disk build/host/appvm/blk/root.img \
+	    --disk $(RUN_IMG) \
+	    -p "console=ttyS0 root=PARTLABEL=root" \
+	    --vhost-user-gpu vhost-user-gpu.sock \
+	    --serial type=file,hardware=serial,path=/tmp/crosvm.log \
+	    --serial type=stdout,hardware=virtio-console,stdin=true \
+	    $(KERNEL)
+.PHONY: run-crosvm
 
 run: run-$(VMM)
 .PHONY: run
