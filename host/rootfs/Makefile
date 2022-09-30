@@ -28,6 +28,10 @@ FILES = \
 	etc/mdev/wait \
 	etc/parse-devname \
 	etc/passwd \
+	etc/template/gpu/data/check \
+	etc/template/gpu/notification-fd \
+	etc/template/gpu/run \
+	etc/template/gpu/type \
 	etc/s6-linux-init/run-image/service/getty-tty1/run \
 	etc/s6-linux-init/run-image/service/getty-tty2/run \
 	etc/s6-linux-init/run-image/service/getty-tty3/run \
