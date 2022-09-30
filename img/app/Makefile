@@ -6,6 +6,8 @@
 # QEMU_KVM = qemu-system-x86_64 -enable-kvm.
 QEMU_KVM = qemu-kvm
 CLOUD_HYPERVISOR = cloud-hypervisor
+CROSVM = crosvm
+CROSVM_DEVICE_GPU = $(CROSVM) device gpu
 
 prefix = /usr/local
 imgdir = $(prefix)/img
@@ -96,6 +98,17 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    s6-rc-compile $@ $$dir; \
 	    exit=$$?; rm -r $$dir; exit $$exit
 
+start-vhost-user-gpu:
+	rm -f vhost-user-gpu.sock
+	$(CROSVM_DEVICE_GPU) \
+	    --socket vhost-user-gpu.sock \
+	    --wayland-sock "$$XDG_RUNTIME_DIR/$$WAYLAND_DISPLAY" \
+	    --params '{"context-types":"virgl:virgl2:cross-domain"}' &
+	while ! [ -S vhost-user-gpu.sock ]; do \
+	    sleep 1 ; \
+	done
+.PHONY: start-vhost-user-gpu
+
 run-qemu: build/host/appvm/blk/root.img
 	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
 	  -drive file=build/host/appvm/blk/root.img,if=virtio,format=raw,readonly=on \
@@ -108,13 +121,14 @@ run-qemu: build/host/appvm/blk/root.img
 	  -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
-run-cloud-hypervisor: build/host/appvm/blk/root.img
+run-cloud-hypervisor: build/host/appvm/blk/root.img start-vhost-user-gpu
 	$(CLOUD_HYPERVISOR) \
 	    --api-socket path=vmm.sock \
-	    --memory size=128M \
+	    --memory size=128M,shared=on \
 	    --disk path=build/host/appvm/blk/root.img,readonly=on \
 	           path=$(RUN_IMG),readonly=on \
 	    --net tap=tap0,mac=0A:B3:EC:00:00:00 \
+	    --gpu socket=vhost-user-gpu.sock \
 	    --kernel $(KERNEL) \
 	    --cmdline "console=ttyS0 root=PARTLABEL=root" \
 	    --console tty \
