@@ -34,9 +34,10 @@ runCommand "spectrum-vm" {
   mkdir root
   cd root
   ln -s ${run} run
-  comm -23 <(sort ${writeReferencesToFile run}) \
+  ln -s ${config.pkgs.mesa.drivers}/lib
+  comm -23 <(sort -u ${writeReferencesToFile run} ${writeReferencesToFile config.pkgs.mesa.drivers}) \
       <(sort ${writeReferencesToFile basePaths}) |
-      tar -cf ../run.tar --verbatim-files-from -T - run
+      tar -cf ../run.tar --verbatim-files-from -T - *
   tar2ext4 -i ../run.tar -o "$out/blk/run.img"
   e2label "$out/blk/run.img" ext
 
