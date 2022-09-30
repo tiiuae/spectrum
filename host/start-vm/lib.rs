@@ -49,7 +49,11 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
     command.arg("--kernel");
     command.arg(config_dir.join("vmlinux"));
 
-    let net_providers_dir = config_dir.join("providers/net");
+    let mut definition_path = PathBuf::new();
+    definition_path.push("/ext/svc/data");
+    definition_path.push(vm_name);
+
+    let net_providers_dir = definition_path.join("providers/net");
     match net_providers_dir.read_dir() {
         Ok(entries) => {
             for r in entries {
@@ -83,7 +87,7 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
 
     command.arg("--disk");
 
-    let blk_dir = config_dir.join("blk");
+    let blk_dir = definition_path.join("blk");
     match blk_dir.read_dir() {
         Ok(entries) => {
             for result in entries {

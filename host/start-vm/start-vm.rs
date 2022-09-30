@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: EUPL-1.2+
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022 Unikie
 
 use std::env::current_dir;
 use std::os::unix::prelude::*;
