@@ -11,7 +11,7 @@ VMM = qemu
 
 HOST_BUILD_FILES = \
 	build/host/data/netvm/rootfs.ext4 \
-	build/host/data/netvm/vmlinux
+	build/host/data/netvm/Image
 
 # We produce a directory, but that doesn't play nice with Make,
 # because it won't know to update if some file in the directory is
@@ -26,9 +26,9 @@ build/svc: $(HOST_BUILD_FILES)
 
 	tar -c $(HOST_BUILD_FILES) | tar -C $@ -x --strip-components 2
 
-build/host/data/netvm/vmlinux: $(VMLINUX)
+build/host/data/netvm/Image: $(IMAGE)
 	mkdir -p $$(dirname $@)
-	cp $(VMLINUX) $@
+	cp $(IMAGE) $$(dirname $@)/Image
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.

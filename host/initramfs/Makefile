@@ -62,6 +62,7 @@ build/live.img: $(SCRIPTS)/format-uuid.sh $(SCRIPTS)/make-gpt.sh build/rootfs.ve
 clean:
 	rm -rf build
 .PHONY: clean
+extfs: $(EXT_FS)
 
 run: build/initramfs build/rootfs.verity.roothash build/live.img
 	$(QEMU_KVM) -m 4G \

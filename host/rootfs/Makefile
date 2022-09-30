@@ -118,7 +118,7 @@ clean:
 	rm -rf build
 .PHONY: clean
 
-run: build/rootfs.ext4 $(EXT_FS)
+run: build/rootfs.ext4
 	$(QEMU_KVM) -cpu host -m 2G \
 	    -machine q35,kernel=$(KERNEL),kernel-irqchip=split \
 	    -display gtk,gl=on \
