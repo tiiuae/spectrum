@@ -49,12 +49,13 @@ let
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
-  kernel = buildPackages.linux.override {
+  kernel = buildPackages.linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
       VIRTIO = yes;
       VIRTIO_PCI = yes;
       VIRTIO_BLK = yes;
       VIRTIO_CONSOLE = yes;
+      DRM_VIRTIO_GPU = yes;
       EXT4_FS = yes;
       DRM_BOCHS = yes;
       DRM = yes;
