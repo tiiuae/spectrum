@@ -9,6 +9,7 @@ import ../make-vm.nix { inherit config; } {
     { writeScript, lynx }:
     writeScript "run-lynx" ''
       #!/bin/execlineb -P
+      if { /etc/mdev/wait network-online }
       ${lynx}/bin/lynx https://spectrum-os.org
     ''
   ) { };

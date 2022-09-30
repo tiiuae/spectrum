@@ -47,6 +47,8 @@ VM_FILES = \
 	etc/init \
 	etc/mdev.conf \
 	etc/mdev/iface \
+	etc/mdev/listen \
+	etc/mdev/wait \
 	etc/passwd \
 	etc/resolv.conf \
 	etc/s6-linux-init/scripts/rc.init

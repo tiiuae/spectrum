@@ -9,6 +9,7 @@ import ../make-vm.nix { inherit config; } {
     { writeScript, catgirl }:
     writeScript "run-catgirl" ''
       #!/bin/execlineb -P
+      if { /etc/mdev/wait network-online }
       foreground { printf "IRC nick (to join #spectrum): " }
       backtick -E nick { head -1 }
       ${catgirl}/bin/catgirl -h irc.libera.chat -j "#spectrum" -n $nick
