@@ -46,6 +46,7 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
     command.args(&["--cmdline", "console=ttyS0 root=PARTLABEL=root"]);
     command.args(&["--memory", "size=128M,shared=on"]);
     command.args(&["--console", "pty"]);
+    command.args(&["--seccomp", "log"]);
     command.arg("--kernel");
     command.arg(config_dir.join("vmlinux"));
 
