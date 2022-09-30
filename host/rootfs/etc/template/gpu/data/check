@@ -1,0 +1,5 @@
+#!/bin/execlineb -P
+# SPDX-License-Identifier: EUPL-1.2+
+# SPDX-FileCopyrightText: Unikie
+
+test -S env/crosvm.sock

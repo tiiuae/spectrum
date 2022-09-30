@@ -2,6 +2,7 @@
 :page-parent: Reference
 
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022 Unikie
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
 == Configuration
@@ -22,6 +23,10 @@ Order is not guaranteed.  At least one image is *required*.
 providers/net:: A directory containing a file named for each VM that
 should provide networking to this VM.  The contents of these files are
 ignored.
+
+wayland:: An empty file, whose presence indicates that the host should
+set up a virtio-gpu device supporting the cross-domain context type,
+for the VM to send Wayland messages over.
 
 === Example
 
