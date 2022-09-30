@@ -1,10 +1,6 @@
 # SPDX-FileCopyrightText: 2022 Unikie
 
-{ pkgs ? import <nixpkgs> {
-    crossSystem = {
-      config = "aarch64-unknown-linux-musl";
-    };
-  }}:
+{ pkgs ? import <nixpkgs> {} }:
 
 let
   uboot = pkgs.ubootIMX8QXP;
