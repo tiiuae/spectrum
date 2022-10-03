@@ -39,7 +39,9 @@ FILES = \
 	usr/bin/lsvm \
 	usr/bin/vm-console \
 	usr/bin/vm-start \
-	usr/bin/vm-stop
+	usr/bin/vm-stop \
+	usr/bin/vm-start-usb \
+	usr/bin/usb-export
 DIRS = dev etc/s6-linux-init/env ext run proc sys
 
 # These are separate because they need to be included, but putting
