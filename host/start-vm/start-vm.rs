@@ -4,14 +4,26 @@
 mod ch;
 mod net;
 
-use std::env::{args, current_dir};
-use std::ffi::{CString, OsString};
+use std::borrow::Cow;
+use std::env::{args_os, current_dir};
+use std::ffi::{CString, OsStr, OsString};
 use std::io::{self, ErrorKind};
 use std::os::unix::prelude::*;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::{exit, Command};
 
 use net::{format_mac, net_setup, NetConfig};
+
+fn prog_name() -> String {
+    args_os()
+        .next()
+        .as_ref()
+        .map(Path::new)
+        .and_then(Path::file_name)
+        .map(OsStr::to_string_lossy)
+        .unwrap_or(Cow::Borrowed("start-vm"))
+        .into_owned()
+}
 
 fn vm_command(dir: PathBuf) -> Result<Command, String> {
     let dir = dir.into_os_string().into_vec();
@@ -106,12 +118,7 @@ fn run() -> String {
 }
 
 fn main() {
-    let argv0_option = args().next();
-    let argv0 = argv0_option
-        .as_ref()
-        .map(String::as_str)
-        .unwrap_or("start-vm");
-    eprintln!("{}: {}", argv0, run());
+    eprintln!("{}: {}", prog_name(), run());
     exit(1);
 }
 
