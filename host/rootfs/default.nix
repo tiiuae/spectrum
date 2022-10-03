@@ -7,7 +7,7 @@ pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
 , busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod
-, mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg
+, mdevd, s6, s6-linux-init, socat, util-linuxMinimal, nc-vsock, usbutils,  xorg, buildPackages
 }:
 
 let
@@ -44,8 +44,7 @@ let
   foot = pkgsGui.foot.override { allowPgo = false; };
 
   packages = [
-    cloud-hypervisor execline jq kmod mdevd s6 s6-linux-init s6-rc socat
-    start-vm
+    cloud-hypervisor execline jq kmod mdevd s6 s6-linux-init s6-rc socat start-vm nc-vsock usbutils
 
     (cryptsetup.override {
       programs = {
@@ -65,6 +64,7 @@ let
         CONFIG_MODINFO n
         CONFIG_MODPROBE n
         CONFIG_RMMOD n
+        CONFIG_LSUSB n
       '';
     })
   ] ++ (with pkgsGui; [ foot westonLite ]);
@@ -73,7 +73,24 @@ let
     imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
   });
 
-  kernel = pkgs.linux_latest;
+  #kernel = pkgs.linux_latest;
+    kernel = buildPackages.linux_latest.override {
+    structuredExtraConfig = with lib.kernel; {
+      VSOCKETS = yes;
+      VSOCKETS_DIAG = yes;
+      VSOCKETS_LOOPBACK = yes;
+      VIRTIO_VSOCKETS = module;
+      VIRTIO_VSOCKETS_COMMON = yes;
+      VSOCKMON = yes;
+      VHOST_VSOCK = yes;
+      USBIP_CORE = module ;
+      USBIP_VHCI_HCD = module;
+      USBIP_HOST = module;
+      USBIP_VUDC = module;
+      #USBIP_DEBUG = yes;
+    };
+  };
+
 
   packagesSysroot = runCommand "packages-sysroot" {
     nativeBuildInputs = [ xorg.lndir ];

@@ -66,5 +66,6 @@ run: build/live.img
 	    -device qemu-xhci \
 	    -device usb-storage,drive=drive1,removable=true \
 	    -drive file=$(OVMF_CODE),format=raw,if=pflash,readonly=true \
-	    -drive file=build/live.img,id=drive1,format=raw,if=none,readonly=true
+	    -drive file=build/live.img,id=drive1,format=raw,if=none,readonly=true \
+	    -device usb-host,vendorid=0xbda,productid=0x8153
 .PHONY: run
