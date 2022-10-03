@@ -18,11 +18,6 @@ let
     inherit config;
     # inherit (foot) terminfo;
   };
-
-  appvm-usbapp = import ../../vm/app/usbapp {
-    inherit config;
-    # inherit (foot) terminfo;
-  };
 in
 
 runCommand "ext.ext4" {
@@ -35,8 +30,6 @@ runCommand "ext.ext4" {
   tar -C ${appvm-catgirl} -c data | tar -C svc -x
   chmod +w svc/data
   tar -C ${appvm-lynx} -c data | tar -C svc -x
-  chmod +w svc/data
-  tar -C ${appvm-usbapp} -c data | tar -C svc -x
 
   tar -cf ext.tar svc
   tar2ext4 -i ext.tar -o $out
