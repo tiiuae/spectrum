@@ -36,7 +36,7 @@ build/boot.fat: $(KERNEL) $(INITRAMFS) $(SYSTEMD_BOOT_EFI) build/spectrum.conf
 	$(MCOPY) -i $@ build/spectrum.conf ::/loader/entries
 	$(MCOPY) -i $@ $(KERNEL) ::/spectrum/linux
 	$(MCOPY) -i $@ $(INITRAMFS) ::/spectrum/initrd
-	$(MCOPY) -i $@ $(SYSTEMD_BOOT_EFI) ::/EFI/BOOT/BOOTX64.EFI
+	$(MCOPY) -i $@ $(SYSTEMD_BOOT_EFI) ::/EFI/BOOT/$(EFINAME)
 
 # veritysetup format produces two files, but Make only (portably)
 # supports one output per rule, so we combine the two outputs then
