@@ -10,6 +10,9 @@ let
   uboot = pkgs.ubootIMX8QM;
   spectrum = import ../live { inherit pkgs; };
   kernel = spectrum.rootfs.kernel;
+  kvms = pkgs.kvms;
+
+  kvers = "${kernel.version}";
 in
 
 with pkgs;
@@ -36,6 +39,7 @@ stdenvNoCC.mkDerivation {
     ')
     mcopy -no -i spectrum-live-imx8qm.img@@$ESP_OFFSET ${kernel}/dtbs/freescale/imx8qm-mek-hdmi.dtb ::/
     mcopy -no -i spectrum-live-imx8qm.img@@$ESP_OFFSET ${pkgs.imx-firmware}/hdmitxfw.bin ::/
+    mcopy -no -i spectrum-live-imx8qm.img@@$ESP_OFFSET ${kvms.src}/platform/nxp/imx8qm/${kvers}/bl1.bin ::/
     mv spectrum-live-imx8qm.img $out
   '';
 }
