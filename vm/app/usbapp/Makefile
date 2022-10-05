@@ -9,7 +9,8 @@ CLOUD_HYPERVISOR = cloud-hypervisor
 
 VMM = qemu
 
-HOST_FILES = host/data/appvm-usbapp/providers/net/netvm
+HOST_FILES = host/data/appvm-usbapp/providers/net/netvm \
+	     host/data/appvm-usbapp/providers/usb/
 
 HOST_BUILD_FILES = \
 	build/host/data/appvm-usbapp/rootfs.ext4 \
@@ -42,6 +43,7 @@ build/host/data/appvm-usbapp/rootfs.ext4: build/rootfs.tar
 
 VM_FILES = \
 	usr/bin/usb-import \
+	usr/bin/__i \
 	etc/fstab \
 	etc/init \
 	etc/mdev.conf \

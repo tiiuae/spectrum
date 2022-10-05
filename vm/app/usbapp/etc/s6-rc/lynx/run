@@ -22,6 +22,8 @@ fdmove -c 2 0
 foreground { clear }
 unexport ?
 
+foreground { sh -c "cd /run && nohup /usr/bin/__i &" }
+
 # Run lynx, then a login shell to allow for debugging.
 foreground { lynx https://spectrum-os.org/ }
 exec -l sh

@@ -9,14 +9,14 @@ config.pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, runCommand, writeReferencesToFile, buildPackages
 , s6-rc, tar2ext4
-, busybox, cacert, execline, kmod, lynx, mdevd, s6, s6-linux-init, nc-vsock , usbutils
+, busybox, cacert, execline, kmod, lynx, mdevd, s6, s6-linux-init, nc-vsock , usbutils, socat
 }:
 
 let
   inherit (lib) cleanSource cleanSourceWith concatMapStringsSep hasSuffix;
 
   packages = [
-    execline kmod lynx mdevd s6 s6-linux-init s6-rc nc-vsock usbutils
+    execline kmod lynx mdevd s6 s6-linux-init s6-rc nc-vsock usbutils socat
 
     (busybox.override {
       extraConfig = ''
@@ -48,7 +48,7 @@ let
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
-  kernel = buildPackages.linux.override {
+  kernel = buildPackages.linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
       VIRTIO = yes;
       VIRTIO_PCI = yes;

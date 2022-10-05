@@ -7,7 +7,7 @@ pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
 , busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod
-, mdevd, s6, s6-linux-init, socat, util-linuxMinimal, nc-vsock, usbutils,  xorg, buildPackages
+, mdevd, s6, s6-linux-init, util-linuxMinimal, nc-vsock, usbutils, socat, xorg, buildPackages
 }:
 
 let
@@ -44,7 +44,7 @@ let
   foot = pkgsGui.foot.override { allowPgo = false; };
 
   packages = [
-    cloud-hypervisor execline jq kmod mdevd s6 s6-linux-init s6-rc socat start-vm nc-vsock usbutils
+    cloud-hypervisor execline jq kmod mdevd s6 s6-linux-init s6-rc start-vm nc-vsock usbutils socat 
 
     (cryptsetup.override {
       programs = {
@@ -76,6 +76,10 @@ let
   #kernel = pkgs.linux_latest;
     kernel = buildPackages.linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
+      VIRTIO = yes;
+      VIRTIO_PCI = yes;
+      VIRTIO_BLK = yes;
+      VIRTIO_CONSOLE = yes;
       VSOCKETS = yes;
       VSOCKETS_DIAG = yes;
       VSOCKETS_LOOPBACK = yes;

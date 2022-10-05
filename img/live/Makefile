@@ -61,8 +61,8 @@ clean:
 run: build/live.img
 	$(QEMU_KVM) -m 4G \
 	    -cpu host \
-	    -display gtk,gl=on \
-	    -device virtio-vga-gl \
+	    -display gtk \
+	    -device virtio-vga,xres=1920,yres=1024 \
 	    -device qemu-xhci \
 	    -device usb-storage,drive=drive1,removable=true \
 	    -drive file=$(OVMF_CODE),format=raw,if=pflash,readonly=true \

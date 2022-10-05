@@ -115,6 +115,7 @@ wait_for_detached() {
 
 # negotiate parameters (field 'extra' reserved for future use)
 read untrusted_devid untrusted_speed untrusted_extra
+echo "$untrusted_devid $untrusted_speed $untrusted_extra" >&2
 
 # check for unexpected EOF
 if [ -z "$untrusted_devid" -a -z "$untrusted_speed" ]; then

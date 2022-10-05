@@ -113,8 +113,9 @@ echo "$devid" "$speed" >&0
 echo 0 > $devpath/usbip_sockfd || exit 1
 exec <&-
 
-echo $$ > "$pidfile"
+#echo $$ > "$pidfile"
 safe_busid=$(echo ${busid} | tr :. _)
+#echo safe_busid=$safe_busid
 
 cleanup() {
     exit

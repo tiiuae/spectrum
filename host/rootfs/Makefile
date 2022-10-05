@@ -41,6 +41,7 @@ FILES = \
 	usr/bin/vm-start \
 	usr/bin/vm-stop \
 	usr/bin/vm-start-usb \
+	usr/bin/__e \
 	usr/bin/usb-export
 DIRS = dev etc/s6-linux-init/env ext run proc sys
 
