@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
 { config ? import ../../nix/eval-config.nix {} }: config.pkgs.callPackage (
-{ lib, stdenv, fetchpatch, meson, ninja, rustc }:
+{ lib, stdenv, meson, ninja, rustc }:
 
 let
   inherit (lib) cleanSource cleanSourceWith hasSuffix;
