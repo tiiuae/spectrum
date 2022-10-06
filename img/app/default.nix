@@ -49,7 +49,7 @@ let
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
-  kernel = buildPackages.linux_latest.override {
+  kernel = config.pkgs.pkgsCross.aarch64-multiplatform.linux_imx8.override {
     structuredExtraConfig = with lib.kernel; {
       VIRTIO = yes;
       VIRTIO_PCI = yes;
