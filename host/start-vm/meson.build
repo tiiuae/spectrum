@@ -12,8 +12,9 @@ rust_lib = static_library('start_vm', 'lib.rs', link_with : c_lib)
 
 executable('start-vm', 'start-vm.rs', link_with : rust_lib, install : true)
 
-test('Rust unit tests', executable('start-vm-test', 'lib.rs',
+test_exe = executable('start-vm-test', 'lib.rs',
   rust_args : ['--test', '-C', 'panic=unwind'],
-  link_with : c_lib))
+  link_with : c_lib)
+test('Rust unit tests', test_exe, protocol : 'rust')
 
 subdir('tests')
