@@ -8,6 +8,7 @@ QEMU_KVM = qemu-kvm
 CLOUD_HYPERVISOR = cloud-hypervisor
 
 VMM = qemu
+SCRIPTS = ../../../scripts
 
 HOST_FILES = host/data/appvm-catgirl/providers/net/netvm
 
@@ -33,9 +34,15 @@ build/host/data/appvm-catgirl/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
 	cp $(VMLINUX) $@
 
+build/host/data/appvm-catgirl/blk/root.img: $(SCRIPTS)/make-gpt.sh $(SCRIPTS)/sfdisk-field.awk build/rootfs.ext4
+	mkdir -p $$(dirname $@)
+	$(SCRIPTS)/make-gpt.sh $@.tmp \
+	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:0d2f5f77-eb9c-453a-9463-daafcb5ce2b2:root
+	mv $@.tmp $@
+
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
-build/host/data/appvm-catgirl/blk/root.img: build/rootfs.tar
+build/rootfs.ext4: build/rootfs.tar
 	mkdir -p $$(dirname $@)
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
@@ -95,7 +102,7 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 run-qemu: build/host/data/appvm-catgirl/blk/root.img
 	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
 	  -drive file=build/host/data/appvm-catgirl/blk/root.img,if=virtio,format=raw,readonly=on \
-	  -append "console=ttyS0 root=/dev/vda" \
+	  -append "console=ttyS0 root=PARTLABEL=root" \
 	  -netdev user,id=net0 \
 	  -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
 	  -chardev vc,id=virtiocon0 \
@@ -110,7 +117,7 @@ run-cloud-hypervisor: build/host/data/appvm-catgirl/blk/root.img
 	    --disk path=build/host/data/appvm-catgirl/blk/root.img,readonly=on \
 	    --net tap=tap0,mac=0A:B3:EC:00:00:00 \
 	    --kernel $(KERNEL) \
-	    --cmdline "console=ttyS0 root=/dev/vda" \
+	    --cmdline "console=ttyS0 root=PARTLABEL=root" \
 	    --console tty \
 	    --serial pty
 .PHONY: run-cloud-hypervisor
