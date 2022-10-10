@@ -35,7 +35,7 @@ fn main() -> std::io::Result<()> {
         OsStr::new("--api-socket"),
         OsStr::new("env/cloud-hypervisor.sock"),
         OsStr::new("--cmdline"),
-        OsStr::new("console=ttyS0 root=/dev/vda"),
+        OsStr::new("console=ttyS0 root=PARTLABEL=root"),
         OsStr::new("--memory"),
         OsStr::new("size=128M"),
         OsStr::new("--console"),

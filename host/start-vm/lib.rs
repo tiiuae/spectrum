@@ -43,7 +43,7 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
     command.args(&["-dc", "test -S env/cloud-hypervisor.sock"]);
     command.arg("cloud-hypervisor");
     command.args(&["--api-socket", "env/cloud-hypervisor.sock"]);
-    command.args(&["--cmdline", "console=ttyS0 root=/dev/vda"]);
+    command.args(&["--cmdline", "console=ttyS0 root=PARTLABEL=root"]);
     command.args(&["--memory", "size=128M"]);
     command.args(&["--console", "pty"]);
     command.arg("--kernel");
