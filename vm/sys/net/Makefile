@@ -10,7 +10,7 @@ CLOUD_HYPERVISOR = cloud-hypervisor
 VMM = qemu
 
 HOST_BUILD_FILES = \
-	build/host/data/netvm/rootfs.ext4 \
+	build/host/data/netvm/blk/root.img \
 	build/host/data/netvm/vmlinux
 
 # We produce a directory, but that doesn't play nice with Make,
@@ -32,7 +32,7 @@ build/host/data/netvm/vmlinux: $(VMLINUX)
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
-build/host/data/netvm/rootfs.ext4: build/rootfs.tar
+build/host/data/netvm/blk/root.img: build/rootfs.tar
 	mkdir -p $$(dirname $@)
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
@@ -97,9 +97,9 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    s6-rc-compile $@ $$dir; \
 	    exit=$$?; rm -r $$dir; exit $$exit
 
-run-qemu: build/host/data/netvm/rootfs.ext4
+run-qemu: build/host/data/netvm/blk/root.img
 	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
-	  -drive file=build/host/data/netvm/rootfs.ext4,if=virtio,format=raw,readonly=on \
+	  -drive file=build/host/data/netvm/blk/root.img,if=virtio,format=raw,readonly=on \
 	  -append "console=ttyS0 root=/dev/vda" \
 	  -netdev user,id=net0 \
 	  -device e1000e,netdev=net0 \
@@ -110,11 +110,11 @@ run-qemu: build/host/data/netvm/rootfs.ext4
 	  -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
-run-cloud-hypervisor: build/host/data/netvm/rootfs.ext4
+run-cloud-hypervisor: build/host/data/netvm/blk/root.img
 	$(CLOUD_HYPERVISOR) \
 	    --api-socket path=vmm.sock \
 	    --memory size=128M \
-	    --disk path=build/host/data/netvm/rootfs.ext4,readonly=on \
+	    --disk path=build/host/data/netvm/blk/root.img,readonly=on \
 	    --net tap=tap0 tap=tap1,mac=0A:B3:EC:80:00:00 \
 	    --kernel $(KERNEL) \
 	    --cmdline "console=ttyS0 root=/dev/vda" \

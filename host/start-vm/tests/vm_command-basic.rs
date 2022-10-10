@@ -14,7 +14,7 @@ fn main() -> std::io::Result<()> {
     create_dir(&service_dir)?;
 
     let kernel_path = tmp_dir.path().join("svc/data/testvm/vmlinux");
-    let image_path = tmp_dir.path().join("svc/data/testvm/rootfs.ext4");
+    let image_path = tmp_dir.path().join("svc/data/testvm/blk/root.img");
 
     create_dir_all(kernel_path.parent().unwrap())?;
     create_dir_all(image_path.parent().unwrap())?;
@@ -43,7 +43,7 @@ fn main() -> std::io::Result<()> {
         OsStr::new("--kernel"),
         kernel_path.as_os_str(),
         OsStr::new("--disk"),
-        OsStr::new("path=/ext/svc/data/testvm/rootfs.ext4,readonly=on"),
+        &expected_disk_arg,
         OsStr::new("--serial"),
         OsStr::new("file=/run/testvm.log"),
     ];

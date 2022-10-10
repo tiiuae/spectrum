@@ -81,12 +81,36 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
         Err(e) => return Err(format!("reading directory {:?}: {}", net_providers_dir, e)),
     }
 
-    command.arg("--disk").arg({
-        let mut disk = OsString::from("path=/ext/svc/data/");
-        disk.push(&vm_name);
-        disk.push("/rootfs.ext4,readonly=on");
-        disk
-    });
+    command.arg("--disk");
+
+    let blk_dir = config_dir.join("blk");
+    match blk_dir.read_dir() {
+        Ok(entries) => {
+            for result in entries {
+                let entry = result
+                    .map_err(|e| format!("examining directory entry: {}", e))?
+                    .path();
+
+                if entry.extension() != Some(OsStr::new("img")) {
+                    continue;
+                }
+
+                if entry.as_os_str().as_bytes().contains(&b',') {
+                    return Err(format!("illegal ',' character in path {:?}", entry));
+                }
+
+                let mut arg = OsString::from("path=");
+                arg.push(entry);
+                arg.push(",readonly=on");
+                command.arg(arg);
+            }
+        }
+        Err(e) => return Err(format!("reading directory {:?}: {}", blk_dir, e)),
+    }
+
+    if command.get_args().last() == Some(OsStr::new("--disk")) {
+        return Err("no block devices specified".to_string());
+    }
 
     command.arg("--serial").arg({
         let mut serial = OsString::from("file=/run/");
