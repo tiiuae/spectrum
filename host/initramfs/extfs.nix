@@ -9,27 +9,20 @@ let
     # inherit (foot) terminfo;
   };
 
-  appvm-catgirl = import ../../vm/app/catgirl {
-    inherit config;
-    # inherit (foot) terminfo;
-  };
-
-  appvm-lynx = import ../../vm/app/lynx {
-    inherit config;
-    # inherit (foot) terminfo;
-  };
+  appvm-catgirl = import ../../vm/app/catgirl.nix { inherit config; };
+  appvm-lynx = import ../../vm/app/lynx.nix { inherit config; };
 in
 
 runCommand "ext.ext4" {
   nativeBuildInputs = [ tar2ext4 ];
 } ''
-  mkdir svc
+  mkdir -p svc/data/appvm-{catgirl,lynx}
 
   tar -C ${netvm} -c data | tar -C svc -x
   chmod +w svc/data
-  tar -C ${appvm-catgirl} -c data | tar -C svc -x
-  chmod +w svc/data
-  tar -C ${appvm-lynx} -c data | tar -C svc -x
+
+  tar -C ${appvm-catgirl} -c . | tar -C svc/data/appvm-catgirl -x
+  tar -C ${appvm-lynx} -c . | tar -C svc/data/appvm-lynx -x
 
   tar -cf ext.tar svc
   tar2ext4 -i ext.tar -o $out
