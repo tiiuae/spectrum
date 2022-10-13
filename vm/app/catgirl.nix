@@ -4,6 +4,7 @@
 { config ? import ../../../nix/eval-config.nix {} }:
 
 import ../make-vm.nix { inherit config; } {
+  name = "appvm-catgirl";
   providers.net = [ "netvm" ];
   run = config.pkgs.pkgsStatic.callPackage (
     { writeScript, catgirl }:

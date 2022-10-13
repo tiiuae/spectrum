@@ -4,6 +4,6 @@
 { config ? import ../nix/eval-config.nix {} }:
 
 import ../vm-lib/make-vm.nix {
-  inherit (config) pkgs;
+  inherit config;
   basePaths = (import ../img/app { inherit config; }).packagesSysroot;
 }

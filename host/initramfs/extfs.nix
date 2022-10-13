@@ -17,14 +17,14 @@ in
 runCommand "ext.ext4" {
   nativeBuildInputs = [ tar2ext4 ];
 } ''
-  mkdir -p svc/data/appvm-{catgirl,lynx}
+  mkdir -p svc/data/appvm-{catgirl,lynx,hello-wayland}
 
   tar -C ${netvm} -c data | tar -C svc -x
   chmod +w svc/data
 
   tar -C ${appvm-catgirl} -c . | tar -C svc/data/appvm-catgirl -x
   tar -C ${appvm-lynx} -c . | tar -C svc/data/appvm-lynx -x
-  tar -C ${appvm-hello-wayland} -c data | tar -C svc/data/appvm-hello-wayland -x
+  tar -C ${appvm-hello-wayland} -c . | tar -C svc/data/appvm-hello-wayland -x
 
   tar -cf ext.tar svc
   tar2ext4 -i ext.tar -o $out

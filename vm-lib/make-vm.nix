@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-{ pkgs ? import <nixpkgs> {}
+{ config ? import ../../../nix/eval-config.nix {}
 
 # Paths that are present in the base image that will start this VM's
 # run script, and don't so need to be duplicated in the extension
@@ -10,7 +10,7 @@
 , basePaths ? builtins.toFile "null" ""
 }:
 
-pkgs.pkgsStatic.callPackage (
+config.pkgs.pkgsStatic.callPackage (
 
 { lib, runCommand, writeReferencesToFile, e2fsprogs, tar2ext4 }:
 
@@ -50,7 +50,7 @@ runCommand "spectrum-vm" {
   popd
 
   if [ -n "$wayland" ]; then
-      touch "$out/data/${name}/wayland"
+      touch "$out/wayland"
   fi
 
   ln -s /usr/img/appvm/blk/root.img "$out/blk"
