@@ -43,12 +43,12 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
     command.args(&["-dc", "test -S env/cloud-hypervisor.sock"]);
     command.arg("cloud-hypervisor");
     command.args(&["--api-socket", "env/cloud-hypervisor.sock"]);
-    command.args(&["--cmdline", "console=ttyS0 root=PARTLABEL=root"]);
+    command.args(&["--cmdline", "console=hvc0 root=PARTLABEL=root"]);
     command.args(&["--memory", "size=128M,shared=on"]);
     command.args(&["--console", "pty"]);
     command.args(&["--seccomp", "log"]);
     command.arg("--kernel");
-    command.arg(config_dir.join("vmlinux"));
+    command.arg(config_dir.join("Image"));
 
     let mut definition_path = PathBuf::new();
     definition_path.push("/ext/svc/data");

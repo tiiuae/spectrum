@@ -34,7 +34,7 @@ stdenvNoCC.mkDerivation {
 
   EXT_FS = extfs;
   INITRAMFS = initramfs;
-  KERNEL = "${rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
+  KERNEL = "${rootfs.kernel}/${stdenv.targetPlatform.linux-kernel.target}";
   ROOT_FS = rootfs;
   SYSTEMD_BOOT_EFI = "${systemd}/lib/systemd/boot/efi/systemd-boot${efiArch}.efi";
   EFINAME = "BOOT${toUpper efiArch}.EFI";
