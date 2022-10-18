@@ -13,6 +13,9 @@ VERITYSETUP = veritysetup
 # half way through.
 build/rootfs.ext4: build/rootfs.tar
 	tar2ext4 -i build/rootfs.tar -o $@.tmp
+	dd if=/dev/zero of=$@.tmp bs=1MiB count=500 conv=notrunc oflag=append
+	resize2fs $@.tmp
+	tune2fs -O ^read-only $@.tmp
 	mv $@.tmp $@
 
 FILES = \
@@ -151,7 +154,7 @@ run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	    -qmp unix:vmm.sock,server,nowait \
 	    -monitor vc \
 	    -parallel none \
-	    -drive file=build/live.img,if=virtio,format=raw,readonly=on \
+	    -drive file=build/live.img,if=virtio,format=raw,readonly=off \
 	    -drive file=$(EXT_FS),if=virtio,format=raw,readonly=on \
 	    -append "console=ttyS0 roothash=$$(< build/rootfs.verity.roothash) ext=/dev/vdb intel_iommu=on" \
 	    -device intel-iommu,intremap=on \
