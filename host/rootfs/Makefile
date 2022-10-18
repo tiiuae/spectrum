@@ -47,6 +47,7 @@ FILES = \
 	etc/xdg/weston/weston.ini \
 	usr/bin/usb-export \
 	usr/bin/__e \
+	usr/bin/setup.sh \
 	usr/bin/lsvm \
 	usr/bin/vm-console \
 	usr/bin/vm-start \
