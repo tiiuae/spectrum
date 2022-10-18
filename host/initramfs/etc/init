@@ -35,14 +35,7 @@ if {
 background { kill $mdevd_pid }
 background { rm /dev/rootfs.poll }
 
-if {
-  importas -i roothash roothash
-  veritysetup open /dev/rootfs root-verity /dev/verity $roothash
-}
-
-background { rm /dev/rootfs /dev/verity }
-
-if { mount /dev/mapper/root-verity /mnt/root }
+if { mount /dev/rootfs /mnt/root }
 wait { $mdevd_pid }
 
 if { mount --move /proc /mnt/root/proc }

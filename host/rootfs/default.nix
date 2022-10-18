@@ -7,7 +7,7 @@ pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
 , busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod
-, mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg
+, mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg, e2fsprogs
 }:
 
 let
@@ -118,7 +118,7 @@ stdenvNoCC.mkDerivation {
     src = cleanSource ./.;
   };
 
-  nativeBuildInputs = [ s6-rc tar2ext4 ];
+  nativeBuildInputs = [ s6-rc tar2ext4 e2fsprogs ];
 
   MODULES_ALIAS = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.alias";
   MODULES_ORDER = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.order";
