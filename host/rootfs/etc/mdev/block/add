@@ -18,8 +18,7 @@ backtick -E ext {
     backtick -E diskpath {
       pipeline { lsblk -lnpo KNAME,PKNAME }
       backtick -E rootpart {
-        pipeline { veritysetup status root-verity }
-        awk -F ":[[:blank:]]*" "$1 ~ /^[[:blank:]]*data device$/ {print $2; exit}"
+        readlink /dev/rootfs
       }
       awk -v rootpart=${rootpart} "$1 == rootpart {print $2; exit}"
     }
