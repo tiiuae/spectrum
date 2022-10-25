@@ -19,8 +19,16 @@ chmod 666 /dev/tty
 chmod 666 /dev/dri/card0
 chmod 666 /dev/dri/renderD128
 
-# element-desktop  --enable-features=UseOzonePlatform --ozone-platform=wayland
+echo "element-desktop  --enable-features=UseOzonePlatform --ozone-platform=wayland" > /home/apprunner/element-desktop.sh
+chown apprunner /home/apprunner/element-desktop.sh
+chmod +x /home/apprunner/element-desktop.sh
+
+echo "chromium  --enable-features=UseOzonePlatform --ozone-platform=wayland" > /home/apprunner/chromium.sh
+chown apprunner /home/apprunner/chromium.sh
+chmod +x /home/apprunner/chromium.sh
+
+echo "gala  --enable-features=UseOzonePlatform --ozone-platform=wayland" > /home/apprunner/gala.sh
+chown apprunner /home/apprunner/gala.sh
+chmod +x /home/apprunner/gala.sh
 
 # /nix/store/npknxl8a5lnc451pj3c2sqbpl5qdri5a-electron-19.0.7/bin/electron --enable-features=UseOzonePlatform --ozone-platform=wayland
-
-# chromium --enable-features=UseOzonePlatform --ozone-platform=wayland
