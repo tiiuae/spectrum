@@ -73,7 +73,17 @@ let
     imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
   });
 
-  kernel = pkgs.linux_latest;
+  kernel = pkgs.linux_imx8.override {
+    structuredExtraConfig = with lib.kernel; {
+      ATA_PIIX = yes;
+      EFI_STUB = yes;
+      EFI = yes;
+      VIRTIO = yes;
+      VIRTIO_PCI = yes;
+      VIRTIO_BLK = yes;
+      EXT4_FS = yes;
+    };
+  };
 
   appvm = import ../../img/app {
     inherit config;
