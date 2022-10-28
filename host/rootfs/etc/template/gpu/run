@@ -6,4 +6,4 @@ s6-notifyoncheck -d
 crosvm --no-syslog device gpu
   --socket env/crosvm.sock
   --wayland-sock /run/user/0/wayland-1
-  --params "{\"context-types\": \"virgl:virgl2:cross-domain\"}"
+  --params "{\"context-types\": \"cross-domain\"}"
