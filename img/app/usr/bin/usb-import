@@ -1,4 +1,8 @@
 #!/bin/sh
+#
+# SPDX-FileCopyrightText: 2022 Unikie
+#
+
 
 command -v modprobe >/dev/null && (modprobe vhci-hcd || exit 1)
 

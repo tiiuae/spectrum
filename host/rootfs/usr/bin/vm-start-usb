@@ -1,6 +1,8 @@
 #!/bin/execlineb -S1
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Unikie
+
 
 foreground { s6-rc -bu change ext-rc } 
 foreground { s6-rc -l /run/s6-rc.ext -u change ${1} }
