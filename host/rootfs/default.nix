@@ -5,9 +5,9 @@
 { config ? import ../../nix/eval-config.nix {} }: let inherit (config) pkgs; in
 pkgs.pkgsStatic.callPackage (
 
-{ lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
+{ lib, stdenvNoCC, nixos, runCommand, buildPackages, writeReferencesToFile, s6-rc, tar2ext4
 , busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod
-, mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg, e2fsprogs
+, mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg, e2fsprogs, usbutils
 }:
 
 let
@@ -65,6 +65,7 @@ let
         CONFIG_MODINFO n
         CONFIG_MODPROBE n
         CONFIG_RMMOD n
+        CONFIG_LSUSB n
       '';
     })
   ] ++ (with pkgsGui; [ foot westonLite ]);
@@ -82,6 +83,10 @@ let
       VIRTIO_PCI = yes;
       VIRTIO_BLK = yes;
       EXT4_FS = yes;
+      USBIP_CORE = module ;
+      USBIP_VHCI_HCD = module;
+      USBIP_HOST = module;
+      USBIP_VUDC = module;
     };
   };
 

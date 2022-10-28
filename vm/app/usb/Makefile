@@ -6,36 +6,39 @@
 # QEMU_KVM = qemu-system-x86_64 -enable-kvm.
 QEMU_KVM = qemu-kvm
 CLOUD_HYPERVISOR = cloud-hypervisor
-CROSVM = crosvm
-CROSVM_DEVICE_GPU = $(CROSVM) device gpu
-CROSVM_RUN = $(CROSVM) run
-
-prefix = /usr/local
-imgdir = $(prefix)/img
 
 VMM = qemu
-SCRIPTS = ../../scripts
+SCRIPTS = ../../../scripts
 
 HOST_BUILD_FILES = \
-	build/host/appvm/blk/root.img \
-	build/host/appvm/Image
+	build/host/data/netvm/blk/root.img \
+	build/host/data/netvm/Image
 
-all: $(HOST_BUILD_FILES)
-.PHONY: all
 
-install: $(HOST_BUILD_FILES)
-	mkdir -p $(imgdir)
-	tar -c $(HOST_BUILD_FILES) | tar -C $(imgdir) -x --strip-components 2
-.PHONY: install
+HOST_FILES =  host/data/appvm-usbapp/providers/usb/
 
-build/host/appvm/Image: $(IMAGE)
+
+# We produce a directory, but that doesn't play nice with Make,
+# because it won't know to update if some file in the directory is
+# changed, or a file is created or removed in a subdirectory.  Using
+# the whole directory could also end up including files that aren't
+# intended to be part of the input, like temporary editor files or
+# .license files.  So for all these reasons, only explicitly listed
+# files are included in the build result.
+build/svc: $(HOST_BUILD_FILES) $(HOST_FILES)
+	rm -rf $@
+	mkdir -p $@
+
+	tar -c $(HOST_BUILD_FILES) | tar -C $@ -x --strip-components 2
+
+build/host/data/netvm/Image: $(IMAGE)
 	mkdir -p $$(dirname $@)
 	cp $(IMAGE) $$(dirname $@)/Image
 
-build/host/appvm/blk/root.img: $(SCRIPTS)/make-gpt.sh $(SCRIPTS)/sfdisk-field.awk build/rootfs.ext4
+build/host/data/netvm/blk/root.img: $(SCRIPTS)/make-gpt.sh $(SCRIPTS)/sfdisk-field.awk build/rootfs.ext4
 	mkdir -p $$(dirname $@)
 	$(SCRIPTS)/make-gpt.sh $@.tmp \
-	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:5460386f-2203-4911-8694-91400125c604:root
+	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:ea21da27-0391-48da-9235-9d2ab2ca7844:root
 	mv $@.tmp $@
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
@@ -47,24 +50,22 @@ build/rootfs.ext4: build/rootfs.tar
 
 VM_FILES = \
     usr/bin/__i \
-    usr/bin/import-usb \
+    usr/bin/usb-import \
+	etc/dbus-1/system.conf \
 	etc/fstab \
 	etc/init \
 	etc/mdev.conf \
 	etc/mdev/iface \
-	etc/mdev/listen \
-	etc/mdev/wait \
+	etc/nftables.conf \
 	etc/passwd \
-	etc/resolv.conf \
-	etc/s6-linux-init/scripts/rc.init
-VM_DIRS = dev run proc sys \
-	etc/s6-linux-init/env \
-	etc/s6-linux-init/run-image/ext \
-	etc/s6-linux-init/run-image/service
+	etc/s6-linux-init/run-image/service/getty-hvc0/run \
+	etc/s6-linux-init/scripts/rc.init \
+	etc/sysctl.conf
+VM_DIRS = dev etc/s6-linux-init/env run proc sys var/lib/connman
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
-VM_LINKS = bin etc/ssl/certs/ca-certificates.crt
+VM_LINKS = bin var/run
 
 VM_BUILD_FILES = build/etc/s6-rc
 
@@ -81,16 +82,24 @@ build/rootfs.tar: build/empty $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
 	done
 
 VM_S6_RC_FILES = \
-	etc/s6-rc/app/run \
-	etc/s6-rc/app/type \
+	etc/s6-rc/connman/dependencies \
+	etc/s6-rc/connman/run \
+	etc/s6-rc/connman/type \
+	etc/s6-rc/dbus/notification-fd \
+	etc/s6-rc/dbus/run \
+	etc/s6-rc/dbus/type \
 	etc/s6-rc/mdevd-coldplug/dependencies \
 	etc/s6-rc/mdevd-coldplug/type \
 	etc/s6-rc/mdevd-coldplug/up \
 	etc/s6-rc/mdevd/notification-fd \
 	etc/s6-rc/mdevd/run \
 	etc/s6-rc/mdevd/type \
+	etc/s6-rc/nftables/type \
+	etc/s6-rc/nftables/up \
 	etc/s6-rc/ok-all/contents \
-	etc/s6-rc/ok-all/type
+	etc/s6-rc/ok-all/type \
+	etc/s6-rc/sysctl/type \
+	etc/s6-rc/sysctl/up
 
 build/etc/s6-rc: $(VM_S6_RC_FILES)
 	mkdir -p $$(dirname $@)
@@ -101,53 +110,30 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    s6-rc-compile $@ $$dir; \
 	    exit=$$?; rm -r $$dir; exit $$exit
 
-start-vhost-user-gpu:
-	rm -f vhost-user-gpu.sock
-	$(CROSVM_DEVICE_GPU) \
-	    --socket vhost-user-gpu.sock \
-	    --wayland-sock "$$XDG_RUNTIME_DIR/$$WAYLAND_DISPLAY" \
-	    --params '{"context-types":"virgl:virgl2:cross-domain"}' &
-	while ! [ -S vhost-user-gpu.sock ]; do \
-	    sleep 1 ; \
-	done
-.PHONY: start-vhost-user-gpu
-
-run-qemu: build/host/appvm/blk/root.img
+run-qemu: build/host/data/netvm/blk/root.img
 	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
-	  -drive file=build/host/appvm/blk/root.img,if=virtio,format=raw,readonly=on \
-	  -drive file=$(RUN_IMG),if=virtio,format=raw,readonly=on \
+	  -drive file=build/host/data/netvm/blk/root.img,if=virtio,format=raw,readonly=on \
 	  -append "console=ttyS0 root=PARTLABEL=root" \
 	  -netdev user,id=net0 \
-	  -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
+	  -device e1000e,netdev=net0 \
+	  -netdev user,id=net1 \
+	  -device virtio-net,netdev=net1,mac=0A:B3:EC:80:00:00 \
 	  -chardev vc,id=virtiocon0 \
 	  -device virtio-serial-pci \
 	  -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
-run-cloud-hypervisor: build/host/appvm/blk/root.img start-vhost-user-gpu
+run-cloud-hypervisor: build/host/data/netvm/blk/root.img
 	$(CLOUD_HYPERVISOR) \
 	    --api-socket path=vmm.sock \
-	    --memory size=128M,shared=on \
-	    --disk path=build/host/appvm/blk/root.img,readonly=on \
-	           path=$(RUN_IMG),readonly=on \
-	    --net tap=tap0,mac=0A:B3:EC:00:00:00 \
-	    --gpu socket=vhost-user-gpu.sock \
+	    --memory size=128M \
+	    --disk path=build/host/data/netvm/blk/root.img,readonly=on \
+	    --net tap=tap0 tap=tap1,mac=0A:B3:EC:80:00:00 \
 	    --kernel $(KERNEL) \
 	    --cmdline "console=ttyS0 root=PARTLABEL=root" \
 	    --console tty \
 	    --serial pty
 .PHONY: run-cloud-hypervisor
-
-run-crosvm: build/host/appvm/blk/root.img start-vhost-user-gpu
-	$(CROSVM_RUN) \
-	    --disk build/host/appvm/blk/root.img \
-	    --disk $(RUN_IMG) \
-	    -p "console=ttyS0 root=PARTLABEL=root" \
-	    --vhost-user-gpu vhost-user-gpu.sock \
-	    --serial type=file,hardware=serial,path=/tmp/crosvm.log \
-	    --serial type=stdout,hardware=virtio-console,stdin=true \
-	    $(KERNEL)
-.PHONY: run-crosvm
 
 run: run-$(VMM)
 .PHONY: run

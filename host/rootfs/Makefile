@@ -45,9 +45,12 @@ FILES = \
 	etc/s6-linux-init/scripts/rc.init \
 	etc/xdg/weston/autolaunch \
 	etc/xdg/weston/weston.ini \
+	usr/bin/usb-export \
+	usr/bin/__e \
 	usr/bin/lsvm \
 	usr/bin/vm-console \
 	usr/bin/vm-start \
+	usr/bin/vm-start-usb \
 	usr/bin/vm-stop
 DIRS = dev etc/s6-linux-init/env ext run proc sys
 
