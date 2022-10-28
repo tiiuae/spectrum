@@ -1,2 +1,5 @@
 #!/bin/sh
+# 
+# SPDX-FileCopyrightText: 2022 Unikie
+#
 socat VSOCK-CONNECT:2:52 EXEC:'/usr/bin/usb-import /run/usb'

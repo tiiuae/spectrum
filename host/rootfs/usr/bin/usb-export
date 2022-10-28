@@ -1,7 +1,7 @@
 #!/bin/sh
 #
-# adopted from qubesos by vadim.likholetov@unikie.com
-#
+## SPDX-FileCopyrightText: 2022 Unikie
+
 
 SYS_USB_DEVICES=/sys/bus/usb/devices
 SYS_USBIP_HOST=/sys/bus/usb/drivers/usbip-host
