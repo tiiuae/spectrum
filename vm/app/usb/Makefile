@@ -13,11 +13,9 @@ VMM = qemu
 SCRIPTS = ../../../scripts
 
 HOST_BUILD_FILES = \
-	build/host/data/netvm/blk/root.img \
-	build/host/data/netvm/Image
-
-
-HOST_FILES =  host/data/appvm-usbapp/providers/usb/
+	build/host/data/appvm-usb/blk/root.img \
+	build/host/data/appvm-usb/Image\
+        build/host/data/appvm-usb/providers/usb/
 
 
 # We produce a directory, but that doesn't play nice with Make,
@@ -33,15 +31,19 @@ build/svc: $(HOST_BUILD_FILES) $(HOST_FILES)
 
 	tar -c $(HOST_BUILD_FILES) | tar -C $@ -x --strip-components 2
 
-build/host/data/netvm/Image: $(IMAGE)
+build/host/data/appvm-usb/Image: $(IMAGE)
 	mkdir -p $$(dirname $@)
 	cp $(IMAGE) $$(dirname $@)/Image
 
-build/host/data/netvm/blk/root.img: $(SCRIPTS)/make-gpt.sh $(SCRIPTS)/sfdisk-field.awk build/rootfs.ext4
+build/host/data/appvm-usb/blk/root.img: $(SCRIPTS)/make-gpt.sh $(SCRIPTS)/sfdisk-field.awk build/rootfs.ext4
 	mkdir -p $$(dirname $@)
 	$(SCRIPTS)/make-gpt.sh $@.tmp \
-	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:ea21da27-0391-48da-9235-9d2ab2ca7844:root
+	    build/rootfs.ext4:4f6888e3-e8cd-4db1-96e7-fbcaf984b709:8881da27-0391-48da-9235-9d2ab2ca7844:root
 	mv $@.tmp $@
+
+build/host/data/appvm-usb/providers/usb/:
+	mkdir -p $@
+
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.
@@ -112,9 +114,9 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    s6-rc-compile $@ $$dir; \
 	    exit=$$?; rm -r $$dir; exit $$exit
 
-run-qemu: build/host/data/netvm/blk/root.img
+run-qemu: build/host/data/appvm-usb/blk/root.img
 	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
-	  -drive file=build/host/data/netvm/blk/root.img,if=virtio,format=raw,readonly=on \
+	  -drive file=build/host/data/appvm-usb/blk/root.img,if=virtio,format=raw,readonly=on \
 	  -append "console=ttyS0 root=PARTLABEL=root" \
 	  -netdev user,id=net0 \
 	  -device e1000e,netdev=net0 \
@@ -125,11 +127,11 @@ run-qemu: build/host/data/netvm/blk/root.img
 	  -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
-run-cloud-hypervisor: build/host/data/netvm/blk/root.img
+run-cloud-hypervisor: build/host/data/appvm-usb/blk/root.img
 	$(CLOUD_HYPERVISOR) \
 	    --api-socket path=vmm.sock \
 	    --memory size=128M \
-	    --disk path=build/host/data/netvm/blk/root.img,readonly=on \
+	    --disk path=build/host/data/appvm-usb/blk/root.img,readonly=on \
 	    --net tap=tap0 tap=tap1,mac=0A:B3:EC:80:00:00 \
 	    --kernel $(KERNEL) \
 	    --cmdline "console=ttyS0 root=PARTLABEL=root" \

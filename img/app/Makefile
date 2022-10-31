@@ -49,7 +49,7 @@ build/rootfs.ext4: build/rootfs.tar
 
 VM_FILES = \
     usr/bin/__i \
-    usr/bin/import-usb \
+    usr/bin/usb-import \
 	etc/fstab \
 	etc/init \
 	etc/mdev.conf \

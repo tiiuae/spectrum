@@ -76,7 +76,6 @@ let
 
   kernel = pkgs.linux_imx8.override {
     structuredExtraConfig = with lib.kernel; {
-      ATA_PIIX = yes;
       EFI_STUB = yes;
       EFI = yes;
       VIRTIO = yes;
