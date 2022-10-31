@@ -8,7 +8,7 @@
 { config ? import ../../../nix/eval-config.nix {} }:
 
 import ../../vm-lib/make-vm.nix { inherit config; } {
-  name = "appvm-uabapp";
+  name = "appvm-usbapp";
   providers.net = [ "netvm" ];
   run = config.pkgs.pkgsStatic.callPackage (
     { writeScript, bash, usbutils }:
