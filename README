@@ -1,2 +1,25 @@
 The canonical URL for the upstream Spectrum git repository is
 <https://spectrum-os.org/git/spectrum/>.
+
+QVT for sound and camera:
+
+When booted, run `cat /proc/asound/cards` and find the number of your sound device there.
+
+Check if there is a correct configuration in /etc/asound.conf file:
+```
+...
+slave {
+    pcm "hw:3,0" <- Set here ID of device,as in cat /proc/asound/cards
+...
+ctl.dmixer {
+        type hw
+        card 3 <- Set here ID of device,as in cat /proc/asound/cards
+}
+```
+To test sound, run
+`speaker-test -c2`
+You should hear a (white?) noise.
+
+The easiest way to test camera is to visit https://webcamtests.com/ service.
+Remember to configure networking and set correct time in prior.
+

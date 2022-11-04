@@ -6,7 +6,7 @@
 pkgs.callPackage (
 
 { lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
-, busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod, cacert
+, busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod, cacert, alsa-utils
 , mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg, strace, e2fsprogs, usbutils
 }:
 
@@ -45,7 +45,7 @@ let
 
   packages = [
     cloud-hypervisor pkgs.crosvm execline jq kmod mdevd s6 s6-linux-init s6-rc
-    socat start-vm strace cacert
+    socat start-vm strace cacert alsa-utils
 
     (cryptsetup.override {
       programs = {
