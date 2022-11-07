@@ -143,14 +143,11 @@ build/live.img: $(SCRIPTS)/format-uuid.sh $(SCRIPTS)/make-gpt.sh build/rootfs.ve
 run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	$(QEMU_KVM) -cpu host -m 2G \
 	    -machine q35,kernel=$(KERNEL),kernel-irqchip=split,initrd=$(INITRAMFS) \
-	    -display gtk,gl=on \
 	    -qmp unix:vmm.sock,server,nowait \
 	    -monitor vc \
 	    -parallel none \
 	    -drive file=build/live.img,if=virtio,format=raw,readonly=on \
 	    -drive file=$(EXT_FS),if=virtio,format=raw,readonly=on \
 	    -append "console=ttyS0 roothash=$$(< build/rootfs.verity.roothash) ext=/dev/vdb intel_iommu=on" \
-	    -device intel-iommu,intremap=on \
-	    -device virtio-vga-gl \
-	    -device vhost-vsock-pci,guest-cid=3
+	    -device intel-iommu,intremap=on
 .PHONY: run
