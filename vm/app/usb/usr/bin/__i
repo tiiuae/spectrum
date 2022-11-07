@@ -1,2 +1,7 @@
 #!/bin/sh
+modprobe vhost_vsock
+sleep 10
+echo 1 > /sys/bus/pci/rescan
+sleep 1
 socat VSOCK-CONNECT:2:52 EXEC:'/usr/bin/usb-import /run/usb'
+

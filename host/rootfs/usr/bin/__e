@@ -6,4 +6,5 @@ for i in /ext/svc/data/${1}/providers/usb/*
 do 
 	device=`readlink $i`
 done
-socat UNIX-LISTEN:/run/u.appvm-usbapp.socket_52 EXEC:"/usr/bin/usb-export $device"
+socat UNIX-LISTEN:/run/u.${1}.socket_52 EXEC:"/usr/bin/usb-export $device"
+
