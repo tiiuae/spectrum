@@ -20,6 +20,7 @@ build/rootfs.ext4: build/rootfs.tar
 	mv $@.tmp $@
 
 FILES = \
+	etc/asound.conf \
 	etc/fonts/fonts.conf \
 	etc/fstab \
 	etc/group \
@@ -47,6 +48,7 @@ FILES = \
 	etc/xdg/weston/weston.ini \
 	usr/bin/usb-export \
 	usr/bin/__e \
+	usr/bin/setup.sh \
 	usr/bin/lsvm \
 	usr/bin/vm-console \
 	usr/bin/vm-start \

@@ -3,11 +3,11 @@
 # SPDX-FileCopyrightText: 2022 Unikie
 
 { config ? import ../../nix/eval-config.nix {} }: let inherit (config) pkgs; in
-pkgs.pkgsStatic.callPackage (
+pkgs.callPackage (
 
-{ lib, stdenvNoCC, nixos, runCommand, buildPackages, writeReferencesToFile, s6-rc, tar2ext4
-, busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod
-, mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg, e2fsprogs, usbutils
+{ lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
+, busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod, cacert, alsa-utils
+, mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg, strace, e2fsprogs, usbutils
 }:
 
 let
@@ -45,7 +45,8 @@ let
 
   packages = [
     cloud-hypervisor pkgs.crosvm execline jq kmod mdevd s6 s6-linux-init s6-rc
-    socat start-vm usbutils
+
+    socat start-vm strace cacert alsa-utils usbutils
 
     (cryptsetup.override {
       programs = {
@@ -93,7 +94,7 @@ let
 
   # Packages that should be fully linked into /usr,
   # (not just their bin/* files).
-  usrPackages = [ appvm pkgsGui.mesa.drivers pkgsGui.dejavu_fonts ];
+  usrPackages = [ appvm pkgsGui.mesa.drivers pkgsGui.dejavu_fonts pkgs.element-desktop-wayland pkgs.chromium pkgs.gala64 ];
 
   packagesSysroot = runCommand "packages-sysroot" {
     nativeBuildInputs = [ xorg.lndir ];
@@ -111,6 +112,8 @@ let
     # programs we want.
     # https://lore.kernel.org/util-linux/87zgrl6ufb.fsf@alyssa.is/
     ln -s ${util-linuxMinimal}/bin/{findfs,lsblk} $out/usr/bin
+    mkdir -p $out/etc/ssl/certs
+    cp -r ${cacert}/etc/ssl/certs/ca-bundle.crt $out/etc/ssl/certs/ca-certificates.crt
   '';
 
   packagesTar = runCommand "packages.tar" {} ''

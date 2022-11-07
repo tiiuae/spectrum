@@ -14,6 +14,8 @@ let
   appvm-lynx = import ../../vm/app/lynx.nix { inherit config; };
   appvm-usbapp = import ../../vm/app/usbapp.nix { inherit config; };
   appvm-usb = import ../../vm/app/usb { inherit config; };
+  appvm-foot = import ../../vm/app/foot-vm.nix {inherit config;};
+  appvm-zathura = import ../../vm/app/zathura-vm.nix {inherit config;};
 
 in
 
@@ -33,7 +35,10 @@ runCommand "ext.ext4" {
   tar -C ${appvm-usbapp} -c data | tar -C svc -x
   chmod +w svc/data
   tar -C ${appvm-usb} -c data | tar -C svc -x
-
+  chmod +w svc/data
+  tar -C ${appvm-foot} -c data | tar -C svc -x
+  chmod +w svc/data
+  tar -C ${appvm-zathura} -c data | tar -C svc -x
 
 
   tar -cf ext.tar svc
