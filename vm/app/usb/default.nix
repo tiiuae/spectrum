@@ -72,13 +72,10 @@ let
       DRM_BOCHS = yes;
       DRM = yes;
       AGP = yes;
-      VSOCKETS = yes;
-      VSOCKETS_DIAG = yes;
-      VSOCKETS_LOOPBACK = yes;
+      VSOCKETS = module;
       VIRTIO_VSOCKETS = module;
-      VIRTIO_VSOCKETS_COMMON = yes;
-      VSOCKMON = yes;
-      VHOST_VSOCK = yes;
+      VIRTIO_VSOCKETS_COMMON = module;
+      VHOST_VSOCK = module;
       USBIP_CORE = module ;
       USBIP_VHCI_HCD = module;
       USBIP_HOST = module;

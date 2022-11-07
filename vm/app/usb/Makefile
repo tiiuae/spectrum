@@ -17,6 +17,7 @@ HOST_BUILD_FILES = \
 	build/host/data/appvm-usb/Image\
         build/host/data/appvm-usb/providers/usb/
 
+HOST_FILES = host/data/appvm-usb/providers/usb/
 
 # We produce a directory, but that doesn't play nice with Make,
 # because it won't know to update if some file in the directory is
@@ -30,6 +31,10 @@ build/svc: $(HOST_BUILD_FILES) $(HOST_FILES)
 	mkdir -p $@
 
 	tar -c $(HOST_BUILD_FILES) | tar -C $@ -x --strip-components 2
+	tar -c $(HOST_FILES) | tar -C $@ -xv --strip-components 1 
+	ls -al 
+	echo *****
+	ls -alR $@
 
 build/host/data/appvm-usb/Image: $(IMAGE)
 	mkdir -p $$(dirname $@)
@@ -43,7 +48,6 @@ build/host/data/appvm-usb/blk/root.img: $(SCRIPTS)/make-gpt.sh $(SCRIPTS)/sfdisk
 
 build/host/data/appvm-usb/providers/usb/:
 	mkdir -p $@
-
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
 # half way through.

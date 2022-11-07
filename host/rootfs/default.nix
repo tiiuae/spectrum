@@ -45,7 +45,7 @@ let
 
   packages = [
     cloud-hypervisor pkgs.crosvm execline jq kmod mdevd s6 s6-linux-init s6-rc
-    socat start-vm
+    socat start-vm usbutils
 
     (cryptsetup.override {
       programs = {
@@ -78,9 +78,6 @@ let
     structuredExtraConfig = with lib.kernel; {
       EFI_STUB = yes;
       EFI = yes;
-      VIRTIO = yes;
-      VIRTIO_PCI = yes;
-      VIRTIO_BLK = yes;
       EXT4_FS = yes;
       USBIP_CORE = module ;
       USBIP_VHCI_HCD = module;
